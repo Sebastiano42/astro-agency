@@ -1,0 +1,57 @@
+---
+// src/components/RippleEffect.astro
+// Creates beautiful ripple effects on click
+---
+
+<script>
+  // Ripple Click Effect
+  const initRippleEffect = () => {
+    const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+
+    const createRipple = (x: number, y: number) => {
+      const ripple = document.createElement('div');
+      ripple.className = 'ripple';
+      ripple.style.left = `${x}px`;
+      ripple.style.top = `${y}px`;
+      ripple.style.width = '20px';
+      ripple.style.height = '20px';
+      ripple.style.marginLeft = '-10px';
+      ripple.style.marginTop = '-10px';
+
+      document.body.appendChild(ripple);
+
+      setTimeout(() => {
+        ripple.remove();
+      }, 600);
+    };
+
+    const handleClick = (e: MouseEvent) => {
+      createRipple(e.clientX, e.clientY);
+    };
+
+    const handleTouch = (e: TouchEvent) => {
+      if (e.touches.length > 0) {
+        const touch = e.touches[0];
+        createRipple(touch.clientX, touch.clientY);
+      }
+    };
+
+    // Add click listener for desktop
+    if (!isTouchDevice) {
+      document.addEventListener('click', handleClick);
+    }
+
+    // Add touch listener for mobile
+    document.addEventListener('touchstart', handleTouch, { passive: true });
+  };
+
+  // Initialize on DOM ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initRippleEffect);
+  } else {
+    initRippleEffect();
+  }
+
+  // Re-initialize on Astro page transitions
+  document.addEventListener('astro:page-load', initRippleEffect);
+</script>

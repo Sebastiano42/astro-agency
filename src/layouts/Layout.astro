@@ -2,6 +2,9 @@
 // src/layouts/Layout.astro
 import Navigation from '../components/Navigation.astro';
 import Footer from '../components/Footer.astro';
+import CursorFollower from '../components/CursorFollower.astro';
+import MagneticElements from '../components/MagneticElements.astro';
+import RippleEffect from '../components/RippleEffect.astro';
 import '../styles/global.css';
 
 interface Props {
@@ -51,6 +54,10 @@ const { title = "Studio Digitale" } = Astro.props;
     </main>
     
     <Footer />
+
+    <CursorFollower />
+    <MagneticElements />
+    <RippleEffect />
 
     <script>
       // Scroll Reveal Animation System - Enhanced

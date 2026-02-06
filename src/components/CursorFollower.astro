@@ -1,0 +1,218 @@
+---
+// src/components/CursorFollower.astro
+---
+
+<!-- Custom Cursor -->
+<div id="cursor" class="cursor"></div>
+<div id="cursor-follower" class="cursor-follower"></div>
+
+<!-- Mouse Glow/Spotlight Effect -->
+<div id="mouse-glow" class="mouse-glow"></div>
+
+<style>
+  /* Custom Cursor Styles */
+  .cursor {
+    width: 10px;
+    height: 10px;
+    border: 2px solid rgba(255, 255, 255, 0.8);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999;
+    transition: transform 0.15s ease-out, opacity 0.3s ease;
+    mix-blend-mode: difference;
+    opacity: 0;
+  }
+
+  .cursor-follower {
+    width: 40px;
+    height: 40px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 9998;
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+                opacity 0.3s ease;
+    mix-blend-mode: difference;
+    opacity: 0;
+  }
+
+  /* Mouse Glow/Spotlight Effect */
+  .mouse-glow {
+    position: fixed;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(
+      circle at center,
+      rgba(99, 102, 241, 0.15) 0%,
+      rgba(168, 85, 247, 0.08) 25%,
+      rgba(236, 72, 153, 0.04) 50%,
+      transparent 70%
+    );
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    transform: translate(-50%, -50%);
+    filter: blur(40px);
+  }
+
+  /* Hover Effects - Enlarge cursor on interactive elements */
+  .cursor.hover {
+    transform: scale(0.5);
+  }
+
+  .cursor-follower.hover {
+    transform: scale(1.5);
+    border-color: rgba(99, 102, 241, 0.6);
+    background: rgba(99, 102, 241, 0.1);
+  }
+
+  /* Hide custom cursor on touch devices */
+  @media (hover: none) and (pointer: coarse) {
+    .cursor,
+    .cursor-follower,
+    .mouse-glow {
+      display: none !important;
+    }
+  }
+
+  /* Hide default cursor on desktop */
+  @media (hover: hover) and (pointer: fine) {
+    body {
+      cursor: none;
+    }
+
+    a, button, input, textarea, select, [role="button"] {
+      cursor: none;
+    }
+  }
+</style>
+
+<script>
+  // Cursor Following Effect with Performance Optimization
+  const initCursorFollower = () => {
+    const cursor = document.getElementById('cursor');
+    const follower = document.getElementById('cursor-follower');
+    const glow = document.getElementById('mouse-glow');
+
+    if (!cursor || !follower || !glow) return;
+
+    // Check if it's a touch device
+    const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+    if (isTouchDevice) return;
+
+    let mouseX = 0;
+    let mouseY = 0;
+    let cursorX = 0;
+    let cursorY = 0;
+    let followerX = 0;
+    let followerY = 0;
+    let glowX = 0;
+    let glowY = 0;
+    let isMouseMoving = false;
+    let mouseTimeout: number;
+
+    // Show cursor elements on first move
+    let hasMouseMoved = false;
+
+    // Smooth animation using requestAnimationFrame
+    const animate = () => {
+      // Cursor (fast follow)
+      const cursorSpeed = 0.2;
+      cursorX += (mouseX - cursorX) * cursorSpeed;
+      cursorY += (mouseY - cursorY) * cursorSpeed;
+      cursor.style.left = `${cursorX}px`;
+      cursor.style.top = `${cursorY}px`;
+
+      // Follower (slower follow for trail effect)
+      const followerSpeed = 0.1;
+      followerX += (mouseX - followerX) * followerSpeed;
+      followerY += (mouseY - followerY) * followerSpeed;
+      follower.style.left = `${followerX}px`;
+      follower.style.top = `${followerY}px`;
+
+      // Glow (even slower for smooth spotlight)
+      const glowSpeed = 0.08;
+      glowX += (mouseX - glowX) * glowSpeed;
+      glowY += (mouseY - glowY) * glowSpeed;
+      glow.style.left = `${glowX}px`;
+      glow.style.top = `${glowY}px`;
+
+      requestAnimationFrame(animate);
+    };
+
+    // Mouse move handler
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!hasMouseMoved) {
+        hasMouseMoved = true;
+        cursor.style.opacity = '1';
+        follower.style.opacity = '1';
+        glow.style.opacity = '1';
+      }
+
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+      isMouseMoving = true;
+
+      clearTimeout(mouseTimeout);
+      mouseTimeout = window.setTimeout(() => {
+        isMouseMoving = false;
+      }, 100);
+    };
+
+    // Hover effect on interactive elements
+    const handleHoverEnter = () => {
+      cursor.classList.add('hover');
+      follower.classList.add('hover');
+    };
+
+    const handleHoverLeave = () => {
+      cursor.classList.remove('hover');
+      follower.classList.remove('hover');
+    };
+
+    // Add event listeners
+    document.addEventListener('mousemove', handleMouseMove);
+
+    // Interactive elements selector
+    const interactiveElements = 'a, button, input, textarea, select, [role="button"], .cursor-hover';
+
+    const addHoverListeners = () => {
+      document.querySelectorAll(interactiveElements).forEach(el => {
+        el.addEventListener('mouseenter', handleHoverEnter);
+        el.addEventListener('mouseleave', handleHoverLeave);
+      });
+    };
+
+    // Initial setup
+    addHoverListeners();
+
+    // Re-attach listeners after page navigation (for Astro View Transitions)
+    document.addEventListener('astro:page-load', addHoverListeners);
+
+    // Start animation loop
+    animate();
+
+    // Cleanup function
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.querySelectorAll(interactiveElements).forEach(el => {
+        el.removeEventListener('mouseenter', handleHoverEnter);
+        el.removeEventListener('mouseleave', handleHoverLeave);
+      });
+    };
+  };
+
+  // Initialize on DOM ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initCursorFollower);
+  } else {
+    initCursorFollower();
+  }
+
+  // Re-initialize on Astro page transitions
+  document.addEventListener('astro:page-load', initCursorFollower);
+</script>
