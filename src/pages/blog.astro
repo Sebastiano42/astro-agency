@@ -1,0 +1,56 @@
+---
+// src/pages/blog.astro
+import Layout from '../layouts/Layout.astro';
+
+const posts = [
+  {
+    title: "Perché Astro è il futuro dei siti web",
+    date: "12 Febbraio 2026",
+    excerpt: "Scopri come la tecnologia 'Island Architecture' sta rivoluzionando la velocità del web.",
+    image: "🚀"
+  },
+  {
+    title: "10 Consigli per migliorare la tua SEO",
+    date: "5 Febbraio 2026",
+    excerpt: "Piccoli accorgimenti tecnici che possono fare una grande differenza nel posizionamento Google.",
+    image: "📈"
+  },
+  {
+    title: "Il Design Minimalista nel 2026",
+    date: "28 Gennaio 2026",
+    excerpt: "Le tendenze estetiche del web design per quest'anno: meno è meglio.",
+    image: "✨"
+  }
+];
+---
+
+<Layout title="Blog">
+  <section class="pt-40 pb-20 bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
+    <div class="container mx-auto px-4 text-center">
+      <h1 class="text-5xl md:text-7xl font-black text-slate-900 dark:text-white mb-6">Il Nostro Blog</h1>
+      <p class="text-xl text-slate-500 dark:text-slate-400 max-w-2xl mx-auto">Idee, approfondimenti e novità dal mondo del digital design e dello sviluppo.</p>
+    </div>
+  </section>
+
+  <section class="py-20 bg-white dark:bg-slate-950 transition-colors duration-300">
+    <div class="container mx-auto px-4">
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
+        {posts.map(post => (
+          <article class="card-premium group p-0 overflow-hidden">
+            <div class="h-48 bg-slate-100 dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800 flex items-center justify-center text-5xl transition-colors group-hover:bg-primary group-hover:text-white duration-500">
+              {post.image}
+            </div>
+            <div class="p-8">
+              <span class="text-xs font-black uppercase tracking-widest text-primary mb-3 block">{post.date}</span>
+              <h2 class="text-2xl font-bold text-slate-900 dark:text-white mb-4 line-clamp-2 leading-tight">{post.title}</h2>
+              <p class="text-slate-500 dark:text-slate-400 mb-8 line-clamp-3">{post.excerpt}</p>
+              <a href="#" class="inline-block font-black text-slate-900 dark:text-white no-underline border-b-2 border-primary pb-1 hover:text-primary transition-all">
+                Leggi tutto
+              </a>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+</Layout>

@@ -1,0 +1,130 @@
+---
+// src/pages/index.astro
+import Layout from '../layouts/Layout.astro';
+import ContactForm from '../components/ContactForm.astro';
+
+const services = [
+  { icon: '01', title: 'Design System', desc: 'Linguaggi visivi scalabili per prodotti digitali complessi.' },
+  { icon: '02', title: 'Sviluppo Web', desc: 'Performance ossessiva. Stack moderni (Astro, React).' },
+  { icon: '03', title: 'Brand Identity', desc: 'Strategia visiva che posiziona il tuo marchio sopra il rumore.' },
+  { icon: '04', title: 'Growth', desc: 'SEO tecnica e conversion rate optimization guidata dai dati.' },
+];
+
+const stats = [
+  { value: '150+', label: 'Progetti Consegnati' },
+  { value: '98%', label: 'Retention Rate' },
+  { value: '100', label: 'Lighthouse Score' }
+];
+---
+
+<Layout title="Home">
+  <!-- HERO SECTION -->
+  <section class="relative min-h-[90vh] flex items-center pt-32 pb-20 overflow-hidden">
+    <!-- Background Effects -->
+    <div class="absolute inset-0 bg-background z-0">
+        <div class="absolute top-[30%] left-[50%] -translate-x-1/2 -translate-y-1/2 w-[80vw] h-[80vw] max-w-[600px] max-h-[600px] bg-white/5 rounded-full blur-[100px] pointer-events-none animate-pulse-slow"></div>
+        <div class="absolute bottom-0 right-0 w-full h-full bg-grid-pattern opacity-10"></div>
+    </div>
+    
+    <div class="container-custom relative z-10 w-full">
+      <div class="max-w-5xl mx-auto md:mx-0">
+        <div class="flex items-center justify-center md:justify-start gap-3 mb-8 reveal">
+            <span class="w-8 md:w-12 h-[1px] bg-white/30 hidden md:block"></span>
+            <span class="text-[10px] md:text-xs font-mono uppercase tracking-widest text-gray-400 bg-white/5 px-3 py-1 rounded-full md:bg-transparent md:p-0 border border-white/10 md:border-none">Available for 2024</span>
+        </div>
+
+        <h1 class="hero-text text-white mb-8 md:mb-10 text-center md:text-left reveal delay-100">
+          Costruiamo <br/>
+          <span class="text-gray-500">il futuro</span> <br/>
+          digitale.
+        </h1>
+        
+        <p class="text-base md:text-xl text-gray-400 max-w-xl mx-auto md:mx-0 leading-relaxed mb-10 md:mb-12 text-center md:text-left reveal delay-200">
+          Uno studio di design e tecnologia focalizzato sulla creazione di esperienze digitali d'élite. Minimalismo, velocità e precisione.
+        </p>
+
+        <div class="flex flex-col sm:flex-row gap-4 justify-center md:justify-start reveal delay-300">
+            <a href="/contatti" class="btn-primary w-full sm:w-auto">
+              Inizia Progetto
+            </a>
+            <a href="/portfolio" class="btn-outline w-full sm:w-auto">
+              Esplora Lavori
+            </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MARQUEE LINE -->
+  <div class="border-y border-white/5 bg-surface/30 py-6 overflow-hidden reveal">
+      <div class="inline-flex animate-marquee whitespace-nowrap">
+          <span class="text-xs md:text-sm font-mono uppercase tracking-[0.3em] md:tracking-[0.5em] text-gray-500 mx-4 md:mx-8">Strategy • Design • Development • Growth •</span>
+          <span class="text-xs md:text-sm font-mono uppercase tracking-[0.3em] md:tracking-[0.5em] text-gray-500 mx-4 md:mx-8">Strategy • Design • Development • Growth •</span>
+          <span class="text-xs md:text-sm font-mono uppercase tracking-[0.3em] md:tracking-[0.5em] text-gray-500 mx-4 md:mx-8">Strategy • Design • Development • Growth •</span>
+          <span class="text-xs md:text-sm font-mono uppercase tracking-[0.3em] md:tracking-[0.5em] text-gray-500 mx-4 md:mx-8">Strategy • Design • Development • Growth •</span>
+      </div>
+  </div>
+
+  <!-- SERVICES PREVIEW -->
+  <section class="py-20 md:py-32 relative">
+    <div class="container-custom">
+      <div class="flex flex-col md:flex-row justify-between items-center md:items-end mb-12 md:mb-20 text-center md:text-left reveal">
+        <h2 class="text-4xl md:text-6xl font-black text-white mb-6 md:mb-0">Competenze</h2>
+        <a href="/servizi" class="text-sm font-mono uppercase tracking-widest text-gray-400 border-b border-gray-700 pb-1 hover:text-white hover:border-white transition-colors">Tutti i Servizi</a>
+      </div>
+      
+      <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {services.map((item, index) => (
+          <div class={`card-dark group text-center md:text-left reveal delay-${(index + 1) * 100} h-full flex flex-col`}>
+            <span class="font-mono text-xs text-gray-600 block mb-8 md:mb-12 group-hover:text-white transition-colors mx-auto md:mx-0 w-fit">{item.icon}</span>
+            <h3 class="text-xl font-bold text-white mb-4">{item.title}</h3>
+            <p class="text-sm text-gray-400 leading-relaxed opacity-80 md:opacity-60 group-hover:opacity-100 transition-opacity flex-grow">{item.desc}</p>
+            
+            <div class="absolute bottom-6 right-6 opacity-0 group-hover:opacity-100 transition-opacity hidden md:block">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-white"><path d="M7 17l9.2-9.2M17 17V7H7"/></svg>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <section class="py-20 md:py-24 border-y border-white/5 bg-surface/30">
+    <div class="container-custom">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-12 text-center md:text-left reveal">
+        {stats.map((stat) => (
+          <div class="flex flex-col items-center md:items-start group hover:-translate-y-2 transition-transform duration-300">
+            <div class="text-5xl md:text-6xl font-black text-white mb-2 tracking-tight group-hover:text-gray-300 transition-colors">{stat.value}</div>
+            <div class="text-xs font-mono uppercase tracking-widest text-gray-500">{stat.label}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="py-20 md:py-32 relative">
+    <div class="container-custom">
+      <div class="grid lg:grid-cols-2 gap-16 relative z-10 items-center">
+          <div class="text-center md:text-left reveal">
+            <h2 class="text-4xl md:text-6xl font-black text-white mb-6 md:mb-8 leading-none">
+              Iniziamo qualcosa <br/> di <span class="text-gray-600">unico.</span>
+            </h2>
+            <p class="text-gray-400 mb-10 md:mb-12 max-w-md mx-auto md:mx-0 leading-relaxed text-base md:text-lg">
+              Hai un progetto che richiede una visione precisa? Parliamone. Siamo qui per elevare il tuo brand.
+            </p>
+            <div class="flex flex-col md:flex-row gap-4 md:gap-8 justify-center md:justify-start text-sm text-gray-500 font-mono mb-8 md:mb-0">
+                <p>• Analisi Gratuita</p>
+                <p>• Strategia Personalizzata</p>
+                <p>• Nessun Impegno</p>
+            </div>
+          </div>
+          
+          <div class="w-full reveal delay-200">
+             <ContactForm />
+          </div>
+        </div>
+    </div>
+  </section>
+</Layout>

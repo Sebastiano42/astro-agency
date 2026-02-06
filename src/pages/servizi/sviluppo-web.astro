@@ -1,0 +1,103 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout title="Sviluppo Web">
+  <section class="service-detail">
+    <div class="container">
+      <a href="/servizi" class="back-link">← Torna ai servizi</a>
+      <div class="content-grid">
+        <div class="text-content">
+          <span class="badge">Development</span>
+          <h1 class="gradient-text">Coding di Alta Qualità</h1>
+          <p class="lead">Traduciamo design complessi in codice pulito, veloce e manutenibile.</p>
+          
+          <div class="detail-block">
+            <h3>Tecnologie all'Avanguardia</h3>
+            <ul>
+              <li><strong>Modern Frameworks:</strong> Utilizziamo Astro e Next.js per la massima velocità.</li>
+              <li><strong>API Integration:</strong> Colleghiamo il tuo sito a gestionali, CRM e servizi esterni.</li>
+              <li><strong>Custom CMS:</strong> Pannelli di controllo su misura per gestire i tuoi contenuti.</li>
+              <li><strong>Clean Code:</strong> Architetture scalabili che crescono con il tuo business.</li>
+            </ul>
+          </div>
+
+          <div class="cta-mini">
+            <p>Hai un'idea tecnicamente complessa?</p>
+            <a href="/contatti" class="btn btn-primary">Parliamone</a>
+          </div>
+        </div>
+        <div class="visual-content">
+          <div class="code-preview">
+            <pre><code>{`function optimizeSite(target) {
+  const score = target.audit();
+  if (score < 100) {
+    applyAstroMagic(target);
+  }
+  return "🚀 Ready!";
+}`}</code></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .service-detail {
+    padding: 8rem 0;
+  }
+
+  .back-link {
+    display: inline-block;
+    margin-bottom: 2rem;
+    color: var(--gray);
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  .content-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 4rem;
+    align-items: center;
+  }
+
+  .badge {
+    background: #f1f5f9;
+    color: var(--dark);
+    padding: 0.5rem 1rem;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    display: inline-block;
+    margin-bottom: 1.5rem;
+  }
+
+  h1 {
+    font-size: 3.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .lead {
+    font-size: 1.25rem;
+    color: var(--dark-light);
+    margin-bottom: 2.5rem;
+  }
+
+  .code-preview {
+    background: var(--dark);
+    padding: 2.5rem;
+    border-radius: 20px;
+    color: #a5b4fc;
+    font-family: 'Courier New', Courier, monospace;
+    box-shadow: 0 30px 60px rgba(0,0,0,0.15);
+  }
+
+  @media (max-width: 992px) {
+    .content-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

@@ -1,0 +1,41 @@
+---
+// src/pages/contatti.astro
+import Layout from '../layouts/Layout.astro';
+import ContactForm from '../components/ContactForm.astro';
+
+const contactMethods = [
+{ label: 'Email', value: 'hello@studio.com', href: 'mailto:hello@studio.com' },
+{ label: 'Telefono', value: '+39 02 1234 5678', href: 'tel:+390212345678' },
+{ label: 'Studio', value: 'Milano, Italia', href: '#' }
+];
+---
+
+<Layout title="Contatti">
+    <div class="pt-32 pb-20 container-custom">
+        <div class="grid lg:grid-cols-2 gap-20">
+            <div>
+                <span class="text-xs font-mono uppercase tracking-widest text-gray-500 mb-6 block">Contatti</span>
+                <h1 class="text-5xl md:text-7xl font-black text-white mb-8 tracking-tight leading-none">
+                    Parliamo <br /> di futuro.
+                </h1>
+                <p class="text-lg text-gray-400 mb-16 max-w-md leading-relaxed">
+                    Siamo sempre alla ricerca di nuove sfide. Scrivici per discutere del tuo prossimo progetto digitale.
+                </p>
+
+                <div class="grid gap-8">
+                    {contactMethods.map(method => (
+                    <div class="border-b border-white/10 pb-8">
+                        <span class="text-xs font-mono uppercase text-gray-600 mb-2 block">{method.label}</span>
+                        <a href={method.href}
+                            class="text-2xl text-white font-bold hover:text-gray-300 transition-colors">{method.value}</a>
+                    </div>
+                    ))}
+                </div>
+            </div>
+
+            <div class="lg:pt-20">
+                <ContactForm />
+            </div>
+        </div>
+    </div>
+</Layout>

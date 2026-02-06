@@ -1,0 +1,175 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout title="Social & Search Ads">
+  <section class="service-detail">
+    <div class="container">
+      <a href="/servizi" class="back-link">← Torna ai servizi</a>
+      <div class="content-grid">
+        <div class="text-content">
+          <span class="badge">Growth Marketing</span>
+          <h1 class="gradient-text">Campagne Mirate ai Risultati</h1>
+          <p class="lead">Portiamo traffico profilato al tuo business tramite pubblicità strategica su Google e Social Media.</p>
+          
+          <div class="detail-block">
+            <h3>I Nostri Canali</h3>
+            <ul>
+              <li><strong>Google Search Ads:</strong> Appari esattamente quando i clienti cercano il tuo prodotto.</li>
+              <li><strong>Meta Ads:</strong> Sfrutta la potenza di Facebook e Instagram per il tuo brand.</li>
+              <li><strong>LinkedIn Ads:</strong> Soluzioni B2B per raggiungere decision-maker e professionisti.</li>
+              <li><strong>Retargeting:</strong> Recupera gli utenti che hanno visitato il tuo sito senza acquistare.</li>
+            </ul>
+          </div>
+
+          <div class="cta-mini">
+            <p>Vuoi aumentare il tuo fatturato?</p>
+            <a href="/contatti" class="btn btn-primary">Richiedi un preventivo Ads</a>
+          </div>
+        </div>
+        <div class="visual-content">
+          <div class="ads-card">
+            <div class="ad-preview">
+              <div class="ad-user">
+                <div class="avatar"></div>
+                <div class="user-meta">
+                  <div class="u-line"></div>
+                  <div class="u-sub">Sponsorizzato</div>
+                </div>
+              </div>
+              <div class="ad-content">
+                <div class="ad-img"></div>
+                <div class="ad-text-block">
+                  <div class="t-line"></div>
+                  <div class="t-line short"></div>
+                </div>
+                <div class="ad-button">Scopri di più</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .service-detail {
+    padding: 8rem 0;
+  }
+
+  .back-link {
+    display: inline-block;
+    margin-bottom: 2rem;
+    color: var(--gray);
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  .content-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 4rem;
+    align-items: center;
+  }
+
+  .badge {
+    background: #fdf2f8;
+    color: #be185d;
+    padding: 0.5rem 1rem;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    display: inline-block;
+    margin-bottom: 1.5rem;
+  }
+
+  h1 {
+    font-size: 3.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .ad-preview {
+    background: var(--white);
+    border: 1px solid #e2e8f0;
+    border-radius: 20px;
+    padding: 1.5rem;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.05);
+    max-width: 400px;
+    margin: 0 auto;
+  }
+
+  .ad-user {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+
+  .avatar {
+    width: 40px;
+    height: 40px;
+    background: var(--gradient);
+    border-radius: 50%;
+  }
+
+  .user-meta {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+  }
+
+  .u-line {
+    height: 10px;
+    width: 100px;
+    background: #e2e8f0;
+  }
+
+  .u-sub {
+    font-size: 0.7rem;
+    color: var(--gray);
+    font-weight: bold;
+  }
+
+  .ad-img {
+    height: 200px;
+    background: #f1f5f9;
+    border-radius: 12px;
+    margin-bottom: 1rem;
+  }
+
+  .ad-text-block {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 1.5rem;
+  }
+
+  .t-line {
+    height: 12px;
+    background: #f1f5f9;
+    border-radius: 6px;
+  }
+
+  .t-line.short {
+    width: 60%;
+  }
+
+  .ad-button {
+    background: var(--primary);
+    color: var(--white);
+    text-align: center;
+    padding: 0.75rem;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 0.9rem;
+  }
+
+  @media (max-width: 992px) {
+    .content-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

@@ -1,0 +1,125 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout title="Ottimizzazione Performance">
+  <section class="service-detail">
+    <div class="container">
+      <a href="/servizi" class="back-link">← Torna ai servizi</a>
+      <div class="content-grid">
+        <div class="text-content">
+          <span class="badge">Speed Matters</span>
+          <h1 class="gradient-text">Velocità di Caricamento Record</h1>
+          <p class="lead">Un sito lento fa perdere clienti. Ottimizziamo ogni byte per caricamenti istantanei.</p>
+          
+          <div class="detail-block">
+            <h3>Core Web Vitals</h3>
+            <ul>
+              <li><strong>LCP:</strong> Immagini e testi principali visibili in pochi millisecondi.</li>
+              <li><strong>FID:</strong> Interattività immediata al primo tocco dell'utente.</li>
+              <li><strong>CLS:</strong> Stabilità visiva totale senza salti di layout.</li>
+              <li><strong>Image Engine:</strong> Compressione intelligente senza perdita di qualità.</li>
+            </ul>
+          </div>
+
+          <div class="cta-mini">
+            <p>Il tuo sito è troppo lento?</p>
+            <a href="/contatti" class="btn btn-primary">Testa la tua velocità</a>
+          </div>
+        </div>
+        <div class="visual-content">
+          <div class="lighthouse-score">
+            <div class="score-circle">100</div>
+            <div class="score-labels">
+              <span>Performance</span>
+              <span>Accessibility</span>
+              <span>Best Practices</span>
+              <span>SEO</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .service-detail {
+    padding: 8rem 0;
+  }
+
+  .back-link {
+    display: inline-block;
+    margin-bottom: 2rem;
+    color: var(--gray);
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  .content-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 4rem;
+    align-items: center;
+  }
+
+  .badge {
+    background: #ecfdf5;
+    color: #059669;
+    padding: 0.5rem 1rem;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    display: inline-block;
+    margin-bottom: 1.5rem;
+  }
+
+  h1 {
+    font-size: 3.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .lighthouse-score {
+    background: #f8fafc;
+    padding: 3rem;
+    border-radius: 50%;
+    width: 350px;
+    height: 350px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 10px solid #22c55e;
+    box-shadow: 0 0 40px rgba(34, 197, 94, 0.2);
+  }
+
+  .score-circle {
+    font-size: 6rem;
+    font-weight: 800;
+    color: #22c55e;
+  }
+
+  .score-labels {
+    display: flex;
+    gap: 1rem;
+    font-size: 0.7rem;
+    color: var(--gray);
+    font-weight: bold;
+    text-transform: uppercase;
+  }
+
+  @media (max-width: 992px) {
+    .content-grid {
+      grid-template-columns: 1fr;
+    }
+    .lighthouse-score {
+      width: 280px;
+      height: 280px;
+    }
+    .score-circle {
+      font-size: 4rem;
+    }
+  }
+</style>

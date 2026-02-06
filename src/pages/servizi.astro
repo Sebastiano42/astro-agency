@@ -1,0 +1,98 @@
+---
+// src/pages/servizi.astro
+import Layout from '../layouts/Layout.astro';
+
+const servizi = [
+{
+nome: 'Web Design',
+descrizione: `Interfacce di lusso. Micro-interazioni fluide. Design System scalabili.`,
+icon: '01',
+link: '/servizi/web-design'
+},
+{
+nome: 'Engineering',
+descrizione: `Architetture robuste. Astro, React, Node.js. Codice a prova di futuro.`,
+icon: '02',
+link: '/servizi/sviluppo-web'
+},
+{
+nome: 'SEO & Growth',
+descrizione: `Visibilità organica. Strategie content-first. Analytics avanzata.`,
+icon: '03',
+link: '/servizi/seo'
+},
+{
+nome: 'E-commerce',
+descrizione: `Esperienze d'acquisto senza attrito. Shopify & Custom solutions.`,
+icon: '04',
+link: '/servizi/ecommerce'
+},
+{
+nome: 'Performance',
+descrizione: `Ottimizzazione Core Web Vitals. Load time istantanei.`,
+icon: '05',
+link: '/servizi/performance'
+},
+{
+nome: 'Brand Strategy',
+descrizione: `Posizionamento di mercato. Identità visiva. Storytelling aziendale.`,
+icon: '06',
+link: '/servizi/ads'
+}
+];
+---
+
+<Layout title="Servizi">
+    <section class="pt-32 pb-20 md:pt-48 md:pb-32 container-custom">
+        <div class="max-w-4xl">
+            <span class="text-xs font-mono uppercase tracking-widest text-gray-500 mb-6 block">Le nostre
+                competenze</span>
+            <h1 class="hero-text text-white mb-8">Servizi <br /><span class="text-gray-600">Esclusivi.</span></h1>
+            <p class="text-lg md:text-xl text-gray-400 max-w-2xl border-l border-white/20 pl-6">
+                Soluzioni digitali sartoriali. Ogni progetto è unico, ogni riga di codice è scritta con intenti precisi.
+            </p>
+        </div>
+    </section>
+
+    <section class="py-20 bg-surface/30 border-y border-white/5">
+        <div class="container-custom">
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {servizi.map(servizio => (
+                <div class="card-dark group">
+                    <div class="flex justify-between items-start mb-8">
+                        <span
+                            class="font-mono text-xs font-bold text-gray-500 border border-white/10 px-2 py-1 rounded">{servizio.icon}</span>
+                        <div class="opacity-0 group-hover:opacity-100 transition-opacity text-white">
+                            ↗
+                        </div>
+                    </div>
+
+                    <h2
+                        class="text-2xl font-bold uppercase mb-4 text-white group-hover:text-gray-300 transition-colors">
+                        {servizio.nome}</h2>
+                    <p class="font-mono text-sm text-gray-500 mb-8 leading-relaxed">
+                        {servizio.descrizione}
+                    </p>
+
+                    <a href={servizio.link}
+                        class="text-xs font-bold uppercase tracking-widest text-white border-b border-white/20 pb-1 hover:border-white transition-colors">
+                        Approfondisci
+                    </a>
+                </div>
+                ))}
+            </div>
+        </div>
+    </section>
+
+    <section class="py-32 relative overflow-hidden">
+        <div class="container-custom flex flex-col items-center text-center relative z-10">
+            <h2 class="text-4xl md:text-6xl font-black uppercase mb-8 text-white">Hai una visione?</h2>
+            <p class="text-gray-400 mb-12 max-w-xl text-lg">
+                Trasformiamo problemi complessi in soluzioni semplici, eleganti e potenti.
+            </p>
+            <a href="/contatti" class="btn-primary">
+                Inizia Progetto
+            </a>
+        </div>
+    </section>
+</Layout>

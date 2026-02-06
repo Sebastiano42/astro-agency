@@ -1,0 +1,157 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout title="E-commerce">
+  <section class="service-detail">
+    <div class="container">
+      <a href="/servizi" class="back-link">← Torna ai servizi</a>
+      <div class="content-grid">
+        <div class="text-content">
+          <span class="badge">E-commerce Solutions</span>
+          <h1 class="gradient-text">Vendi Online Senza Limiti</h1>
+          <p class="lead">Sviluppiamo negozi online sicuri, veloci e ottimizzati per massimizzare le tue vendite.</p>
+          
+          <div class="detail-block">
+            <h3>Soluzioni su Misura</h3>
+            <ul>
+              <li><strong>Gestione Catalogo:</strong> Caricamento prodotti semplice e intuitivo.</li>
+              <li><strong>Sistemi di Pagamento:</strong> Integrazione sicura con Stripe, PayPal e Satispay.</li>
+              <li><strong>Gestione Ordini:</strong> Dashboard completa per tracciare le spedizioni.</li>
+              <li><strong>SEO per Prodotti:</strong> Ogni scheda prodotto ottimizzata per apparire su Google.</li>
+            </ul>
+          </div>
+
+          <div class="cta-mini">
+            <p>Hai dei prodotti da lanciare?</p>
+            <a href="/contatti" class="btn btn-primary">Apri il tuo negozio</a>
+          </div>
+        </div>
+        <div class="visual-content">
+          <div class="ecommerce-preview">
+            <div class="product-grid">
+              {[1, 2, 3, 4].map(() => (
+                <div class="prod-card">
+                  <div class="prod-img"></div>
+                  <div class="prod-text"></div>
+                  <div class="prod-price"></div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .service-detail {
+    padding: 8rem 0;
+  }
+
+  .back-link {
+    display: inline-block;
+    margin-bottom: 2rem;
+    color: var(--gray);
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  .content-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 4rem;
+    align-items: center;
+  }
+
+  .badge {
+    background: #fef3c7;
+    color: #92400e;
+    padding: 0.5rem 1rem;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    display: inline-block;
+    margin-bottom: 1.5rem;
+  }
+
+  h1 {
+    font-size: 3.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .lead {
+    font-size: 1.25rem;
+    color: var(--dark-light);
+    margin-bottom: 2.5rem;
+  }
+
+  .detail-block ul {
+    list-style: none;
+    display: grid;
+    gap: 1rem;
+  }
+
+  .detail-block li {
+    position: relative;
+    padding-left: 1.5rem;
+  }
+
+  .detail-block li::before {
+    content: '🛒';
+    position: absolute;
+    left: 0;
+  }
+
+  .cta-mini {
+    margin-top: 3rem;
+    padding: 2rem;
+    background: #f8fafc;
+    border-radius: 16px;
+  }
+
+  .product-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    padding: 2rem;
+    background: #f1f5f9;
+    border-radius: 24px;
+  }
+
+  .prod-card {
+    background: var(--white);
+    padding: 1rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  }
+
+  .prod-img {
+    height: 100px;
+    background: #e2e8f0;
+    border-radius: 8px;
+    margin-bottom: 0.75rem;
+  }
+
+  .prod-text {
+    height: 10px;
+    width: 60%;
+    background: #e2e8f0;
+    margin-bottom: 0.5rem;
+  }
+
+  .prod-price {
+    height: 15px;
+    width: 30%;
+    background: var(--primary);
+    opacity: 0.3;
+  }
+
+  @media (max-width: 992px) {
+    .content-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

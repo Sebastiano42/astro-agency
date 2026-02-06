@@ -1,0 +1,170 @@
+---
+// src/components/Navigation.astro
+---
+
+<header id="main-header" class="fixed top-0 w-full z-50 transition-all duration-300 pointer-events-none">
+  <!-- Backdrop for header content -->
+  <div class="absolute inset-0 bg-background/90 backdrop-blur-xl opacity-0 transition-opacity duration-300 border-b border-white/5" id="header-bg"></div>
+  
+  <nav class="container-custom py-5 relative z-[60] pointer-events-auto">
+    <div class="flex justify-between items-center">
+      <!-- Logo -->
+      <a href="/" class="flex items-center gap-3 no-underline group relative">
+        <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center text-black font-black text-xl logo-box transition-colors duration-300">
+          S.
+        </div>
+        <span class="text-xl font-bold uppercase tracking-widest text-white hidden sm:block">Studio</span>
+      </a>
+      
+      <!-- Desktop Menu -->
+      <div class="hidden md:flex items-center gap-8 bg-surface/80 backdrop-blur-xl border border-white/10 px-8 py-3 rounded-full shadow-2xl">
+        <ul class="flex list-none gap-8 m-0 p-0 items-center">
+          {['Home', 'Servizi', 'Portfolio', 'Chi Siamo'].map((item) => (
+            <li>
+              <a href={item === 'Home' ? '/' : `/${item.toLowerCase().replace(' ', '-')}`} 
+                 class="text-xs font-bold uppercase tracking-widest text-gray-400 hover:text-white transition-colors duration-200 no-underline">
+                {item}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div class="hidden md:flex">
+         <a href="/contatti" class="btn-primary !py-2.5 !px-6 !text-xs rounded-full">
+            Inizia Progetto
+          </a>
+      </div>
+      
+      <!-- Mobile Controls -->
+      <div class="flex items-center gap-4 md:hidden relative">
+        <button class="mobile-toggle w-12 h-12 bg-white text-black rounded-full flex flex-col items-center justify-center gap-1.5 active:scale-90 transition-all shadow-[0_0_20px_rgba(255,255,255,0.2)] cursor-pointer" aria-label="Menu">
+          <span class="w-5 h-0.5 bg-black block transition-all duration-300 rounded-full origin-center"></span>
+          <span class="w-5 h-0.5 bg-black block transition-all duration-300 rounded-full origin-center"></span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Mobile Menu Overlay -->
+  <div class="nav-menu fixed inset-0 bg-black z-50 md:hidden flex flex-col justify-center opacity-0 pointer-events-none transition-all duration-500">
+     <!-- Background decoration -->
+    <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-gray-800/20 to-black opacity-100"></div>
+    <div class="absolute inset-0 bg-grid-pattern opacity-10"></div>
+    
+    <div class="container-custom relative z-10 w-full">
+        <ul class="flex flex-col gap-6 list-none p-0 text-left w-full">
+          {['Home', 'Servizi', 'Portfolio', 'Chi Siamo', 'Contatti'].map((item, id) => (
+            <li class="overflow-hidden border-b border-white/10 pb-4 last:border-0 last:pb-0">
+              <a href={item === 'Home' ? '/' : `/${item.toLowerCase().replace(' ', '-')}`} 
+                 class="mobile-link group flex items-baseline gap-4 text-4xl sm:text-5xl font-black uppercase text-gray-500 hover:text-white transition-all duration-300 no-underline translate-y-8 opacity-0">
+                 <span class="text-xs font-mono text-gray-700 group-hover:text-white transition-colors align-top mt-2">0{id + 1}</span>
+                {item}
+              </a>
+            </li>
+          ))}
+        </ul>
+
+        <div class="mt-12 pt-8 border-t border-white/10 grid grid-cols-2 gap-8 animate-fade-in opacity-0 delay-500 mobile-footer">
+            <div>
+                <span class="text-xs font-mono text-gray-600 uppercase tracking-widest block mb-2">Contatto</span>
+                <a href="mailto:hello@studio.com" class="text-white font-bold block">hello@studio.com</a>
+            </div>
+            <div>
+                <span class="text-xs font-mono text-gray-600 uppercase tracking-widest block mb-2">Social</span>
+                <div class="flex gap-4 text-white font-bold text-xs">
+                    <a href="#">IG</a> <a href="#">TW</a> <a href="#">LN</a>
+                </div>
+            </div>
+        </div>
+    </div>
+  </div>
+</header>
+
+<script>
+  // Mobile menu toggle
+  const toggle = document.querySelector('.mobile-toggle');
+  const menu = document.querySelector('.nav-menu');
+  const spans = toggle?.querySelectorAll('span');
+  const links = document.querySelectorAll('.mobile-link');
+  const mobileFooter = document.querySelector('.mobile-footer');
+  const logoBox = document.querySelector('.logo-box');
+
+  if (toggle && menu && spans) {
+    toggle.addEventListener('click', () => {
+      const isClosed = menu.classList.contains('opacity-0');
+      
+      if (!isClosed) {
+        // CLOSE ACTION
+        menu.classList.add('opacity-0', 'pointer-events-none');
+        document.body.classList.remove('overflow-hidden');
+        
+        // Reset Burger
+        spans[0].classList.remove('rotate-45', 'translate-y-[6px]');
+        spans[1].classList.remove('-rotate-45', '-translate-y-[6px]');
+        
+        // Reset Colors
+        toggle.classList.remove('bg-transparent', 'text-white', 'border-white/20');
+        toggle.classList.add('bg-white', 'text-black');
+        spans.forEach(s => s.classList.replace('bg-white', 'bg-black'));
+        
+        logoBox?.classList.remove('bg-transparent', 'text-white', 'border', 'border-white');
+        logoBox?.classList.add('bg-white', 'text-black');
+
+        // Reset Links
+         links.forEach(link => {
+             link.classList.remove('translate-y-0', 'opacity-100');
+             link.classList.add('translate-y-8', 'opacity-0');
+         });
+         mobileFooter?.classList.add('opacity-0');
+
+      } else {
+        // OPEN ACTION
+        menu.classList.remove('opacity-0', 'pointer-events-none');
+        document.body.classList.add('overflow-hidden');
+        
+        // Animate Burger
+        spans[0].classList.add('rotate-45', 'translate-y-[6px]');
+        spans[1].classList.add('-rotate-45', '-translate-y-[6px]');
+        
+        // Invert Colors for contrast on dark menu
+        toggle.classList.remove('bg-white', 'text-black');
+        toggle.classList.add('bg-transparent', 'text-white', 'border-white/20', 'border');
+        spans.forEach(s => s.classList.replace('bg-black', 'bg-white'));
+        
+        logoBox?.classList.remove('bg-white', 'text-black');
+        logoBox?.classList.add('bg-transparent', 'text-white', 'border', 'border-white');
+
+        // Animate Links
+        links.forEach((link, idx) => {
+            setTimeout(() => {
+                link.classList.remove('translate-y-8', 'opacity-0');
+                link.classList.add('translate-y-0', 'opacity-100');
+            }, 100 + (idx * 50));
+        });
+        
+        setTimeout(() => {
+            mobileFooter?.classList.remove('opacity-0');
+        }, 400);
+      }
+    });
+
+    // Close menu on link click
+    links.forEach(link => {
+        link.addEventListener('click', () => {
+             // Trigger close logic
+             toggle.click();
+        });
+    });
+  }
+
+  // Scroll Effect
+  const headerBg = document.getElementById('header-bg');
+  window.addEventListener('scroll', () => {
+      if (window.scrollY > 20) {
+          headerBg.classList.remove('opacity-0');
+      } else {
+          headerBg.classList.add('opacity-0');
+      }
+  });
+</script>

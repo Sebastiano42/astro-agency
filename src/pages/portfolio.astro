@@ -1,0 +1,111 @@
+---
+// src/pages/portfolio.astro
+import Layout from '../layouts/Layout.astro';
+
+const projects = [
+  {
+    title: "E-commerce Luxury",
+    category: "Sviluppo",
+    image: "01",
+    description: "Piattaforma retail high-end. Performance estreme.",
+    tags: ["ASTRO", "SHOPIFY", "REACT"]
+  },
+  {
+    title: "App Fintech",
+    category: "Mobile",
+    image: "02",
+    description: "Dashboard finanziaria in tempo reale. Secure by design.",
+    tags: ["REACT NATIVE", "NODE"]
+  },
+  {
+    title: "Studio Architettura",
+    category: "Branding",
+    image: "03",
+    description: "Identità visiva minimalista. Spazialità digitale.",
+    tags: ["DESIGN", "WEBGL"]
+  },
+  {
+    title: "Ristorazione Premium",
+    category: "Web App",
+    image: "04",
+    description: "Booking engine personalizzato. UX senza frizioni.",
+    tags: ["VUE", "SUPABASE"]
+  },
+  {
+    title: "Creative Portfolio",
+    category: "Design",
+    image: "05",
+    description: "Showcase interattivo per artisti digitali.",
+    tags: ["THREE.JS", "GSAP"]
+  },
+  {
+    title: "Travel Journal",
+    category: "Content",
+    image: "06",
+    description: "Magazine editoriale. Tipografia avanzata.",
+    tags: ["TYPOGRAPHY", "SEO"]
+  }
+];
+---
+
+<Layout title="Lavori">
+  <div class="pt-32 pb-20 container-custom">
+      <span class="text-xs font-mono uppercase tracking-widest text-gray-500 mb-6 block">Case Studies</span>
+      <h1 class="hero-text text-white mb-8">Lavori <br/><span class="text-gray-600">Selezionati.</span></h1>
+      <p class="text-lg text-gray-400 max-w-2xl border-l border-white/20 pl-6">
+          Un archivio di eccellenza digitale. Risultati tangibili, design senza tempo.
+      </p>
+  </div>
+
+  <section class="pb-32 container-custom">
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+      {projects.map((project, index) => (
+        <div class="card-dark group !p-0">
+          <!-- Header -->
+          <div class="border-b border-white/5 p-6 flex justify-between items-center bg-white/[0.02]">
+            <span class="font-mono text-[10px] font-bold uppercase tracking-widest text-gray-500">
+              {project.category}
+            </span>
+            <span class="font-mono text-lg font-bold text-gray-700 group-hover:text-white transition-colors">
+              {project.image}
+            </span>
+          </div>
+          
+          <!-- Content -->
+          <div class="p-8">
+            <h3 class="text-2xl font-bold uppercase mb-4 text-white group-hover:text-gray-300 transition-colors">
+              {project.title}
+            </h3>
+            <p class="font-mono text-xs text-gray-500 mb-8 leading-relaxed h-8">
+              {project.description}
+            </p>
+            
+            <!-- Tags -->
+            <div class="flex flex-wrap gap-2 mb-8">
+              {project.tags.map(tag => (
+               <span class="text-[10px] font-mono uppercase border border-white/10 px-2 py-1 text-gray-600 rounded">
+                 {tag}
+               </span>
+              ))}
+            </div>
+
+            <a href="#" class="w-full block bg-white/5 border border-white/5 text-white font-bold uppercase text-center text-xs tracking-widest py-4 rounded-lg hover:bg-white hover:text-black transition-all">
+              Vedi Progetto
+            </a>
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="py-32 border-t border-white/5 bg-surface/30">
+    <div class="container-custom text-center">
+      <h2 class="text-4xl md:text-6xl font-black uppercase mb-10 text-white">
+        Il prossimo passo <br/> è tuo.
+      </h2>
+      <a href="/contatti" class="btn-primary">
+        Discuti Progetto
+      </a>
+    </div>
+  </section>
+</Layout>

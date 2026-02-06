@@ -1,0 +1,110 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout title="Web Design">
+  <section class="service-detail">
+    <div class="container">
+      <a href="/servizi" class="back-link">← Torna ai servizi</a>
+      <div class="grid-2">
+        <div class="text-content">
+          <span class="badge badge-indigo">Servizio Core</span>
+          <h1 class="gradient-text">Web Design Moderno</h1>
+          <p class="section-subtitle" style="text-align: left; margin-left: 0;">Progettiamo interfacce che non sono solo belle da vedere, ma studiate per convertire.</p>
+          
+          <div class="detail-block">
+            <h3>Cosa Offriamo</h3>
+            <ul>
+              <li><strong>UI/UX Design:</strong> Studio dell'esperienza utente e dell'interfaccia.</li>
+              <li><strong>Responsive Design:</strong> Ottimizzazione perfetta per smartphone, tablet e desktop.</li>
+              <li><strong>Interactive Prototypes:</strong> Vedi il tuo sito prima ancora che venga programmato.</li>
+              <li><strong>Brand Integration:</strong> Coerenza totale con l'immagine della tua azienda.</li>
+            </ul>
+          </div>
+
+          <div class="cta-mini card-premium">
+            <p>Vuoi un design che parli di te?</p>
+            <a href="/contatti" class="btn btn-primary">Richiedi un audit gratuito</a>
+          </div>
+        </div>
+        <div class="visual-content">
+          <div class="glass-card card-premium">
+            <div class="mockup-header">
+              <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+            </div>
+            <div class="mockup-body">
+              <div class="skeleton-line hero"></div>
+              <div class="skeleton-grid">
+                <div class="skeleton-item"></div>
+                <div class="skeleton-item"></div>
+                <div class="skeleton-item"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .cta-mini {
+    margin-top: 3rem;
+    padding: 2rem;
+    border-left: 4px solid var(--primary);
+    text-align: left;
+  }
+
+  .cta-mini p {
+    margin-bottom: 1rem;
+    font-weight: 700;
+  }
+
+  .glass-card {
+    padding: 0;
+    overflow: hidden;
+  }
+
+  .mockup-header {
+    background: #f1f5f9;
+    padding: 0.75rem 1rem;
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #cbd5e1;
+  }
+
+  .mockup-body {
+    padding: 2rem;
+  }
+
+  .skeleton-line {
+    background: #f1f5f9;
+    height: 20px;
+    border-radius: 10px;
+    margin-bottom: 2rem;
+  }
+
+  .skeleton-line.hero {
+    height: 150px;
+    background: var(--gradient);
+    opacity: 0.2;
+  }
+
+  .skeleton-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+  }
+
+  .skeleton-item {
+    height: 80px;
+    background: #f1f5f9;
+    border-radius: 8px;
+  }
+</style>

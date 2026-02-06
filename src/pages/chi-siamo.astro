@@ -1,0 +1,102 @@
+---
+// src/pages/chi-siamo.astro
+import Layout from '../layouts/Layout.astro';
+
+const values = [
+  { icon: '01', title: 'Velocità', desc: 'Codice ottimizzato per performance istantanee. Nessun compromesso.' },
+  { icon: '02', title: 'Precisione', desc: 'Pixel perfect. Curiamo ogni dettaglio, anche quelli invisibili.' },
+  { icon: '03', title: 'Impatto', desc: 'Design che lascia il segno. Rifiutiamo la mediocrità.' },
+  { icon: '04', title: 'Trasparenza', desc: 'Processi chiari. Comunicazione diretta. Partner, non fornitori.' }
+];
+---
+
+<Layout title="Chi Siamo">
+  <div class="pt-32 pb-20 container-custom">
+      <span class="text-xs font-mono uppercase tracking-widest text-gray-500 mb-6 block animate-fade-in opacity-0" style="animation-delay: 0.1s">Dal 2024</span>
+      
+      <div class="grid lg:grid-cols-2 gap-16 items-center">
+        <div>
+           <h1 class="hero-text text-white mb-8 animate-fade-in opacity-0" style="animation-delay: 0.2s">
+            Siamo <br/> <span class="text-gray-600">Studio.</span>
+          </h1>
+          <p class="text-lg md:text-xl text-gray-400 leading-relaxed max-w-xl animate-fade-in opacity-0" style="animation-delay: 0.3s">
+            Non costruiamo solo siti web. Costruiamo asset digitali per brand che vogliono dominare il loro mercato. Nati dal codice, elevati dal design.
+          </p>
+        </div>
+        
+        <div class="relative hidden lg:block animate-fade-in opacity-0" style="animation-delay: 0.5s">
+           <!-- Abstract visual representation -->
+           <div class="aspect-square rounded-full border border-white/5 bg-white/[0.02] flex items-center justify-center p-20 relative">
+              <div class="absolute inset-0 bg-gradient-to-tr from-white/5 to-transparent rounded-full blur-3xl"></div>
+              <div class="text-center relative z-10">
+                 <span class="block text-9xl font-black mb-4 text-white hover:scale-110 transition-transform duration-500 cursor-default">⚡</span>
+                 <div class="h-px w-20 bg-white/20 mx-auto my-6"></div>
+                 <p class="font-mono text-xs uppercase tracking-[0.3em] text-gray-500">Digital Powerhouse</p>
+              </div>
+           </div>
+        </div>
+      </div>
+  </div>
+
+  <!-- MANIFESTO -->
+  <section class="py-32 border-y border-white/5 bg-surface/30 relative overflow-hidden">
+    <div class="container-custom relative z-10">
+      <div class="max-w-4xl mx-auto text-center">
+        <h2 class="font-mono text-xs text-gray-500 uppercase tracking-[0.5em] mb-12">Il Manifesto</h2>
+        <p class="text-2xl md:text-5xl font-bold uppercase leading-tight text-white">
+          "Crediamo che ogni pixel debba guadagnarsi il suo posto. <span class="text-gray-600">Rifiutiamo i fronzoli.</span> Abbracciamo la pura funzionalità ed un'estetica senza tempo."
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- VALUES -->
+  <section class="py-32 container-custom">
+    <div class="flex flex-col md:flex-row justify-between items-end mb-16">
+        <h2 class="text-4xl md:text-6xl font-black text-white">Valori</h2>
+        <p class="text-sm font-mono text-gray-500 mt-4 md:mt-0">I pilastri del nostro lavoro.</p>
+    </div>
+
+    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+      {values.map((val, idx) => (
+        <div class="card-dark group">
+          <span class="block font-mono text-xs font-bold text-gray-600 mb-8 border border-white/10 w-fit px-2 py-1 rounded group-hover:text-white group-hover:border-white/30 transition-colors">
+            {val.icon}
+          </span>
+          <h3 class="text-xl font-bold uppercase mb-4 text-white">{val.title}</h3>
+          <p class="font-mono text-xs text-gray-500 leading-relaxed group-hover:text-gray-400 transition-colors">
+            {val.desc}
+          </p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="py-32 border-t border-white/5 relative">
+    <div class="container-custom text-center">
+        <div class="inline-block p-1 rounded-full bg-gradient-to-r from-white/10 to-transparent">
+             <div class="bg-surface border border-white/10 px-10 py-4 rounded-full">
+                 <span class="text-xs font-mono text-white tracking-widest uppercase">Join the resistance</span>
+             </div>
+        </div>
+       <h2 class="text-4xl md:text-7xl font-black uppercase my-10 text-white">
+         Costruiamo <br/> il tuo impero.
+       </h2>
+       <a href="/contatti" class="btn-primary">
+         Parlaci del progetto
+       </a>
+    </div>
+  </section>
+</Layout>
+
+<style>
+    @keyframes fade-in {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .animate-fade-in {
+        animation: fade-in 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+    }
+</style>
