@@ -117,7 +117,11 @@
     .input-dark {
         background-color: theme('colors.surfaceHighlight');
         border-color: theme('colors.border');
-        @apply w-full border p-4 rounded-lg text-white focus:outline-none focus:border-white focus:ring-1 focus:ring-white transition-all placeholder:text-gray-600 focus:shadow-[0_0_15px_rgba(255, 255, 255, 0.1)];
+        @apply w-full border p-4 rounded-lg text-white focus:outline-none focus:border-white focus:ring-1 focus:ring-white transition-all placeholder:text-gray-600;
+    }
+
+    .input-dark:focus {
+        box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
     }
 }
 
