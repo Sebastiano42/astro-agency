@@ -53,7 +53,7 @@ const { title = "Studio Digitale" } = Astro.props;
     <Footer />
 
     <script>
-      // Scroll Reveal Animation System
+      // Scroll Reveal Animation System - Enhanced
       const initAnimations = () => {
         const observerOptions = {
           root: null,
@@ -70,8 +70,19 @@ const { title = "Studio Digitale" } = Astro.props;
           });
         }, observerOptions);
 
-        document.querySelectorAll('.reveal').forEach(el => {
-          observer.observe(el);
+        // Observe all reveal animation classes
+        const revealSelectors = [
+          '.reveal',
+          '.reveal-scale',
+          '.reveal-left',
+          '.reveal-right',
+          '.reveal-rotate'
+        ];
+        
+        revealSelectors.forEach(selector => {
+          document.querySelectorAll(selector).forEach(el => {
+            observer.observe(el);
+          });
         });
       };
 
