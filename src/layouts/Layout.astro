@@ -179,25 +179,22 @@ const websiteSchema = {
     <ScrollButton />
 
     <script>
-      // After View Transition swap: instantly activate reveal elements
-      // so content is visible DURING the page transition animation,
-      // not blank/invisible waiting for IntersectionObserver + CSS transition
-      document.addEventListener('astro:after-swap', () => {
-        document.querySelectorAll('[class*="reveal"]').forEach(el => {
-          el.style.transition = 'none';
-          el.classList.add('active');
-        });
+      // Pre-activate reveal elements in the NEW document BEFORE the DOM swap.
+      // This prevents the blank-page flash on mobile: without this, the new <main>
+      // gets swapped in with all .reveal elements at opacity:0, and the browser
+      // renders a blank page before JS can activate them.
+      // On desktop this is not needed (fast enough), so we keep scroll-reveal there.
+      document.addEventListener('astro:before-swap', (e) => {
+        if (window.matchMedia('(pointer: coarse)').matches) {
+          e.newDocument.querySelectorAll('[class*="reveal"]').forEach(el => {
+            el.classList.add('active');
+          });
+        }
       });
 
       // Scroll Reveal Animation System
       const initAnimations = () => {
         const isMobile = window.matchMedia('(pointer: coarse)').matches;
-
-        // Re-enable transitions (disabled by astro:after-swap for instant reveal)
-        document.querySelectorAll('[class*="reveal"]').forEach(el => {
-          el.style.transition = '';
-        });
-
         const observerOptions = {
           root: null,
           rootMargin: isMobile ? '0px' : '-50px 0px',
@@ -213,7 +210,7 @@ const websiteSchema = {
           });
         }, observerOptions);
 
-        // Only observe elements not already activated (initial load)
+        // Only observe elements not yet activated
         document.querySelectorAll('[class*="reveal"]:not(.active)').forEach(el => {
           observer.observe(el);
         });
@@ -232,7 +229,6 @@ const websiteSchema = {
         });
       };
 
-      // astro:page-load fires on initial load too, no need for DOMContentLoaded
       document.addEventListener('astro:page-load', () => {
         initAnimations();
         initSmoothScroll();
