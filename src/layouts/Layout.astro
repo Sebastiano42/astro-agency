@@ -182,6 +182,8 @@ const websiteSchema = {
       let currentObserver = null;
       let smoothScrollCleanups = [];
 
+      const isMobileDevice = () => window.matchMedia('(pointer: coarse)').matches;
+
       // Cleanup before every page swap to prevent memory leaks
       document.addEventListener('astro:before-swap', (e) => {
         // Disconnect old IntersectionObserver
@@ -193,24 +195,47 @@ const websiteSchema = {
         smoothScrollCleanups.forEach(fn => fn());
         smoothScrollCleanups = [];
 
-        // Pre-activate reveal elements in the NEW document BEFORE the DOM swap.
-        // This prevents the blank-page flash on mobile: without this, the new <main>
-        // gets swapped in with all .reveal elements at opacity:0.
-        if (window.matchMedia('(pointer: coarse)').matches) {
+        if (isMobileDevice()) {
+          // NUCLEAR FIX: Skip the View Transition animation entirely on mobile.
+          // This prevents the black screen caused by the fade-out animation
+          // leaving the page at opacity:0 while the new page loads.
+          if (e.viewTransition) {
+            e.viewTransition.skipTransition();
+          }
+
+          // Pre-activate reveal elements in the NEW document BEFORE the DOM swap.
           e.newDocument.querySelectorAll('[class*="reveal"]').forEach(el => {
             el.classList.add('active');
           });
         }
       });
 
-      // Safety net: after swap, ensure body is never stuck in overflow-hidden
-      // and all reveals are activated on mobile
+      // Safety net: after swap, force page content visible on mobile
       document.addEventListener('astro:after-swap', () => {
         document.body.classList.remove('overflow-hidden');
-        if (window.matchMedia('(pointer: coarse)').matches) {
+
+        if (isMobileDevice()) {
+          // Force main content visible - remove any leftover animation/opacity
+          const main = document.getElementById('main-content');
+          if (main) {
+            main.style.animation = 'none';
+            main.removeAttribute('data-astro-transition-fallback');
+            // Reset on next frame so CSS can take over normally
+            requestAnimationFrame(() => {
+              main.style.animation = '';
+            });
+          }
+
+          // Force all reveals active
           document.querySelectorAll('[class*="reveal"]:not(.active)').forEach(el => {
             el.classList.add('active');
           });
+
+          // Ensure mobile menu overlay is hidden
+          const menu = document.querySelector('.nav-menu');
+          if (menu) {
+            menu.classList.add('opacity-0', 'pointer-events-none');
+          }
         }
       });
 
