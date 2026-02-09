@@ -107,6 +107,15 @@ import ThemeToggle from './ThemeToggle.astro';
   let linkListeners = [];
 
   function cleanup() {
+    // Safety: always remove overflow-hidden before swap to prevent stuck body
+    document.body.classList.remove('overflow-hidden');
+
+    // Close menu overlay immediately if open
+    const menu = document.querySelector('.nav-menu');
+    if (menu) {
+      menu.classList.add('opacity-0', 'pointer-events-none');
+    }
+
     if (scrollListener) {
       window.removeEventListener('scroll', scrollListener);
       scrollListener = null;

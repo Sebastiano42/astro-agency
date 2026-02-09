@@ -19,6 +19,20 @@
     }
 }
 
+/* Mobile: disable page transition opacity animation to prevent black screen.
+   The old page stays visible until the instant swap, then new page appears immediately.
+   This fixes the bug where mobile gets stuck on a black unresponsive screen. */
+@media (pointer: coarse) {
+    @keyframes pageFadeOut {
+        from { opacity: 1; }
+        to { opacity: 1; }
+    }
+    @keyframes pageFadeSlideIn {
+        from { opacity: 1; transform: translateY(0); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+}
+
 @layer base {
     html {
         background-color: #020202;
