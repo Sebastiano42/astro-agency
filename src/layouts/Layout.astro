@@ -196,12 +196,8 @@ const websiteSchema = {
         smoothScrollCleanups = [];
 
         if (isMobileDevice()) {
-          // NUCLEAR FIX: Skip the View Transition animation entirely on mobile.
-          // This prevents the black screen caused by the fade-out animation
-          // leaving the page at opacity:0 while the new page loads.
-          if (e.viewTransition) {
-            e.viewTransition.skipTransition();
-          }
+          // Skip the View Transition animation entirely on mobile.
+          try { e.viewTransition?.skipTransition(); } catch (_) {}
 
           // Pre-activate reveal elements in the NEW document BEFORE the DOM swap.
           e.newDocument.querySelectorAll('[class*="reveal"]').forEach(el => {
@@ -220,10 +216,7 @@ const websiteSchema = {
           if (main) {
             main.style.animation = 'none';
             main.removeAttribute('data-astro-transition-fallback');
-            // Reset on next frame so CSS can take over normally
-            requestAnimationFrame(() => {
-              main.style.animation = '';
-            });
+            requestAnimationFrame(() => { main.style.animation = ''; });
           }
 
           // Force all reveals active
@@ -231,10 +224,11 @@ const websiteSchema = {
             el.classList.add('active');
           });
 
-          // Ensure mobile menu overlay is hidden
-          const menu = document.querySelector('.nav-menu');
+          // Force-hide mobile menu (display:none)
+          const menu = document.getElementById('mobile-menu');
           if (menu) {
-            menu.classList.add('opacity-0', 'pointer-events-none');
+            menu.style.display = 'none';
+            menu.style.opacity = '0';
           }
         }
       });

@@ -20,13 +20,13 @@ import ThemeToggle from './ThemeToggle.astro';
         </div>
         <span class="text-xl font-bold uppercase tracking-widest text-white hidden sm:block">Studio</span>
       </a>
-      
+
       <!-- Desktop Menu -->
       <div class="hidden md:flex items-center gap-8 bg-surface/80 backdrop-blur-xl border border-white/10 px-8 py-3 rounded-full shadow-2xl">
         <ul class="flex list-none gap-8 m-0 p-0 items-center">
           {['Home', 'Servizi', 'Portfolio', 'Chi Siamo'].map((item) => (
             <li>
-              <a href={item === 'Home' ? '/' : `/${item.toLowerCase().replace(' ', '-')}`} 
+              <a href={item === 'Home' ? '/' : `/${item.toLowerCase().replace(' ', '-')}`}
                  class="text-xs font-bold uppercase tracking-widest text-gray-400 hover:text-white transition-colors duration-200 no-underline">
                 {item}
               </a>
@@ -41,7 +41,7 @@ import ThemeToggle from './ThemeToggle.astro';
             Inizia Progetto
           </a>
       </div>
-      
+
       <!-- Mobile Controls -->
       <div class="flex items-center gap-4 md:hidden relative z-[110]">
         <button class="mobile-toggle w-12 h-12 bg-white text-black rounded-full flex flex-col items-center justify-center gap-1.5 active:scale-90 transition-all shadow-[0_0_20px_rgba(255,255,255,0.2)] cursor-pointer border-2 border-transparent" aria-label="Apri menu di navigazione" aria-expanded="false" aria-controls="mobile-menu">
@@ -52,8 +52,8 @@ import ThemeToggle from './ThemeToggle.astro';
     </div>
   </nav>
 
-  <!-- Mobile Menu Overlay -->
-  <div id="mobile-menu" class="nav-menu fixed inset-0 bg-background z-[100] md:hidden flex flex-col opacity-0 pointer-events-none will-change-[opacity] transition-opacity duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]" role="dialog" aria-label="Menu di navigazione">
+  <!-- Mobile Menu Overlay — uses display:none when closed (guaranteed no click blocking) -->
+  <div id="mobile-menu" class="nav-menu fixed inset-0 bg-background z-[100] md:hidden" role="dialog" aria-label="Menu di navigazione" aria-hidden="true" style="display:none;">
 
     <!-- Close button -->
     <div class="container-custom pt-5 relative z-20 flex justify-end">
@@ -105,16 +105,50 @@ import ThemeToggle from './ThemeToggle.astro';
   let toggleListener = null;
   let closeListener = null;
   let linkListeners = [];
+  let linkTimeouts = [];
+  let footerTimeout = null;
 
-  function cleanup() {
-    // Safety: always remove overflow-hidden before swap to prevent stuck body
+  // Force-hide the menu overlay. Uses display:none = ZERO chance of blocking page clicks.
+  function forceHideMenu() {
+    const menu = document.getElementById('mobile-menu');
+    if (!menu) return;
+    menu.style.display = 'none';
+    menu.style.opacity = '0';
+    menu.setAttribute('aria-hidden', 'true');
     document.body.classList.remove('overflow-hidden');
 
-    // Close menu overlay immediately if open
-    const menu = document.querySelector('.nav-menu');
-    if (menu) {
-      menu.classList.add('opacity-0', 'pointer-events-none');
+    // Reset toggle button
+    const toggle = document.querySelector('.mobile-toggle');
+    if (toggle) {
+      toggle.setAttribute('aria-expanded', 'false');
+      toggle.setAttribute('aria-label', 'Apri menu di navigazione');
+      toggle.style.opacity = '1';
+      toggle.style.pointerEvents = 'auto';
     }
+
+    // Reset logo
+    const logoBox = document.querySelector('.logo-box');
+    if (logoBox) {
+      logoBox.classList.remove('bg-transparent', 'text-white', 'border', 'border-white/20');
+      logoBox.classList.add('bg-white', 'text-black');
+    }
+
+    // Reset link animations
+    document.querySelectorAll('.mobile-link').forEach(link => {
+      link.classList.remove('translate-y-0', 'opacity-100');
+      link.classList.add('opacity-0', 'translate-y-4');
+    });
+    document.querySelector('.mobile-footer')?.classList.add('opacity-0');
+
+    // Clear pending animation timeouts
+    linkTimeouts.forEach(t => clearTimeout(t));
+    linkTimeouts = [];
+    if (footerTimeout) { clearTimeout(footerTimeout); footerTimeout = null; }
+  }
+
+  function cleanup() {
+    // ALWAYS force-hide menu before any page swap
+    forceHideMenu();
 
     if (scrollListener) {
       window.removeEventListener('scroll', scrollListener);
@@ -141,59 +175,33 @@ import ThemeToggle from './ThemeToggle.astro';
 
     const toggle = document.querySelector('.mobile-toggle');
     const closeBtn = document.querySelector('.mobile-close');
-    const menu = document.querySelector('.nav-menu');
-    const spans = toggle?.querySelectorAll('span');
+    const menu = document.getElementById('mobile-menu');
     const links = document.querySelectorAll('.mobile-link');
     const mobileFooter = document.querySelector('.mobile-footer');
     const logoBox = document.querySelector('.logo-box');
 
-    // Force reset menu DOM state on init (handles browser back/forward with menu open)
-    if (menu) {
-      menu.classList.add('opacity-0', 'pointer-events-none');
-      document.body.classList.remove('overflow-hidden');
-    }
-    if (toggle) {
-      toggle.setAttribute('aria-expanded', 'false');
-      toggle.setAttribute('aria-label', 'Apri menu di navigazione');
-      toggle.style.opacity = '1';
-      toggle.style.pointerEvents = 'auto';
-    }
-    if (logoBox) {
-      logoBox.classList.remove('bg-transparent', 'text-white', 'border', 'border-white/20');
-      logoBox.classList.add('bg-white', 'text-black');
-    }
-    links.forEach(link => {
-      link.classList.remove('translate-y-0', 'opacity-100');
-      link.classList.add('opacity-0', 'translate-y-4');
-    });
-    mobileFooter?.classList.add('opacity-0');
+    // Menu starts hidden (display:none from HTML). Ensure it stays that way.
+    forceHideMenu();
 
-    if (toggle && menu && spans) {
+    if (toggle && menu) {
       let isOpen = false;
-
-      function resetMenuState() {
-        menu.classList.add('opacity-0', 'pointer-events-none');
-        document.body.classList.remove('overflow-hidden');
-        toggle.setAttribute('aria-expanded', 'false');
-        toggle.setAttribute('aria-label', 'Apri menu di navigazione');
-        toggle.style.opacity = '1';
-        toggle.style.pointerEvents = 'auto';
-        logoBox?.classList.remove('bg-transparent', 'text-white', 'border', 'border-white/20');
-        logoBox?.classList.add('bg-white', 'text-black');
-        links.forEach(link => {
-          link.classList.remove('translate-y-0', 'opacity-100');
-          link.classList.add('opacity-0', 'translate-y-4');
-        });
-        mobileFooter?.classList.add('opacity-0');
-        isOpen = false;
-      }
 
       function openMenu() {
         if (isOpen) return;
         isOpen = true;
 
-        menu.classList.remove('opacity-0', 'pointer-events-none');
+        // Show menu: display:flex + fade in opacity
+        menu.style.display = 'flex';
+        menu.style.flexDirection = 'column';
+        menu.style.opacity = '0';
+        menu.setAttribute('aria-hidden', 'false');
         document.body.classList.add('overflow-hidden');
+
+        // Force reflow, then animate opacity
+        menu.offsetHeight;
+        menu.style.transition = 'opacity 0.3s cubic-bezier(0.22, 1, 0.36, 1)';
+        menu.style.opacity = '1';
+
         toggle.setAttribute('aria-expanded', 'true');
         toggle.setAttribute('aria-label', 'Chiudi menu di navigazione');
         toggle.style.opacity = '0';
@@ -202,14 +210,19 @@ import ThemeToggle from './ThemeToggle.astro';
         logoBox?.classList.remove('bg-white', 'text-black');
         logoBox?.classList.add('bg-transparent', 'text-white', 'border', 'border-white/20');
 
+        // Stagger link reveal
+        linkTimeouts.forEach(t => clearTimeout(t));
+        linkTimeouts = [];
         links.forEach((link, idx) => {
-          setTimeout(() => {
+          const t = setTimeout(() => {
             link.classList.remove('opacity-0', 'translate-y-4');
             link.classList.add('translate-y-0', 'opacity-100');
           }, 60 + (idx * 40));
+          linkTimeouts.push(t);
         });
 
-        setTimeout(() => {
+        if (footerTimeout) clearTimeout(footerTimeout);
+        footerTimeout = setTimeout(() => {
           mobileFooter?.classList.remove('opacity-0');
         }, 300);
       }
@@ -218,7 +231,17 @@ import ThemeToggle from './ThemeToggle.astro';
         if (!isOpen) return;
         isOpen = false;
 
-        menu.classList.add('opacity-0', 'pointer-events-none');
+        // Fade out, then hide completely
+        menu.style.transition = 'opacity 0.25s ease-in';
+        menu.style.opacity = '0';
+
+        // After fade completes, set display:none (guaranteed no blocking)
+        setTimeout(() => {
+          menu.style.display = 'none';
+          menu.style.transition = '';
+          menu.setAttribute('aria-hidden', 'true');
+        }, 280);
+
         document.body.classList.remove('overflow-hidden');
         toggle.setAttribute('aria-expanded', 'false');
         toggle.setAttribute('aria-label', 'Apri menu di navigazione');
@@ -228,6 +251,9 @@ import ThemeToggle from './ThemeToggle.astro';
         logoBox?.classList.remove('bg-transparent', 'text-white', 'border', 'border-white/20');
         logoBox?.classList.add('bg-white', 'text-black');
 
+        linkTimeouts.forEach(t => clearTimeout(t));
+        linkTimeouts = [];
+        if (footerTimeout) { clearTimeout(footerTimeout); footerTimeout = null; }
         links.forEach(link => {
           link.classList.remove('translate-y-0', 'opacity-100');
           link.classList.add('opacity-0', 'translate-y-4');
@@ -235,15 +261,30 @@ import ThemeToggle from './ThemeToggle.astro';
         mobileFooter?.classList.add('opacity-0');
       }
 
-      // Instant close (no animation) - used when navigating
+      // Instant close (no animation) - used when navigating via link click
       function closeMenuInstant() {
         if (!isOpen) return;
-        menu.style.transition = 'none';
-        resetMenuState();
-        // Re-enable transitions on next frame
-        requestAnimationFrame(() => {
-          menu.style.transition = '';
+        isOpen = false;
+        // Immediately hide - no animation, no delay
+        menu.style.display = 'none';
+        menu.style.opacity = '0';
+        menu.style.transition = '';
+        menu.setAttribute('aria-hidden', 'true');
+        document.body.classList.remove('overflow-hidden');
+        toggle.setAttribute('aria-expanded', 'false');
+        toggle.setAttribute('aria-label', 'Apri menu di navigazione');
+        toggle.style.opacity = '1';
+        toggle.style.pointerEvents = 'auto';
+        logoBox?.classList.remove('bg-transparent', 'text-white', 'border', 'border-white/20');
+        logoBox?.classList.add('bg-white', 'text-black');
+        linkTimeouts.forEach(t => clearTimeout(t));
+        linkTimeouts = [];
+        if (footerTimeout) { clearTimeout(footerTimeout); footerTimeout = null; }
+        links.forEach(link => {
+          link.classList.remove('translate-y-0', 'opacity-100');
+          link.classList.add('opacity-0', 'translate-y-4');
         });
+        mobileFooter?.classList.add('opacity-0');
       }
 
       toggleListener = () => {
@@ -256,7 +297,7 @@ import ThemeToggle from './ThemeToggle.astro';
         closeBtn.addEventListener('click', closeListener);
       }
 
-      // On link click: close instantly, let View Transition handle the page change smoothly
+      // On link click: close instantly, let View Transition handle navigation
       links.forEach(link => {
         const handler = () => { closeMenuInstant(); };
         link.addEventListener('click', handler);
@@ -266,22 +307,24 @@ import ThemeToggle from './ThemeToggle.astro';
 
     // Scroll Effect with RAF throttling
     const headerBg = document.getElementById('header-bg');
-    let ticking = false;
+    if (headerBg) {
+      let ticking = false;
 
-    scrollListener = () => {
-      if (!ticking) {
-        window.requestAnimationFrame(() => {
-          if (window.scrollY > 20) {
-            headerBg.classList.remove('opacity-0');
-          } else {
-            headerBg.classList.add('opacity-0');
-          }
-          ticking = false;
-        });
-        ticking = true;
-      }
-    };
-    window.addEventListener('scroll', scrollListener);
+      scrollListener = () => {
+        if (!ticking) {
+          window.requestAnimationFrame(() => {
+            if (window.scrollY > 20) {
+              headerBg.classList.remove('opacity-0');
+            } else {
+              headerBg.classList.add('opacity-0');
+            }
+            ticking = false;
+          });
+          ticking = true;
+        }
+      };
+      window.addEventListener('scroll', scrollListener, { passive: true });
+    }
   }
 
   document.addEventListener('astro:page-load', init);
