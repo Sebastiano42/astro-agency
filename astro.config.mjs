@@ -4,6 +4,10 @@ import sitemap from '@astrojs/sitemap';
 
 export default defineConfig({
   site: 'https://yourdomain.com', // TODO: Replace with your actual domain
+  prefetch: {
+    prefetchAll: true,
+    defaultStrategy: 'viewport'
+  },
   integrations: [
     tailwind(),
     sitemap()
