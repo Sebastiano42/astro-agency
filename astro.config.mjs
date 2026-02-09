@@ -6,7 +6,7 @@ export default defineConfig({
   site: 'https://yourdomain.com', // TODO: Replace with your actual domain
   prefetch: {
     prefetchAll: true,
-    defaultStrategy: 'load'
+    defaultStrategy: 'viewport'
   },
   integrations: [
     tailwind(),

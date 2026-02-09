@@ -146,6 +146,7 @@ const websiteSchema = {
 	</head>
 	<body class="selection:bg-indigo-500/30 selection:text-indigo-900 dark:selection:text-indigo-200">
     <script is:inline>
+      // Theme detection (runs immediately to prevent flash)
       const theme = (() => {
         if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
           return localStorage.getItem('theme');
@@ -155,14 +156,37 @@ const websiteSchema = {
         }
         return 'light';
       })();
-    
+
       if (theme === 'dark') {
         document.documentElement.classList.add('dark');
       } else {
         document.documentElement.classList.remove('dark');
       }
-      
+
       window.localStorage.setItem('theme', theme);
+
+      // MOBILE FIX: Bypass Astro View Transitions entirely on touch devices.
+      // View Transitions cause black screen / frozen page on mobile browsers.
+      // This intercepts all internal link clicks and uses regular full-page
+      // navigation instead of Astro's client-side router.
+      if (window.matchMedia('(pointer: coarse)').matches && !window.__mobileNavFixed) {
+        window.__mobileNavFixed = true;
+        document.addEventListener('click', function(e) {
+          var link = e.target.closest('a[href]');
+          if (!link) return;
+          var href = link.getAttribute('href');
+          // Only intercept internal relative links
+          if (!href) return;
+          if (href.startsWith('#') || href.startsWith('http') || href.startsWith('mailto:') || href.startsWith('tel:') || href.startsWith('javascript:')) return;
+          // Don't intercept if modifier keys are held
+          if (e.ctrlKey || e.metaKey || e.shiftKey || e.altKey) return;
+          // Don't intercept if link has external target
+          if (link.target && link.target !== '_self') return;
+          e.preventDefault();
+          e.stopImmediatePropagation();
+          window.location.href = href;
+        }, true); // capture phase - runs before Astro's router
+      }
     </script>
     
     <Navigation transition:persist />
