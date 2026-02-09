@@ -138,6 +138,27 @@ import ThemeToggle from './ThemeToggle.astro';
     const mobileFooter = document.querySelector('.mobile-footer');
     const logoBox = document.querySelector('.logo-box');
 
+    // Force reset menu DOM state on init (handles browser back/forward with menu open)
+    if (menu) {
+      menu.classList.add('opacity-0', 'pointer-events-none');
+      document.body.classList.remove('overflow-hidden');
+    }
+    if (toggle) {
+      toggle.setAttribute('aria-expanded', 'false');
+      toggle.setAttribute('aria-label', 'Apri menu di navigazione');
+      toggle.style.opacity = '1';
+      toggle.style.pointerEvents = 'auto';
+    }
+    if (logoBox) {
+      logoBox.classList.remove('bg-transparent', 'text-white', 'border', 'border-white/20');
+      logoBox.classList.add('bg-white', 'text-black');
+    }
+    links.forEach(link => {
+      link.classList.remove('translate-y-0', 'opacity-100');
+      link.classList.add('opacity-0', 'translate-y-4');
+    });
+    mobileFooter?.classList.add('opacity-0');
+
     if (toggle && menu && spans) {
       let isOpen = false;
 

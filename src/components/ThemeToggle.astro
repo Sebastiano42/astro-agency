@@ -3,52 +3,59 @@
 ---
 
 <button
-  id="theme-toggle"
   class="theme-toggle w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-gray-400 hover:bg-white hover:text-black hover:border-white transition-all duration-300"
   aria-label="Cambia tema"
   title="Cambia tema chiaro/scuro"
 >
   <!-- Sun icon (shown in dark mode) -->
-  <svg id="icon-sun" class="w-5 h-5 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+  <svg class="theme-icon-sun w-5 h-5 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
     <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
   </svg>
   <!-- Moon icon (shown in light mode) -->
-  <svg id="icon-moon" class="w-5 h-5 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+  <svg class="theme-icon-moon w-5 h-5 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
     <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
   </svg>
 </button>
 
 <script>
+  let themeCleanups = [];
+
+  function cleanupThemeToggles() {
+    themeCleanups.forEach(fn => fn());
+    themeCleanups = [];
+  }
+
   function initThemeToggle() {
-    const toggle = document.getElementById('theme-toggle');
-    const iconSun = document.getElementById('icon-sun');
-    const iconMoon = document.getElementById('icon-moon');
+    cleanupThemeToggles();
 
-    if (!toggle || !iconSun || !iconMoon) return;
+    const toggles = document.querySelectorAll('.theme-toggle');
 
-    function updateIcons() {
+    function updateAllIcons() {
       const isDark = document.documentElement.classList.contains('dark');
-      iconSun.classList.toggle('hidden', !isDark);
-      iconMoon.classList.toggle('hidden', isDark);
+      document.querySelectorAll('.theme-icon-sun').forEach(el => el.classList.toggle('hidden', !isDark));
+      document.querySelectorAll('.theme-icon-moon').forEach(el => el.classList.toggle('hidden', isDark));
     }
 
-    updateIcons();
+    updateAllIcons();
 
-    toggle.addEventListener('click', () => {
-      const isDark = document.documentElement.classList.contains('dark');
+    toggles.forEach(toggle => {
+      const handler = () => {
+        const isDark = document.documentElement.classList.contains('dark');
+        if (isDark) {
+          document.documentElement.classList.remove('dark');
+          localStorage.setItem('theme', 'light');
+        } else {
+          document.documentElement.classList.add('dark');
+          localStorage.setItem('theme', 'dark');
+        }
+        updateAllIcons();
+      };
 
-      if (isDark) {
-        document.documentElement.classList.remove('dark');
-        localStorage.setItem('theme', 'light');
-      } else {
-        document.documentElement.classList.add('dark');
-        localStorage.setItem('theme', 'dark');
-      }
-
-      updateIcons();
+      toggle.addEventListener('click', handler);
+      themeCleanups.push(() => toggle.removeEventListener('click', handler));
     });
   }
 
-  document.addEventListener('DOMContentLoaded', initThemeToggle);
   document.addEventListener('astro:page-load', initThemeToggle);
+  document.addEventListener('astro:before-swap', cleanupThemeToggles);
 </script>
