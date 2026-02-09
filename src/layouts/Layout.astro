@@ -6,6 +6,7 @@ import Footer from '../components/Footer.astro';
 import CursorFollower from '../components/CursorFollower.astro';
 import MagneticElements from '../components/MagneticElements.astro';
 import RippleEffect from '../components/RippleEffect.astro';
+import ScrollButton from '../components/ScrollButton.astro';
 import '../styles/global.css';
 
 interface Props {
@@ -28,31 +29,31 @@ const smoothPage = {
 	forwards: {
 		old: [{
 			name: 'pageFadeOut',
-			duration: '0.2s',
+			duration: '0.15s',
 			easing: 'ease-in',
 			fillMode: 'forwards',
 		}],
 		new: [{
 			name: 'pageFadeSlideIn',
-			duration: '0.45s',
+			duration: '0.3s',
 			easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
 			fillMode: 'backwards',
-			delay: '0.12s',
+			delay: '0.05s',
 		}],
 	},
 	backwards: {
 		old: [{
 			name: 'pageFadeOut',
-			duration: '0.2s',
+			duration: '0.15s',
 			easing: 'ease-in',
 			fillMode: 'forwards',
 		}],
 		new: [{
 			name: 'pageFadeSlideIn',
-			duration: '0.45s',
+			duration: '0.3s',
 			easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
 			fillMode: 'backwards',
-			delay: '0.12s',
+			delay: '0.05s',
 		}],
 	},
 };
@@ -166,7 +167,7 @@ const websiteSchema = {
     
     <Navigation transition:persist />
 
-		<main id="main-content" class="overflow-hidden" transition:animate={smoothPage}>
+		<main id="main-content" class="overflow-x-hidden" transition:animate={smoothPage}>
       <slot />
     </main>
 
@@ -175,14 +176,16 @@ const websiteSchema = {
     <CursorFollower />
     <MagneticElements />
     <RippleEffect />
+    <ScrollButton />
 
     <script>
       // Scroll Reveal Animation System - Enhanced
       const initAnimations = () => {
+        const isMobile = window.matchMedia('(pointer: coarse)').matches;
         const observerOptions = {
           root: null,
-          rootMargin: '-50px 0px',
-          threshold: 0.25
+          rootMargin: isMobile ? '0px' : '-50px 0px',
+          threshold: isMobile ? 0.1 : 0.25
         };
 
         const observer = new IntersectionObserver((entries) => {

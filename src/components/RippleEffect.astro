@@ -1,28 +1,26 @@
 ---
 // src/components/RippleEffect.astro
-// Creates beautiful ripple effects on click
+// Creates beautiful ripple effects on click - desktop only
 ---
 
 <script>
   const MAX_RIPPLES = 3;
   let clickHandler = null;
-  let touchHandler = null;
 
   function cleanupRipple() {
     if (clickHandler) {
       document.removeEventListener('click', clickHandler);
       clickHandler = null;
     }
-    if (touchHandler) {
-      document.removeEventListener('touchstart', touchHandler);
-      touchHandler = null;
-    }
   }
 
   function initRippleEffect() {
     cleanupRipple();
 
+    // Disable ripple entirely on touch devices - it adds DOM on touchstart
+    // which delays navigation and causes perceived lag
     const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+    if (isTouchDevice) return;
 
     const createRipple = (x, y) => {
       const existingRipples = document.querySelectorAll('.ripple');
@@ -47,16 +45,7 @@
     };
 
     clickHandler = (e) => { createRipple(e.clientX, e.clientY); };
-    touchHandler = (e) => {
-      if (e.touches.length > 0) {
-        createRipple(e.touches[0].clientX, e.touches[0].clientY);
-      }
-    };
-
-    if (!isTouchDevice) {
-      document.addEventListener('click', clickHandler);
-    }
-    document.addEventListener('touchstart', touchHandler, { passive: true });
+    document.addEventListener('click', clickHandler);
   }
 
   document.addEventListener('astro:page-load', initRippleEffect);
