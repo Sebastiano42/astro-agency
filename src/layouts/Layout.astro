@@ -179,9 +179,25 @@ const websiteSchema = {
     <ScrollButton />
 
     <script>
-      // Scroll Reveal Animation System - Enhanced
+      // After View Transition swap: instantly activate reveal elements
+      // so content is visible DURING the page transition animation,
+      // not blank/invisible waiting for IntersectionObserver + CSS transition
+      document.addEventListener('astro:after-swap', () => {
+        document.querySelectorAll('[class*="reveal"]').forEach(el => {
+          el.style.transition = 'none';
+          el.classList.add('active');
+        });
+      });
+
+      // Scroll Reveal Animation System
       const initAnimations = () => {
         const isMobile = window.matchMedia('(pointer: coarse)').matches;
+
+        // Re-enable transitions (disabled by astro:after-swap for instant reveal)
+        document.querySelectorAll('[class*="reveal"]').forEach(el => {
+          el.style.transition = '';
+        });
+
         const observerOptions = {
           root: null,
           rootMargin: isMobile ? '0px' : '-50px 0px',
@@ -197,13 +213,13 @@ const websiteSchema = {
           });
         }, observerOptions);
 
-        // Observe all reveal animation classes with single selector
-        document.querySelectorAll('[class*="reveal"]').forEach(el => {
+        // Only observe elements not already activated (initial load)
+        document.querySelectorAll('[class*="reveal"]:not(.active)').forEach(el => {
           observer.observe(el);
         });
       };
 
-      // Smooth scroll for anchor links (replaces CSS scroll-behavior: smooth)
+      // Smooth scroll for anchor links
       const initSmoothScroll = () => {
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
           anchor.addEventListener('click', function (e) {
