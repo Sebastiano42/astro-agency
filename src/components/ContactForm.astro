@@ -1,0 +1,222 @@
+---
+// src/components/ContactForm.astro
+interface Props {
+  title?: string;
+  subtitle?: string;
+}
+
+const { 
+  title = "Contattaci", 
+  subtitle = "Risponderemo entro 24h.",
+} = Astro.props;
+---
+
+<div class="bg-gradient-to-br from-white/[0.08] to-white/[0.02] backdrop-blur-xl border border-white/10 p-8 md:p-10 rounded-3xl relative overflow-hidden group/form">
+  <!-- Subtle glow effect -->
+  <div class="absolute -top-20 -right-20 w-40 h-40 bg-white/5 rounded-full blur-3xl pointer-events-none"></div>
+  
+  <div class="mb-10 relative">
+      <h3 class="text-2xl font-bold text-white mb-2">{title}</h3>
+      <p class="text-sm text-gray-400 font-mono">{subtitle}</p>
+  </div>
+  
+  <form id="contact-form" class="flex flex-col gap-6 relative">
+    <!-- Honeypot field (hidden, anti-spam) -->
+    <input
+      type="text"
+      name="website"
+      style="display:none;"
+      tabindex="-1"
+      autocomplete="off"
+    />
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <!-- Nome Field -->
+      <div class="form-field group/field">
+        <label for="nome" class="block text-[11px] font-semibold uppercase tracking-widest text-gray-400 mb-3 transition-colors group-focus-within/field:text-white">
+          Nome
+        </label>
+        <input
+          type="text"
+          id="nome"
+          name="nome"
+          class="input-dark"
+          placeholder="Il tuo nome"
+          minlength="2"
+          maxlength="100"
+          required
+        />
+      </div>
+
+      <!-- Email Field -->
+      <div class="form-field group/field">
+        <label for="email" class="block text-[11px] font-semibold uppercase tracking-widest text-gray-400 mb-3 transition-colors group-focus-within/field:text-white">
+          Email
+        </label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          class="input-dark"
+          placeholder="tuo@email.com"
+          required
+        />
+      </div>
+    </div>
+
+    <!-- Servizio Field -->
+    <div class="form-field group/field">
+      <label for="servizio" class="block text-[11px] font-semibold uppercase tracking-widest text-gray-400 mb-3 transition-colors group-focus-within/field:text-white">
+        Interesse
+      </label>
+      <div class="relative">
+        <select id="servizio" name="servizio" class="input-dark cursor-pointer appearance-none pr-12" required>
+          <option value="" disabled selected>Seleziona un servizio</option>
+          <option value="design">Design & UI/UX</option>
+          <option value="development">Sviluppo Web</option>
+          <option value="ecommerce">E-Commerce</option>
+          <option value="marketing">Growth & SEO</option>
+        </select>
+        <!-- Custom dropdown arrow -->
+        <svg class="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+        </svg>
+      </div>
+    </div>
+
+    <!-- Messaggio Field -->
+    <div class="form-field group/field">
+      <label for="messaggio" class="block text-[11px] font-semibold uppercase tracking-widest text-gray-400 mb-3 transition-colors group-focus-within/field:text-white">
+        Dettagli del progetto
+      </label>
+      <textarea
+        id="messaggio"
+        name="messaggio"
+        rows="4"
+        class="input-dark resize-none"
+        placeholder="Raccontaci del tuo progetto..."
+        minlength="10"
+        maxlength="2000"
+        required
+      ></textarea>
+    </div>
+
+    <!-- Privacy Checkbox -->
+    <label class="flex items-center gap-4 cursor-pointer group/check mt-2 py-2">
+      <div class="relative flex items-center justify-center">
+        <input
+          type="checkbox"
+          id="privacy"
+          name="privacy"
+          required
+          class="peer h-5 w-5 appearance-none border-2 border-gray-500 rounded bg-transparent checked:bg-white checked:border-white transition-all duration-300 hover:border-gray-300"
+        />
+        <svg
+          class="absolute w-3 h-3 text-black opacity-0 peer-checked:opacity-100 pointer-events-none transition-opacity duration-200"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="4"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+      </div>
+      <span class="text-sm text-gray-400 group-hover/check:text-gray-200 transition-colors">
+        Accetto la <a href="/privacy" class="underline hover:text-white">privacy policy</a>
+      </span>
+    </label>
+
+    <!-- Message display area -->
+    <div id="form-message" class="hidden p-4 rounded-lg text-sm font-medium" role="alert"></div>
+
+    <!-- Submit Button -->
+    <button
+      type="submit"
+      id="submit-btn"
+      class="w-full bg-white text-black font-bold uppercase text-sm tracking-widest py-5 rounded-xl hover:bg-gray-100 transition-all duration-300 mt-4 relative overflow-hidden group/btn disabled:opacity-50 disabled:cursor-not-allowed"
+    >
+      <span id="button-text" class="relative z-10">Invia Messaggio</span>
+      <!-- Loading spinner (hidden by default) -->
+      <span id="button-spinner" class="hidden relative z-10">
+        <svg class="inline animate-spin h-5 w-5 text-black" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        <span class="ml-2">Invio in corso...</span>
+      </span>
+      <!-- Shine effect -->
+      <div class="absolute inset-0 bg-gradient-to-r from-transparent via-black/10 to-transparent -translate-x-full group-hover/btn:translate-x-full transition-transform duration-700"></div>
+    </button>
+  </form>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const form = document.getElementById('contact-form') as HTMLFormElement;
+      const submitBtn = document.getElementById('submit-btn') as HTMLButtonElement;
+      const buttonText = document.getElementById('button-text') as HTMLSpanElement;
+      const buttonSpinner = document.getElementById('button-spinner') as HTMLSpanElement;
+      const messageDiv = document.getElementById('form-message') as HTMLDivElement;
+
+      if (!form) return;
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        // Disable button and show spinner
+        submitBtn.disabled = true;
+        buttonText.classList.add('hidden');
+        buttonSpinner.classList.remove('hidden');
+        messageDiv.classList.add('hidden');
+
+        try {
+          // Get form data
+          const formData = new FormData(form);
+
+          // Send to API
+          const response = await fetch('/api/contact', {
+            method: 'POST',
+            body: formData,
+          });
+
+          const data = await response.json();
+
+          // Show message
+          messageDiv.classList.remove('hidden');
+          messageDiv.textContent = data.message;
+
+          if (data.success) {
+            // Success
+            messageDiv.classList.remove('bg-red-500/20', 'border-red-500', 'text-red-300');
+            messageDiv.classList.add('bg-green-500/20', 'border', 'border-green-500', 'text-green-300');
+
+            // Reset form
+            form.reset();
+
+            // Hide message after 5 seconds
+            setTimeout(() => {
+              messageDiv.classList.add('hidden');
+            }, 5000);
+          } else {
+            // Error
+            messageDiv.classList.remove('bg-green-500/20', 'border-green-500', 'text-green-300');
+            messageDiv.classList.add('bg-red-500/20', 'border', 'border-red-500', 'text-red-300');
+          }
+        } catch (error) {
+          // Network or other error
+          messageDiv.classList.remove('hidden', 'bg-green-500/20', 'border-green-500', 'text-green-300');
+          messageDiv.classList.add('bg-red-500/20', 'border', 'border-red-500', 'text-red-300');
+          messageDiv.textContent = 'Errore di connessione. Riprova più tardi.';
+          console.error('Form submission error:', error);
+        } finally {
+          // Re-enable button and hide spinner
+          submitBtn.disabled = false;
+          buttonText.classList.remove('hidden');
+          buttonSpinner.classList.add('hidden');
+        }
+      });
+    });
+  </script>
+</div>
+

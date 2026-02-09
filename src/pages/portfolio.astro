@@ -1,0 +1,179 @@
+---
+// src/pages/portfolio.astro
+import Layout from '../layouts/Layout.astro';
+
+const projects = [
+  {
+    title: "E-commerce Luxury",
+    category: "Sviluppo",
+    image: "01",
+    color: "from-blue-500/20 to-purple-500/10",
+    description: "Piattaforma retail high-end. Performance estreme.",
+    tags: ["ASTRO", "SHOPIFY", "REACT"],
+    link: "/contatti" // Link to contact for case study
+  },
+  {
+    title: "App Fintech",
+    category: "Mobile",
+    image: "02",
+    color: "from-emerald-500/20 to-cyan-500/10",
+    description: "Dashboard finanziaria in tempo reale. Secure by design.",
+    tags: ["REACT NATIVE", "NODE"],
+    link: "/contatti"
+  },
+  {
+    title: "Studio Architettura",
+    category: "Branding",
+    image: "03",
+    color: "from-orange-500/20 to-amber-500/10",
+    description: "Identità visiva minimalista. Spazialità digitale.",
+    tags: ["DESIGN", "WEBGL"],
+    link: "/contatti"
+  },
+  {
+    title: "Ristorazione Premium",
+    category: "Web App",
+    image: "04",
+    color: "from-pink-500/20 to-rose-500/10",
+    description: "Booking engine personalizzato. UX senza frizioni.",
+    tags: ["VUE", "SUPABASE"],
+    link: "/contatti"
+  },
+  {
+    title: "Creative Portfolio",
+    category: "Design",
+    image: "05",
+    color: "from-violet-500/20 to-indigo-500/10",
+    description: "Showcase interattivo per artisti digitali.",
+    tags: ["THREE.JS", "GSAP"],
+    link: "/contatti"
+  },
+  {
+    title: "Travel Journal",
+    category: "Content",
+    image: "06",
+    color: "from-amber-500/20 to-yellow-500/10",
+    description: "Magazine editoriale. Tipografia avanzata.",
+    tags: ["TYPOGRAPHY", "SEO"],
+    link: "/contatti"
+  }
+];
+---
+
+<Layout
+  title="Portfolio"
+  description="Case study e progetti realizzati da Studio Digitale: e-commerce luxury, app fintech, siti corporate e identità digitali. Design senza tempo, performance estreme."
+>
+  <div class="pt-32 pb-20 md:pt-40 container-custom">
+      <div class="grid lg:grid-cols-2 gap-16 items-center">
+        <div>
+          <span class="text-xs font-mono uppercase tracking-widest text-gray-500 mb-6 block reveal">Case Studies</span>
+          <h1 class="hero-text text-white mb-8 reveal-scale">Lavori <br/><span class="text-gray-600">Selezionati.</span></h1>
+          <p class="text-lg md:text-xl text-gray-400 max-w-2xl border-l-2 border-white/30 pl-6 reveal">
+              Un archivio di eccellenza digitale. Risultati tangibili, design senza tempo.
+          </p>
+        </div>
+        
+        <div class="hidden lg:block reveal-scale">
+          <div class="relative bg-gradient-to-br from-white/[0.08] to-transparent border border-white/10 rounded-2xl overflow-hidden shadow-2xl">
+            <!-- Mockup Header -->
+            <div class="flex items-center gap-2 px-4 py-3 border-b border-white/10 bg-white/[0.02]">
+              <div class="flex gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-white/10"></span>
+                <span class="w-2 h-2 rounded-full bg-white/10"></span>
+                <span class="w-2 h-2 rounded-full bg-white/10"></span>
+              </div>
+              <div class="h-4 bg-white/5 rounded-full w-32 mx-auto"></div>
+            </div>
+            <!-- Mockup Content -->
+            <div class="p-6 grid grid-cols-2 gap-4">
+              <div class="aspect-video bg-white/5 rounded-lg border border-white/5 relative overflow-hidden group/item">
+                <div class="absolute inset-0 bg-gradient-to-tr from-blue-500/10 to-transparent"></div>
+              </div>
+              <div class="aspect-video bg-white/5 rounded-lg border border-white/5 relative overflow-hidden">
+                <div class="absolute inset-0 bg-gradient-to-tr from-purple-500/10 to-transparent"></div>
+              </div>
+              <div class="aspect-video bg-white/5 rounded-lg border border-white/5 relative overflow-hidden">
+                <div class="absolute inset-0 bg-gradient-to-tr from-emerald-500/10 to-transparent"></div>
+              </div>
+              <div class="aspect-video bg-white/5 rounded-lg border border-white/5 relative overflow-hidden">
+                <div class="absolute inset-0 bg-gradient-to-tr from-orange-500/10 to-transparent"></div>
+              </div>
+            </div>
+            <div class="px-6 pb-6 space-y-2">
+              <div class="h-2 bg-white/10 rounded w-full"></div>
+              <div class="h-2 bg-white/5 rounded w-2/3"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+  </div>
+
+  <section class="pb-32 container-custom">
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+      {projects.map((project, index) => (
+        <div class={`group reveal-scale delay-${(index % 3 + 1) * 100}`}>
+          <div class="relative bg-gradient-to-br from-white/[0.08] to-transparent border border-white/10 rounded-2xl overflow-hidden transition-all duration-500 hover:border-white/30 hover:bg-white/[0.05]">
+            
+            <!-- Gradient Glow -->
+            <div class={`absolute -top-24 -right-24 w-48 h-48 bg-gradient-to-br ${project.color} rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700`}></div>
+            
+            <!-- Header -->
+            <div class="border-b border-white/5 p-6 flex justify-between items-center bg-white/[0.02] relative">
+              <span class="font-mono text-[10px] font-bold uppercase tracking-widest text-gray-500 group-hover:text-gray-300 transition-colors">
+                {project.category}
+              </span>
+              <div class="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center group-hover:bg-white/10 transition-all">
+                <span class="font-mono text-lg font-bold text-gray-600 group-hover:text-white transition-colors">
+                  {project.image}
+                </span>
+              </div>
+            </div>
+            
+            <!-- Content -->
+            <div class="p-8 relative">
+              <h3 class="text-2xl md:text-3xl font-bold uppercase mb-4 text-white group-hover:translate-x-1 transition-transform duration-300">
+                {project.title}
+              </h3>
+              <p class="font-mono text-sm text-gray-500 mb-8 leading-relaxed group-hover:text-gray-400 transition-colors">
+                {project.description}
+              </p>
+              
+              <!-- Tags -->
+              <div class="flex flex-wrap gap-2 mb-8">
+                {project.tags.map(tag => (
+                 <span class="text-[10px] font-mono uppercase border border-white/10 px-3 py-1.5 text-gray-500 rounded-full group-hover:border-white/20 group-hover:text-gray-400 transition-all">
+                   {tag}
+                 </span>
+                ))}
+              </div>
+
+              <a href={project.link} class="w-full flex items-center justify-center gap-2 bg-white/5 border border-white/10 text-white font-bold uppercase text-xs tracking-widest py-4 rounded-xl hover:bg-white hover:text-black transition-all duration-300 group/btn">
+                <span>Vedi Progetto</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="transform group-hover/btn:translate-x-1 transition-transform">
+                  <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+              </a>
+            </div>
+            
+            <!-- Bottom Border Animation -->
+            <div class="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-white/50 to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-500"></div>
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="py-32 border-t border-white/5 bg-gradient-to-b from-surface/50 to-background relative overflow-hidden">
+    <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-white/5 via-transparent to-transparent"></div>
+    <div class="container-custom text-center relative z-10">
+      <h2 class="text-4xl md:text-6xl lg:text-7xl font-black uppercase mb-10 text-white reveal-scale">
+        Il prossimo passo <br/> è tuo.
+      </h2>
+      <a href="/contatti" class="btn-primary reveal">
+        Discuti Progetto
+      </a>
+    </div>
+  </section>
+</Layout>
+

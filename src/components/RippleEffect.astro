@@ -1,0 +1,64 @@
+---
+// src/components/RippleEffect.astro
+// Creates beautiful ripple effects on click
+---
+
+<script>
+  const MAX_RIPPLES = 3;
+  let clickHandler = null;
+  let touchHandler = null;
+
+  function cleanupRipple() {
+    if (clickHandler) {
+      document.removeEventListener('click', clickHandler);
+      clickHandler = null;
+    }
+    if (touchHandler) {
+      document.removeEventListener('touchstart', touchHandler);
+      touchHandler = null;
+    }
+  }
+
+  function initRippleEffect() {
+    cleanupRipple();
+
+    const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+
+    const createRipple = (x, y) => {
+      const existingRipples = document.querySelectorAll('.ripple');
+      if (existingRipples.length >= MAX_RIPPLES) {
+        existingRipples[0].remove();
+      }
+
+      const ripple = document.createElement('div');
+      ripple.className = 'ripple';
+      ripple.style.left = `${x}px`;
+      ripple.style.top = `${y}px`;
+      ripple.style.width = '20px';
+      ripple.style.height = '20px';
+      ripple.style.marginLeft = '-10px';
+      ripple.style.marginTop = '-10px';
+
+      document.body.appendChild(ripple);
+
+      ripple.addEventListener('animationend', () => {
+        ripple.remove();
+      }, { once: true });
+    };
+
+    clickHandler = (e) => { createRipple(e.clientX, e.clientY); };
+    touchHandler = (e) => {
+      if (e.touches.length > 0) {
+        createRipple(e.touches[0].clientX, e.touches[0].clientY);
+      }
+    };
+
+    if (!isTouchDevice) {
+      document.addEventListener('click', clickHandler);
+    }
+    document.addEventListener('touchstart', touchHandler, { passive: true });
+  }
+
+  document.addEventListener('astro:page-load', initRippleEffect);
+  document.addEventListener('astro:before-swap', cleanupRipple);
+</script>

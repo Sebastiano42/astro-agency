@@ -1,0 +1,92 @@
+---
+// src/components/Footer.astro
+const today = new Date();
+---
+
+<footer class="bg-surface border-t border-border pt-20 pb-10 relative overflow-hidden">
+  <!-- Subtle Grid Background -->
+  <div class="absolute inset-0 bg-grid-pattern opacity-[0.03] pointer-events-none"></div>
+
+  <div class="container-custom relative z-10">
+    <div class="grid md:grid-cols-2 lg:grid-cols-12 gap-12 lg:gap-8 mb-20">
+      
+      <!-- Brand Column -->
+      <div class="lg:col-span-4">
+        <a href="/" class="flex items-center gap-3 mb-6 no-underline group w-fit">
+          <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center text-black font-black text-xl group-hover:scale-95 transition-transform duration-300">
+            S.
+          </div>
+          <span class="text-xl font-bold uppercase tracking-widest text-white">Studio.</span>
+        </a>
+        <p class="text-gray-400 leading-relaxed mb-8 max-w-sm text-sm">
+          Costruiamo esperienze digitali che definiscono il futuro dei brand. <br/>
+          Milano • Roma • Remote
+        </p>
+        <div class="flex gap-4">
+            <a href="https://www.linkedin.com/company/studio-digital" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-gray-400 hover:bg-white hover:text-black hover:border-white transition-all duration-300">
+                <span class="sr-only">LinkedIn</span>
+                <span class="font-bold text-xs">IN</span>
+            </a>
+            <a href="https://www.instagram.com/studiodigital" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-gray-400 hover:bg-white hover:text-black hover:border-white transition-all duration-300">
+                <span class="sr-only">Instagram</span>
+                <span class="font-bold text-xs">IG</span>
+            </a>
+            <a href="https://twitter.com/studiodigital" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-gray-400 hover:bg-white hover:text-black hover:border-white transition-all duration-300">
+                <span class="sr-only">Twitter</span>
+                <span class="font-bold text-xs">TW</span>
+            </a>
+        </div>
+      </div>
+      
+      <!-- Links Column 1 -->
+      <div class="lg:col-span-2 lg:col-start-6">
+        <h4 class="text-white font-bold mb-6 text-sm uppercase tracking-widest">Studio</h4>
+        <ul class="flex flex-col gap-4">
+          <li><a href="/" class="text-gray-500 hover:text-white transition-colors text-sm">Home</a></li>
+          <li><a href="/chi-siamo" class="text-gray-500 hover:text-white transition-colors text-sm">Chi Siamo</a></li>
+          <li><a href="/portfolio" class="text-gray-500 hover:text-white transition-colors text-sm">Lavori</a></li>
+          <li><a href="/contatti" class="text-gray-500 hover:text-white transition-colors text-sm">Contatti</a></li>
+        </ul>
+      </div>
+      
+      <!-- Links Column 2 -->
+      <div class="lg:col-span-3">
+        <h4 class="text-white font-bold mb-6 text-sm uppercase tracking-widest">Servizi</h4>
+        <ul class="flex flex-col gap-4">
+          <li><a href="/servizi/web-design" class="text-gray-500 hover:text-white transition-colors text-sm">Web Design & UI/UX</a></li>
+          <li><a href="/servizi/sviluppo-web" class="text-gray-500 hover:text-white transition-colors text-sm">Sviluppo Web</a></li>
+          <li><a href="/servizi/ecommerce" class="text-gray-500 hover:text-white transition-colors text-sm">E-commerce Solutions</a></li>
+          <li><a href="/servizi/seo" class="text-gray-500 hover:text-white transition-colors text-sm">Digital Growth</a></li>
+        </ul>
+      </div>
+      
+      <!-- Contact Column -->
+      <div class="lg:col-span-3">
+        <h4 class="text-white font-bold mb-6 text-sm uppercase tracking-widest">Contatti</h4>
+        <ul class="flex flex-col gap-4">
+          <li>
+              <a href="mailto:hello@studio.com" class="text-xl text-white font-bold hover:text-gray-300 transition-colors block">hello@studio.com</a>
+          </li>
+          <li>
+              <span class="text-gray-500 text-sm block mb-1">Nuovi Progetti</span>
+              <a href="tel:+3902123456" class="text-gray-300 hover:text-white transition-colors text-sm">+39 02 1234 5678</a>
+          </li>
+          <li class="pt-4">
+              <span class="text-gray-600 text-xs uppercase tracking-widest">P.IVA 12345678901</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+    
+    <!-- Footer Bottom -->
+    <div class="pt-8 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-6">
+      <p class="text-gray-600 text-xs font-mono uppercase tracking-widest">
+        &copy; {today.getFullYear()} Studio Digital. All rights reserved.
+      </p>
+      <div class="flex gap-8">
+        <a href="/privacy" class="text-gray-600 hover:text-white text-xs font-mono uppercase tracking-widest transition-colors no-underline">Privacy Policy</a>
+        <a href="/cookie-policy" class="text-gray-600 hover:text-white text-xs font-mono uppercase tracking-widest transition-colors no-underline">Cookie Policy</a>
+      </div>
+    </div>
+  </div>
+</footer>

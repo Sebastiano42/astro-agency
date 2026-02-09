@@ -1,0 +1,223 @@
+---
+// src/layouts/Layout.astro
+import { ViewTransitions } from 'astro:transitions';
+import Navigation from '../components/Navigation.astro';
+import Footer from '../components/Footer.astro';
+import CursorFollower from '../components/CursorFollower.astro';
+import MagneticElements from '../components/MagneticElements.astro';
+import RippleEffect from '../components/RippleEffect.astro';
+import '../styles/global.css';
+
+interface Props {
+	title?: string;
+	description?: string;
+	ogImage?: string;
+	ogType?: string;
+	noindex?: boolean;
+}
+
+const {
+	title = "Studio Digitale",
+	description = "Costruiamo esperienze digitali che definiscono il futuro dei brand. Web design, sviluppo e digital marketing a Milano.",
+	ogImage = "/og-image.jpg",
+	ogType = "website",
+	noindex = false
+} = Astro.props;
+
+const smoothPage = {
+	forwards: {
+		old: [{
+			name: 'pageFadeOut',
+			duration: '0.2s',
+			easing: 'ease-in',
+			fillMode: 'forwards',
+		}],
+		new: [{
+			name: 'pageFadeSlideIn',
+			duration: '0.45s',
+			easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
+			fillMode: 'backwards',
+			delay: '0.12s',
+		}],
+	},
+	backwards: {
+		old: [{
+			name: 'pageFadeOut',
+			duration: '0.2s',
+			easing: 'ease-in',
+			fillMode: 'forwards',
+		}],
+		new: [{
+			name: 'pageFadeSlideIn',
+			duration: '0.45s',
+			easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
+			fillMode: 'backwards',
+			delay: '0.12s',
+		}],
+	},
+};
+
+// Construct full URL for canonical and OG
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+const fullOgImage = new URL(ogImage, Astro.site);
+
+// Schema.org JSON-LD - Organization & Website
+const organizationSchema = {
+	"@context": "https://schema.org",
+	"@type": "Organization",
+	"name": "Studio Digitale",
+	"url": Astro.site,
+	"logo": new URL("/logo.png", Astro.site),
+	"description": "Studio di web design e sviluppo a Milano. Creiamo esperienze digitali che definiscono il futuro dei brand.",
+	"address": {
+		"@type": "PostalAddress",
+		"addressLocality": "Milano",
+		"addressCountry": "IT"
+	},
+	"contactPoint": {
+		"@type": "ContactPoint",
+		"telephone": "+39-02-1234-5678",
+		"contactType": "customer service",
+		"email": "hello@studio.com",
+		"availableLanguage": ["it", "en"]
+	},
+	"sameAs": [
+		"https://www.linkedin.com/company/studio-digital",
+		"https://www.instagram.com/studiodigital",
+		"https://twitter.com/studiodigital"
+	]
+};
+
+const websiteSchema = {
+	"@context": "https://schema.org",
+	"@type": "WebSite",
+	"name": "Studio Digitale",
+	"url": Astro.site,
+	"description": "Web Design & Development Studio",
+	"inLanguage": "it-IT"
+};
+---
+
+<!doctype html>
+<html lang="it">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0, viewport-fit=cover" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="generator" content={Astro.generator} />
+
+		<!-- Primary Meta Tags -->
+		<title>{title} | Web Design & Development</title>
+		<meta name="title" content={`${title} | Web Design & Development`} />
+		<meta name="description" content={description} />
+		{noindex && <meta name="robots" content="noindex, nofollow" />}
+
+		<!-- Canonical URL -->
+		<link rel="canonical" href={canonicalURL} />
+
+		<!-- Open Graph / Facebook -->
+		<meta property="og:type" content={ogType} />
+		<meta property="og:url" content={canonicalURL} />
+		<meta property="og:title" content={`${title} | Web Design & Development`} />
+		<meta property="og:description" content={description} />
+		<meta property="og:image" content={fullOgImage} />
+		<meta property="og:site_name" content="Studio Digitale" />
+		<meta property="og:locale" content="it_IT" />
+
+		<!-- Twitter -->
+		<meta property="twitter:card" content="summary_large_image" />
+		<meta property="twitter:url" content={canonicalURL} />
+		<meta property="twitter:title" content={`${title} | Web Design & Development`} />
+		<meta property="twitter:description" content={description} />
+		<meta property="twitter:image" content={fullOgImage} />
+
+		<!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+
+		<!-- Schema.org JSON-LD -->
+		<script type="application/ld+json" set:html={JSON.stringify(organizationSchema)} />
+		<script type="application/ld+json" set:html={JSON.stringify(websiteSchema)} />
+
+		<!-- View Transitions -->
+		<ViewTransitions fallback="swap" />
+	</head>
+	<body class="selection:bg-indigo-500/30 selection:text-indigo-900 dark:selection:text-indigo-200">
+    <script is:inline>
+      const theme = (() => {
+        if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
+          return localStorage.getItem('theme');
+        }
+        if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          return 'dark';
+        }
+        return 'light';
+      })();
+    
+      if (theme === 'dark') {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+      
+      window.localStorage.setItem('theme', theme);
+    </script>
+    
+    <Navigation transition:persist />
+
+		<main id="main-content" class="overflow-hidden" transition:animate={smoothPage}>
+      <slot />
+    </main>
+
+    <Footer transition:persist />
+
+    <CursorFollower />
+    <MagneticElements />
+    <RippleEffect />
+
+    <script>
+      // Scroll Reveal Animation System - Enhanced
+      const initAnimations = () => {
+        const observerOptions = {
+          root: null,
+          rootMargin: '-50px 0px',
+          threshold: 0.25
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('active');
+              observer.unobserve(entry.target);
+            }
+          });
+        }, observerOptions);
+
+        // Observe all reveal animation classes with single selector
+        document.querySelectorAll('[class*="reveal"]').forEach(el => {
+          observer.observe(el);
+        });
+      };
+
+      // Smooth scroll for anchor links (replaces CSS scroll-behavior: smooth)
+      const initSmoothScroll = () => {
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+          anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+              target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+          });
+        });
+      };
+
+      // astro:page-load fires on initial load too, no need for DOMContentLoaded
+      document.addEventListener('astro:page-load', () => {
+        initAnimations();
+        initSmoothScroll();
+      });
+    </script>
+	</body>
+</html>

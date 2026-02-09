@@ -1,0 +1,10 @@
+# robots.txt for Studio Digitale
+
+User-agent: *
+Allow: /
+
+# Disallow admin/private pages (if any)
+# Disallow: /admin/
+
+# Sitemap location (update with your domain)
+Sitemap: https://yourdomain.com/sitemap-index.xml

@@ -1,0 +1,126 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+const features = [
+  { icon: '📦', title: 'Gestione Catalogo', desc: 'Caricamento prodotti semplice e intuitivo.' },
+  { icon: '💳', title: 'Sistemi di Pagamento', desc: 'Integrazione sicura con Stripe, PayPal e Satispay.' },
+  { icon: '🚚', title: 'Gestione Ordini', desc: 'Dashboard completa per tracciare le spedizioni.' },
+  { icon: '🔍', title: 'SEO per Prodotti', desc: 'Ogni scheda prodotto ottimizzata per Google.' }
+];
+
+const serviceSchema = {
+  "@context": "https://schema.org",
+  "@type": "Service",
+  "serviceType": "E-commerce Development",
+  "provider": {
+    "@type": "Organization",
+    "name": "Studio Digitale"
+  },
+  "areaServed": {
+    "@type": "Country",
+    "name": "Italy"
+  },
+  "description": "Soluzioni E-commerce professionali: Shopify, WooCommerce e custom development. Esperienze d'acquisto senza attrito, pagamenti sicuri e gestione ordini completa.",
+  "offers": {
+    "@type": "Offer",
+    "availability": "https://schema.org/InStock"
+  }
+};
+---
+
+<Layout
+  title="E-commerce Solutions"
+  description="Soluzioni E-commerce professionali: Shopify, WooCommerce e custom development. Esperienze d'acquisto senza attrito, pagamenti sicuri e gestione ordini completa."
+>
+  <script type="application/ld+json" set:html={JSON.stringify(serviceSchema)} slot="head" />
+  <!-- Hero Section -->
+  <section class="pt-32 pb-20 md:pt-48 md:pb-32 container-custom">
+    <a href="/servizi" class="inline-flex items-center gap-2 text-gray-500 hover:text-white transition-colors mb-8 text-sm font-mono uppercase tracking-widest reveal">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M19 12H5M12 19l-7-7 7-7"/>
+      </svg>
+      Torna ai servizi
+    </a>
+    
+    <div class="grid lg:grid-cols-2 gap-16 items-center">
+      <div>
+        <span class="inline-block px-4 py-2 rounded-full bg-pink-500/10 border border-pink-500/20 text-pink-400 text-xs font-mono uppercase tracking-widest mb-6 reveal">
+          E-commerce Solutions
+        </span>
+        <h1 class="text-5xl md:text-7xl lg:text-8xl font-black text-white mb-8 tracking-tight leading-none reveal-scale">
+          Vendi Online<br/><span class="text-gray-600">Senza Limiti.</span>
+        </h1>
+        <p class="text-lg md:text-xl text-gray-400 leading-relaxed max-w-xl reveal">
+          Sviluppiamo negozi online sicuri, veloci e ottimizzati per massimizzare le tue vendite.
+        </p>
+      </div>
+      
+      <div class="hidden lg:block reveal-scale">
+        <!-- Product grid preview -->
+        <div class="relative bg-gradient-to-br from-white/[0.08] to-transparent border border-white/10 rounded-2xl p-6 overflow-hidden">
+          <div class="absolute -top-24 -right-24 w-48 h-48 bg-gradient-to-br from-pink-500/20 to-rose-500/10 rounded-full blur-3xl"></div>
+          
+          <div class="grid grid-cols-2 gap-4 relative">
+            {[1, 2, 3, 4].map((i) => (
+              <div class="bg-white/[0.05] border border-white/10 rounded-xl p-4 hover:bg-white/[0.08] transition-all group">
+                <div class="aspect-square bg-gradient-to-br from-white/10 to-transparent rounded-lg mb-4 flex items-center justify-center">
+                  <span class="text-3xl opacity-50 group-hover:opacity-100 transition-opacity">🛍️</span>
+                </div>
+                <div class="h-2 bg-white/10 rounded w-3/4 mb-2"></div>
+                <div class="h-3 bg-gradient-to-r from-pink-500 to-rose-500 rounded w-1/3"></div>
+              </div>
+            ))}
+          </div>
+          
+          <div class="mt-6 flex items-center justify-center gap-4">
+            <div class="flex items-center gap-2 text-xs font-mono text-gray-500">
+              <span class="w-2 h-2 bg-green-500 rounded-full"></span>
+              Pagamenti sicuri
+            </div>
+            <div class="flex items-center gap-2 text-xs font-mono text-gray-500">
+              <span class="w-2 h-2 bg-blue-500 rounded-full"></span>
+              Spedizione tracciata
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section class="py-24 bg-gradient-to-b from-surface/50 to-background border-y border-white/5">
+    <div class="container-custom">
+      <h2 class="text-3xl md:text-4xl font-black text-white mb-12 reveal-scale">Soluzioni su Misura</h2>
+      
+      <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {features.map((feature, index) => (
+          <div class={`group reveal-scale delay-${(index + 1) * 100}`}>
+            <div class="relative h-full bg-gradient-to-br from-white/[0.08] to-transparent border border-white/10 rounded-2xl p-6 transition-all duration-500 hover:border-white/30 hover:bg-white/[0.05] overflow-hidden">
+              <div class="absolute -top-16 -right-16 w-32 h-32 bg-gradient-to-br from-pink-500/20 to-rose-500/10 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+              
+              <span class="text-4xl mb-6 block relative">{feature.icon}</span>
+              <h3 class="text-xl font-bold text-white mb-3 group-hover:translate-x-1 transition-transform relative">{feature.title}</h3>
+              <p class="font-mono text-sm text-gray-500 group-hover:text-gray-400 transition-colors relative">{feature.desc}</p>
+              
+              <div class="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-pink-500/50 to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-500"></div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="py-32 relative overflow-hidden">
+    <div class="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_50%,_var(--tw-gradient-stops))] from-pink-500/5 via-pink-500/2 via-30% via-transparent via-60% to-transparent"></div>
+    <div class="container-custom relative z-10">
+      <div class="max-w-2xl mx-auto text-center">
+        <h2 class="text-4xl md:text-5xl font-black text-white mb-6 reveal-scale">Hai dei prodotti<br/>da lanciare?</h2>
+        <p class="text-gray-400 mb-10 text-lg reveal">Apri il tuo store online e inizia a vendere.</p>
+        <a href="/contatti" class="btn-primary reveal">
+          Apri il tuo negozio
+        </a>
+      </div>
+    </div>
+  </section>
+</Layout>

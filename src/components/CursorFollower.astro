@@ -1,0 +1,123 @@
+---
+// src/components/CursorFollower.astro
+---
+
+<!-- Custom Cursor - Circle to Dot Style -->
+<div id="cursor" class="cursor"></div>
+
+<style>
+  /* Custom Cursor - Modern Circle to Dot */
+  .cursor {
+    width: 32px;
+    height: 32px;
+    border: 1.5px solid rgba(255, 255, 255, 0.6);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999;
+    transition: all 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    mix-blend-mode: difference;
+    opacity: 0;
+    transform: translate(-50%, -50%);
+  }
+
+  /* Hover State - Transforms to Dot */
+  .cursor.hover {
+    width: 8px;
+    height: 8px;
+    border-width: 0;
+    background: rgba(255, 255, 255, 0.9);
+  }
+
+  /* Hide custom cursor on touch devices */
+  @media (hover: none) and (pointer: coarse) {
+    .cursor,
+    .cursor-follower,
+    .mouse-glow {
+      display: none !important;
+    }
+  }
+
+  /* Hide default cursor on desktop */
+  @media (hover: hover) and (pointer: fine) {
+    body {
+      cursor: none;
+    }
+
+    a, button, input, textarea, select, [role="button"] {
+      cursor: none;
+    }
+  }
+</style>
+
+<script>
+  let mouseMoveHandler = null;
+  let hoverEnterHandler = null;
+  let hoverLeaveHandler = null;
+  const interactiveElements = 'a, button, input, textarea, select, [role="button"], .cursor-hover';
+
+  function cleanupCursor() {
+    if (mouseMoveHandler) {
+      document.removeEventListener('mousemove', mouseMoveHandler);
+      mouseMoveHandler = null;
+    }
+    if (hoverEnterHandler) {
+      document.querySelectorAll(interactiveElements).forEach(el => {
+        el.removeEventListener('mouseenter', hoverEnterHandler);
+        el.removeEventListener('mouseleave', hoverLeaveHandler);
+      });
+      hoverEnterHandler = null;
+      hoverLeaveHandler = null;
+    }
+  }
+
+  function initCursor() {
+    cleanupCursor();
+
+    const cursor = document.getElementById('cursor');
+    if (!cursor) return;
+
+    const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+    const hasCoarsePointer = window.matchMedia('(pointer: coarse)').matches;
+    const hasNoHover = window.matchMedia('(hover: none)').matches;
+
+    if (isTouchDevice || hasCoarsePointer || hasNoHover) {
+      cursor.style.display = 'none';
+      return;
+    }
+
+    let mouseX = 0;
+    let mouseY = 0;
+    let hasMouseMoved = false;
+    let rafId = null;
+
+    mouseMoveHandler = (e) => {
+      if (!hasMouseMoved) {
+        hasMouseMoved = true;
+        cursor.style.opacity = '1';
+      }
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+      if (rafId === null) {
+        rafId = requestAnimationFrame(() => {
+          cursor.style.left = `${mouseX}px`;
+          cursor.style.top = `${mouseY}px`;
+          rafId = null;
+        });
+      }
+    };
+
+    hoverEnterHandler = () => { cursor.classList.add('hover'); };
+    hoverLeaveHandler = () => { cursor.classList.remove('hover'); };
+
+    document.addEventListener('mousemove', mouseMoveHandler);
+
+    document.querySelectorAll(interactiveElements).forEach(el => {
+      el.addEventListener('mouseenter', hoverEnterHandler);
+      el.addEventListener('mouseleave', hoverLeaveHandler);
+    });
+  }
+
+  document.addEventListener('astro:page-load', initCursor);
+  document.addEventListener('astro:before-swap', cleanupCursor);
+</script>

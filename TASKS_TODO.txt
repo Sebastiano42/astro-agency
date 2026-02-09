@@ -1,0 +1,522 @@
+================================================================================
+PROGETTO: STUDIO DIGITALE - TASK LIST COMPLETA
+Data: 07 Febbraio 2026
+================================================================================
+
+LEGENDA PRIORITÀ:
+🔴 CRITICO - Deve essere fatto prima del lancio
+🟡 ALTA - Importante per UX/SEO
+🟢 MEDIA - Miglioramenti consigliati
+🔵 BASSA - Nice to have
+
+================================================================================
+FASE 1: PROBLEMI CRITICI (BLOCKERS)
+================================================================================
+
+🔴 TASK 1: IMPLEMENTARE BACKEND FORM CONTATTI
+   File: src/pages/api/contact.ts (da creare)
+
+   [ ] 1.1 - Creare API endpoint /api/contact.ts
+   [ ] 1.2 - Aggiungere validazione lato server (nome, email, messaggio)
+   [ ] 1.3 - Implementare invio email (usando servizio tipo Resend, SendGrid, o Nodemailer)
+   [ ] 1.4 - Aggiungere honeypot field anti-spam
+   [ ] 1.5 - Implementare rate limiting (max 3 invii/ora per IP)
+   [ ] 1.6 - Aggiungere gestione errori e response messages
+   [ ] 1.7 - Testare invio email end-to-end
+
+   File: src/components/ContactForm.astro
+   [ ] 1.8 - Collegare form a API endpoint
+   [ ] 1.9 - Aggiungere validazione client-side
+   [ ] 1.10 - Mostrare loading spinner durante invio
+   [ ] 1.11 - Mostrare messaggio success/error dopo invio
+   [ ] 1.12 - Disabilitare bottone durante invio
+   [ ] 1.13 - Clear form dopo invio successo
+
+---
+
+🔴 TASK 2: CREARE PAGINE MANCANTI ESSENZIALI
+
+   [ ] 2.1 - Creare src/pages/privacy.astro
+         - Inserire privacy policy (generare da template GDPR)
+         - Sezione cookies
+         - Sezione dati raccolti
+         - Contatti DPO/riferimento
+
+   [ ] 2.2 - Creare src/pages/cookie-policy.astro
+         - Elenco cookies utilizzati
+         - Finalità cookies
+         - Come disabilitarli
+
+   [ ] 2.3 - Creare src/pages/404.astro
+         - Design coerente con sito
+         - Link "Torna alla home"
+         - Lista link utili
+         - Animazione simpatica
+
+   [ ] 2.4 - Configurare 404 in astro.config.mjs
+         - Redirect pages non trovate
+
+   [ ] 2.5 - Creare template blog detail: src/pages/blog/[slug].astro
+         - Layout articolo completo
+         - Metadata autore, data, tags
+         - Share buttons social
+         - Related posts
+         - Comments section (opzionale)
+
+---
+
+🔴 TASK 3: FIXARE TUTTI I LINK ROTTI
+
+   File: src/pages/portfolio.astro
+   [ ] 3.1 - Sostituire href="#" con link reali progetti
+         Opzioni:
+         - Creare pagine /portfolio/[slug]
+         - Linkare a case study esterni
+         - Linkare a sito live del progetto
+
+   File: src/pages/blog.astro
+   [ ] 3.2 - Collegare post a /blog/[slug]
+
+   File: src/components/Footer.astro
+   [ ] 3.3 - Aggiungere URL social reali:
+         - Instagram
+         - Twitter/X
+         - LinkedIn
+         - GitHub (opzionale)
+
+   [ ] 3.4 - Verificare link privacy/cookie-policy dopo creazione pagine
+
+---
+
+🔴 TASK 4: IMPLEMENTARE SEO BASE
+
+   File: src/layouts/Layout.astro
+   [ ] 4.1 - Aggiungere props per SEO:
+         - description
+         - ogImage
+         - ogType
+         - twitterCard
+
+   [ ] 4.2 - Aggiungere meta tags:
+         <meta name="description" content={description} />
+         <meta property="og:title" content={title} />
+         <meta property="og:description" content={description} />
+         <meta property="og:image" content={ogImage} />
+         <meta property="og:type" content={ogType} />
+         <meta name="twitter:card" content="summary_large_image" />
+         <meta name="twitter:title" content={title} />
+         <meta name="twitter:description" content={description} />
+         <meta name="twitter:image" content={ogImage} />
+
+   [ ] 4.3 - Aggiungere canonical URL:
+         <link rel="canonical" href={Astro.url} />
+
+   [ ] 4.4 - Creare public/robots.txt
+         User-agent: *
+         Allow: /
+         Sitemap: https://[yourdomain]/sitemap.xml
+
+   [ ] 4.5 - Installare @astrojs/sitemap
+         npm install @astrojs/sitemap
+
+   [ ] 4.6 - Configurare sitemap in astro.config.mjs:
+         import sitemap from '@astrojs/sitemap';
+         export default defineConfig({
+           site: 'https://[yourdomain]',
+           integrations: [sitemap()]
+         });
+
+   [ ] 4.7 - Aggiungere meta descriptions a TUTTE le pagine:
+         - Home
+         - Servizi (main + 6 sub-pages)
+         - Portfolio
+         - Chi Siamo
+         - Blog
+         - Contatti
+
+---
+
+🔴 TASK 5: AGGIUNGERE SCHEMA.ORG JSON-LD
+
+   File: src/layouts/Layout.astro
+   [ ] 5.1 - Aggiungere Organization schema
+   [ ] 5.2 - Aggiungere LocalBusiness schema (se applicabile)
+   [ ] 5.3 - Aggiungere WebSite schema con searchAction
+
+   File: src/pages/blog/[slug].astro
+   [ ] 5.4 - Aggiungere Article schema per blog posts
+
+   File: src/pages/servizi/*.astro
+   [ ] 5.5 - Aggiungere Service schema
+
+
+================================================================================
+FASE 2: PROBLEMI ALTA PRIORITÀ
+================================================================================
+
+🟡 TASK 6: ATTIVARE VIEW TRANSITIONS
+
+   File: src/layouts/Layout.astro
+   [ ] 6.1 - Importare ViewTransitions da 'astro:transitions'
+   [ ] 6.2 - Aggiungere <ViewTransitions /> nel <head>
+   [ ] 6.3 - Testare navigazione tra pagine
+   [ ] 6.4 - Aggiungere transition:animate su elementi chiave
+   [ ] 6.5 - Configurare transition:persist per elementi persistenti (nav, footer)
+
+---
+
+🟡 TASK 7: IMPLEMENTARE DARK MODE TOGGLE UI
+
+   File: src/components/ThemeToggle.astro (da creare)
+   [ ] 7.1 - Creare componente toggle button
+   [ ] 7.2 - Aggiungere icone sole/luna
+   [ ] 7.3 - Implementare logic toggle con localStorage
+   [ ] 7.4 - Animare transizione tema
+
+   File: src/components/Navigation.astro
+   [ ] 7.5 - Inserire ThemeToggle nel menu desktop
+   [ ] 7.6 - Inserire ThemeToggle nel menu mobile
+
+   File: astro.config.mjs
+   [ ] 7.7 - Verificare darkMode: 'class' in tailwind config
+
+   [ ] 7.8 - Testare switch tema su tutte le pagine
+
+---
+
+🟡 TASK 8: FIXARE BLOG PAGE STYLING
+
+   File: src/pages/blog.astro
+   [ ] 8.1 - Rimuovere classi dark: (es. dark:bg-slate-950)
+   [ ] 8.2 - Usare palette colori principale del sito:
+         - bg-background invece di bg-slate-50
+         - text-gray-300 invece di text-slate-600
+   [ ] 8.3 - Unificare border colors con resto sito
+   [ ] 8.4 - Verificare consistency spacing
+   [ ] 8.5 - Testare responsive design
+
+---
+
+🟡 TASK 9: OTTIMIZZARE PERFORMANCE JAVASCRIPT
+
+   File: src/components/CursorFollower.astro
+   [ ] 9.1 - Aggiungere debounce a mousemove listener (50ms)
+   [ ] 9.2 - Limitare area di attivazione cursor (solo viewport visibile)
+
+   File: src/components/MagneticElements.astro
+   [ ] 9.3 - Rimuovere codice parallax inutilizzato (linee 67-108)
+   [ ] 9.4 - Aggiungere requestIdleCallback per setup listeners
+   [ ] 9.5 - Throttle scroll listeners se necessario
+
+   File: src/components/RippleEffect.astro
+   [ ] 9.6 - Cleanup ripple elements dopo animazione
+   [ ] 9.7 - Limitare max ripple simultanei (max 3)
+
+---
+
+🟡 TASK 10: MIGLIORARE ACCESSIBILITY
+
+   File: src/styles/global.css
+   [ ] 10.1 - Aggiungere focus-visible styles:
+          *:focus-visible {
+            outline: 2px solid rgba(255, 255, 255, 0.6);
+            outline-offset: 2px;
+          }
+
+   [ ] 10.2 - Verificare contrasto colori WCAG AA:
+          - text-gray-500 su #020202
+          - text-gray-400 su #020202
+          Usare tool: https://webaim.org/resources/contrastchecker/
+
+   File: src/components/Navigation.astro
+   [ ] 10.3 - Aggiungere skip navigation link:
+          <a href="#main-content" class="sr-only focus:not-sr-only">
+            Skip to main content
+          </a>
+
+   [ ] 10.4 - Aggiungere aria-label a button hamburger
+   [ ] 10.5 - Aggiungere aria-expanded al menu mobile
+
+   File: tutti i componenti con SVG
+   [ ] 10.6 - Aggiungere aria-hidden="true" agli SVG decorativi
+   [ ] 10.7 - Aggiungere title/desc agli SVG informativi
+
+   [ ] 10.8 - Test navigazione keyboard completa
+   [ ] 10.9 - Test con screen reader (NVDA/JAWS)
+
+---
+
+🟡 TASK 11: RESPONSIVE DESIGN FIXES
+
+   File: src/styles/global.css
+   [ ] 11.1 - Testare .hero-text su viewport 320px
+   [ ] 11.2 - Adjustare scale se necessario:
+          text-4xl sm:text-6xl md:text-7xl lg:text-8xl
+
+   File: src/components/Navigation.astro
+   [ ] 11.3 - Fix alignment menu items mobile
+   [ ] 11.4 - Testare z-index layers (nav vs menu)
+
+   [ ] 11.5 - Test completo breakpoints:
+          - 320px (iPhone SE)
+          - 375px (iPhone 12)
+          - 768px (iPad)
+          - 1024px (Desktop small)
+          - 1920px (Desktop large)
+
+
+================================================================================
+FASE 3: MEDIA PRIORITÀ
+================================================================================
+
+🟢 TASK 12: AGGIUNGERE IMMAGINI REALI
+
+   Directory: public/images/ (da creare)
+   [ ] 12.1 - Creare cartelle:
+          /public/images/portfolio/
+          /public/images/blog/
+          /public/images/team/
+
+   [ ] 12.2 - Aggiungere immagini portfolio (min 6)
+   [ ] 12.3 - Aggiungere featured images blog (min 3)
+   [ ] 12.4 - Aggiungere foto team (se presente sezione)
+
+   [ ] 12.5 - Installare @astrojs/image optimization
+   [ ] 12.6 - Convertire placeholder SVG in <Image /> component
+   [ ] 12.7 - Aggiungere lazy loading
+   [ ] 12.8 - Ottimizzare dimensioni (WebP format)
+   [ ] 12.9 - Aggiungere alt text descrittivi
+
+---
+
+🟢 TASK 13: AGGIUNGERE CONTENUTI REALI
+
+   File: src/pages/portfolio.astro
+   [ ] 13.1 - Sostituire progetti fake con case study reali
+   [ ] 13.2 - Aggiungere descrizioni dettagliate progetti
+   [ ] 13.3 - Aggiungere tecnologie usate per progetto
+   [ ] 13.4 - Aggiungere link a siti live
+
+   File: src/pages/blog.astro
+   [ ] 13.5 - Scrivere 3-5 articoli blog reali
+   [ ] 13.6 - Inserire contenuti di valore (tutorial, news, insights)
+
+   File: src/pages/chi-siamo.astro
+   [ ] 13.7 - Aggiungere sezione team (opzionale)
+   [ ] 13.8 - Aggiungere foto/bio membri team
+   [ ] 13.9 - Personalizzare testo about
+
+---
+
+🟢 TASK 14: MIGLIORARE ANIMAZIONI
+
+   File: src/styles/global.css
+   [ ] 14.1 - Adjustare IntersectionObserver threshold:
+          threshold: 0.3 (invece di 0.1)
+
+   File: src/components/MagneticElements.astro
+   [ ] 14.2 - Aumentare magnetic strength:
+          da 0.15 a 0.25 per maggiore effetto
+
+   [ ] 14.3 - Aggiungere animated counter per sezione stats:
+          Numeri che contano da 0 a valore finale
+
+   [ ] 14.4 - Aggiungere stagger animation su liste:
+          delay-100, delay-200, delay-300...
+
+   [ ] 14.5 - Testare smoothness animazioni 60fps
+
+---
+
+🟢 TASK 15: AGGIUNGERE FAVICON E PWA
+
+   [ ] 15.1 - Creare public/favicon.svg
+   [ ] 15.2 - Generare favicon.ico
+   [ ] 15.3 - Generare apple-touch-icon.png (180x180)
+   [ ] 15.4 - Creare public/manifest.json (per PWA)
+   [ ] 15.5 - Aggiungere link favicon nel Layout.astro
+   [ ] 15.6 - Testare favicon su tutti i browser
+
+
+================================================================================
+FASE 4: BASSA PRIORITÀ (NICE TO HAVE)
+================================================================================
+
+🔵 TASK 16: ANALYTICS E TRACKING
+
+   [ ] 16.1 - Creare account Google Analytics 4
+   [ ] 16.2 - Installare @astrojs/partytown per analytics
+   [ ] 16.3 - Configurare GA4 tracking
+   [ ] 16.4 - Setup conversion goals:
+          - Form submission
+          - Button clicks CTA
+          - Page scroll depth
+   [ ] 16.5 - Aggiungere Hotjar/Microsoft Clarity (opzionale)
+   [ ] 16.6 - Setup Google Search Console
+   [ ] 16.7 - Verificare proprietà sito GSC
+
+---
+
+🔵 TASK 17: COOKIE CONSENT BANNER
+
+   [ ] 17.1 - Installare libreria cookie consent (es. cookieconsent)
+   [ ] 17.2 - Creare componente CookieBanner.astro
+   [ ] 17.3 - Aggiungere al Layout.astro
+   [ ] 17.4 - Configurare categorie cookies:
+          - Necessari
+          - Analitici
+          - Marketing
+   [ ] 17.5 - Salvare preferenze utente localStorage
+   [ ] 17.6 - Bloccare scripts analytics se rifiutati
+
+---
+
+🔵 TASK 18: NEWSLETTER SIGNUP
+
+   File: src/components/Newsletter.astro (da creare)
+   [ ] 18.1 - Creare form signup email
+   [ ] 18.2 - Integrare con servizio email (Mailchimp, ConvertKit, Buttondown)
+   [ ] 18.3 - Aggiungere al footer
+   [ ] 18.4 - Aggiungere success message
+   [ ] 18.5 - GDPR compliance checkbox
+
+---
+
+🔵 TASK 19: FAQ SECTION
+
+   File: src/pages/faq.astro (da creare)
+   [ ] 19.1 - Creare pagina FAQ
+   [ ] 19.2 - Aggiungere 10-15 domande comuni:
+          - Tempi di sviluppo?
+          - Costi progetti?
+          - Processo di lavoro?
+          - Supporto post-lancio?
+   [ ] 19.3 - Implementare accordion animato
+   [ ] 19.4 - Aggiungere search bar FAQ
+   [ ] 19.5 - Linkare FAQ dal footer
+
+---
+
+🔵 TASK 20: TESTIMONIALS/RECENSIONI
+
+   File: src/components/Testimonials.astro (da creare)
+   [ ] 20.1 - Creare componente testimonials
+   [ ] 20.2 - Aggiungere 5-10 recensioni clienti (reali)
+   [ ] 20.3 - Carousel autoplay testimonials
+   [ ] 20.4 - Aggiungere foto/nome/azienda clienti
+   [ ] 20.5 - Inserire in homepage dopo stats
+
+---
+
+🔵 TASK 21: BLOG AVANZATO
+
+   [ ] 21.1 - Aggiungere sistema tags/categorie
+   [ ] 21.2 - Creare pagina /blog/tag/[tag]
+   [ ] 21.3 - Aggiungere search blog
+   [ ] 21.4 - Related posts in article
+   [ ] 21.5 - Reading time estimate
+   [ ] 21.6 - Table of contents articoli lunghi
+   [ ] 21.7 - Share buttons social
+   [ ] 21.8 - Comments system (Giscus/Disqus)
+   [ ] 21.9 - RSS feed blog
+
+---
+
+🔵 TASK 22: PERFORMANCE AVANZATA
+
+   [ ] 22.1 - Lighthouse audit completo
+   [ ] 22.2 - Setup Lighthouse CI
+   [ ] 22.3 - Performance budgets:
+          - JS < 100KB
+          - CSS < 50KB
+          - Images < 500KB per page
+   [ ] 22.4 - Lazy load offscreen images
+   [ ] 22.5 - Preload critical fonts
+   [ ] 22.6 - Code splitting per route
+   [ ] 22.7 - Service Worker per caching (opzionale)
+
+---
+
+🔵 TASK 23: INTERNAZIONALIZZAZIONE (I18N)
+
+   [ ] 23.1 - Installare @astrojs/i18n
+   [ ] 23.2 - Setup lingue: IT (default), EN
+   [ ] 23.3 - Tradurre contenuti
+   [ ] 23.4 - Language switcher nel nav
+   [ ] 23.5 - hreflang tags per SEO
+   [ ] 23.6 - Locale-specific sitemap
+
+
+================================================================================
+TESTING E LAUNCH CHECKLIST
+================================================================================
+
+PRE-LAUNCH TESTING:
+[ ] Browser compatibility (Chrome, Firefox, Safari, Edge)
+[ ] Mobile testing (iOS Safari, Android Chrome)
+[ ] Lighthouse scores > 90 tutte le metriche
+[ ] Broken links check (tool: screaming frog)
+[ ] Spelling/grammar check
+[ ] Form submission test (tutti i campi)
+[ ] Error handling test
+[ ] 404 page test
+[ ] Social share preview test
+[ ] GTmetrix speed test
+[ ] Pingdom test
+[ ] Cross-device testing (320px - 2560px)
+[ ] Print stylesheet test
+[ ] Accessibility audit (WAVE, axe)
+
+DEPLOYMENT:
+[ ] Configurare dominio custom
+[ ] Setup SSL certificate
+[ ] Configurare DNS
+[ ] Deploy to production (Vercel/Netlify/Cloudflare)
+[ ] Test sito live
+[ ] Redirect www/non-www
+[ ] Setup email forwarding
+[ ] Backup automatico database (se applicabile)
+
+POST-LAUNCH:
+[ ] Submit sitemap a Google Search Console
+[ ] Submit sitemap a Bing Webmaster
+[ ] Monitoring uptime (UptimeRobot)
+[ ] Setup error logging (Sentry)
+[ ] Annuncio lancio social media
+[ ] Email lista clienti/contatti
+
+
+================================================================================
+NOTE FINALI
+================================================================================
+
+PRIORITÀ ASSOLUTA PER LANCIO MINIMO FUNZIONANTE:
+1. Form contatti funzionante (TASK 1)
+2. Privacy policy + 404 (TASK 2)
+3. Link rotti fixati (TASK 3)
+4. SEO base (TASK 4)
+
+Completando TASK 1-5 il sito è PRONTO PER LANCIO.
+
+TASK 6-15 sono miglioramenti importanti da fare nelle 2 settimane dopo lancio.
+
+TASK 16-23 sono enhancement opzionali per crescita successiva.
+
+
+TEMPO STIMATO:
+- Fase 1 (Critici): 8-12 ore
+- Fase 2 (Alta): 6-8 ore
+- Fase 3 (Media): 10-15 ore
+- Fase 4 (Bassa): 20-30 ore
+TOTALE: ~44-65 ore di sviluppo
+
+
+CONTATTI SUPPORTO:
+- Astro Docs: https://docs.astro.build
+- Tailwind Docs: https://tailwindcss.com/docs
+- Community: https://astro.build/chat
+
+
+================================================================================
+Fine Task List - Buon Lavoro! 🚀
+================================================================================

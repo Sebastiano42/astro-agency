@@ -1,0 +1,66 @@
+---
+// src/components/MagneticElements.astro
+// Magnetic hover effect for interactive elements
+---
+
+<script>
+  let magneticCleanups = [];
+
+  function cleanupMagnetic() {
+    magneticCleanups.forEach(fn => fn());
+    magneticCleanups = [];
+  }
+
+  function initMagneticEffect() {
+    cleanupMagnetic();
+
+    const magneticElements = document.querySelectorAll('.btn-primary, .btn-outline, .magnetic');
+    if (!magneticElements.length) return;
+
+    const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+    if (isTouchDevice) return;
+
+    magneticElements.forEach((element) => {
+      const el = element;
+
+      const handleMouseMove = (e) => {
+        const rect = el.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+        const deltaX = e.clientX - centerX;
+        const deltaY = e.clientY - centerY;
+        const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+        const maxDistance = Math.max(rect.width, rect.height);
+
+        if (distance < maxDistance) {
+          const strength = 0.25;
+          el.style.transform = `translate(${deltaX * strength}px, ${deltaY * strength}px) scale(1.02)`;
+        }
+      };
+
+      const handleMouseEnter = () => {
+        el.style.transition = 'transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)';
+      };
+
+      const handleMouseLeave = () => {
+        el.style.transform = 'translate(0px, 0px) scale(1)';
+        el.style.transition = 'transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)';
+      };
+
+      el.addEventListener('mouseenter', handleMouseEnter);
+      el.addEventListener('mousemove', handleMouseMove);
+      el.addEventListener('mouseleave', handleMouseLeave);
+
+      magneticCleanups.push(() => {
+        el.removeEventListener('mouseenter', handleMouseEnter);
+        el.removeEventListener('mousemove', handleMouseMove);
+        el.removeEventListener('mouseleave', handleMouseLeave);
+        el.style.transform = '';
+        el.style.transition = '';
+      });
+    });
+  }
+
+  document.addEventListener('astro:page-load', initMagneticEffect);
+  document.addEventListener('astro:before-swap', cleanupMagnetic);
+</script>

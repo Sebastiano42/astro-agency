@@ -1,0 +1,259 @@
+---
+// src/components/Navigation.astro
+import ThemeToggle from './ThemeToggle.astro';
+---
+
+<a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[200] focus:bg-white focus:text-black focus:px-4 focus:py-2 focus:rounded-lg focus:font-bold focus:text-sm">
+  Vai al contenuto principale
+</a>
+
+<header id="main-header" class="fixed top-0 w-full z-50 transition-all duration-300">
+  <!-- Backdrop for header content -->
+  <div class="absolute inset-0 bg-background/90 backdrop-blur-xl opacity-0 transition-opacity duration-300 border-b border-white/5" id="header-bg"></div>
+
+  <nav class="container-custom py-5 relative">
+    <div class="flex justify-between items-center">
+      <!-- Logo -->
+      <a href="/" class="flex items-center gap-3 no-underline group relative z-[110]">
+        <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center text-black font-black text-xl logo-box transition-colors duration-300">
+          S.
+        </div>
+        <span class="text-xl font-bold uppercase tracking-widest text-white hidden sm:block">Studio</span>
+      </a>
+      
+      <!-- Desktop Menu -->
+      <div class="hidden md:flex items-center gap-8 bg-surface/80 backdrop-blur-xl border border-white/10 px-8 py-3 rounded-full shadow-2xl">
+        <ul class="flex list-none gap-8 m-0 p-0 items-center">
+          {['Home', 'Servizi', 'Portfolio', 'Chi Siamo'].map((item) => (
+            <li>
+              <a href={item === 'Home' ? '/' : `/${item.toLowerCase().replace(' ', '-')}`} 
+                 class="text-xs font-bold uppercase tracking-widest text-gray-400 hover:text-white transition-colors duration-200 no-underline">
+                {item}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div class="hidden md:flex items-center gap-4">
+         <ThemeToggle />
+         <a href="/contatti" class="btn-primary !py-2.5 !px-6 !text-xs rounded-full">
+            Inizia Progetto
+          </a>
+      </div>
+      
+      <!-- Mobile Controls -->
+      <div class="flex items-center gap-4 md:hidden relative z-[110]">
+        <button class="mobile-toggle w-12 h-12 bg-white text-black rounded-full flex flex-col items-center justify-center gap-1.5 active:scale-90 transition-all shadow-[0_0_20px_rgba(255,255,255,0.2)] cursor-pointer border-2 border-transparent" aria-label="Apri menu di navigazione" aria-expanded="false" aria-controls="mobile-menu">
+          <span class="w-5 h-0.5 bg-black block transition-all duration-300 rounded-full origin-center"></span>
+          <span class="w-5 h-0.5 bg-black block transition-all duration-300 rounded-full origin-center"></span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Mobile Menu Overlay -->
+  <div id="mobile-menu" class="nav-menu fixed inset-0 bg-background z-[100] md:hidden flex flex-col opacity-0 pointer-events-none will-change-[opacity] transition-opacity duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]" role="dialog" aria-label="Menu di navigazione">
+
+    <!-- Close button -->
+    <div class="container-custom pt-5 relative z-20 flex justify-end">
+      <button class="mobile-close w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-gray-400 hover:text-white hover:border-white/25 transition-colors duration-200 cursor-pointer bg-transparent" aria-label="Chiudi menu">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+          <line x1="2" y1="2" x2="14" y2="14" />
+          <line x1="14" y1="2" x2="2" y2="14" />
+        </svg>
+      </button>
+    </div>
+
+    <!-- Menu content -->
+    <div class="flex-1 overflow-y-auto container-custom relative z-10 flex flex-col justify-center py-6">
+        <ul class="flex flex-col gap-0 list-none p-0 text-left w-full">
+          {['Home', 'Servizi', 'Portfolio', 'Chi Siamo', 'Contatti'].map((item, id) => (
+            <li class="border-b border-white/[0.06] last:border-0">
+              <a href={item === 'Home' ? '/' : `/${item.toLowerCase().replace(' ', '-')}`}
+                 class="mobile-link group flex items-center gap-3 py-4 text-2xl font-bold uppercase tracking-wide text-gray-500 hover:text-white no-underline opacity-0 translate-y-4 transition-[opacity,transform,color] duration-300 ease-out">
+                 <span class="text-[10px] font-mono text-gray-700 group-hover:text-gray-400 transition-colors duration-200 tabular-nums">0{id + 1}</span>
+                {item}
+              </a>
+            </li>
+          ))}
+        </ul>
+
+        <div class="mt-8 pt-6 border-t border-white/[0.06] flex flex-col sm:flex-row sm:items-center gap-5 sm:gap-10 opacity-0 mobile-footer transition-opacity duration-300">
+            <div>
+                <span class="text-[10px] font-mono text-gray-600 uppercase tracking-widest block mb-1.5">Contatto</span>
+                <a href="mailto:hello@studio.com" class="text-white text-sm font-medium no-underline hover:text-gray-300 transition-colors duration-200">hello@studio.com</a>
+            </div>
+            <div>
+                <span class="text-[10px] font-mono text-gray-600 uppercase tracking-widest block mb-1.5">Social</span>
+                <div class="flex gap-4 text-white font-medium text-xs">
+                    <a href="https://www.instagram.com/studiodigital" target="_blank" rel="noopener noreferrer" class="no-underline hover:text-gray-300 transition-colors duration-200">IG</a>
+                    <a href="https://twitter.com/studiodigital" target="_blank" rel="noopener noreferrer" class="no-underline hover:text-gray-300 transition-colors duration-200">TW</a>
+                    <a href="https://www.linkedin.com/company/studio-digital" target="_blank" rel="noopener noreferrer" class="no-underline hover:text-gray-300 transition-colors duration-200">LN</a>
+                </div>
+            </div>
+            <div class="sm:ml-auto">
+                <ThemeToggle />
+            </div>
+        </div>
+    </div>
+  </div>
+</header>
+
+<script>
+  let scrollListener = null;
+  let toggleListener = null;
+  let closeListener = null;
+  let linkListeners = [];
+
+  function cleanup() {
+    if (scrollListener) {
+      window.removeEventListener('scroll', scrollListener);
+      scrollListener = null;
+    }
+    if (toggleListener) {
+      const toggle = document.querySelector('.mobile-toggle');
+      toggle?.removeEventListener('click', toggleListener);
+      toggleListener = null;
+    }
+    if (closeListener) {
+      const closeBtn = document.querySelector('.mobile-close');
+      closeBtn?.removeEventListener('click', closeListener);
+      closeListener = null;
+    }
+    linkListeners.forEach(({ el, handler }) => {
+      el.removeEventListener('click', handler);
+    });
+    linkListeners = [];
+  }
+
+  function init() {
+    cleanup();
+
+    const toggle = document.querySelector('.mobile-toggle');
+    const closeBtn = document.querySelector('.mobile-close');
+    const menu = document.querySelector('.nav-menu');
+    const spans = toggle?.querySelectorAll('span');
+    const links = document.querySelectorAll('.mobile-link');
+    const mobileFooter = document.querySelector('.mobile-footer');
+    const logoBox = document.querySelector('.logo-box');
+
+    if (toggle && menu && spans) {
+      let isOpen = false;
+
+      function resetMenuState() {
+        menu.classList.add('opacity-0', 'pointer-events-none');
+        document.body.classList.remove('overflow-hidden');
+        toggle.setAttribute('aria-expanded', 'false');
+        toggle.setAttribute('aria-label', 'Apri menu di navigazione');
+        toggle.style.opacity = '1';
+        toggle.style.pointerEvents = 'auto';
+        logoBox?.classList.remove('bg-transparent', 'text-white', 'border', 'border-white/20');
+        logoBox?.classList.add('bg-white', 'text-black');
+        links.forEach(link => {
+          link.classList.remove('translate-y-0', 'opacity-100');
+          link.classList.add('opacity-0', 'translate-y-4');
+        });
+        mobileFooter?.classList.add('opacity-0');
+        isOpen = false;
+      }
+
+      function openMenu() {
+        if (isOpen) return;
+        isOpen = true;
+
+        menu.classList.remove('opacity-0', 'pointer-events-none');
+        document.body.classList.add('overflow-hidden');
+        toggle.setAttribute('aria-expanded', 'true');
+        toggle.setAttribute('aria-label', 'Chiudi menu di navigazione');
+        toggle.style.opacity = '0';
+        toggle.style.pointerEvents = 'none';
+
+        logoBox?.classList.remove('bg-white', 'text-black');
+        logoBox?.classList.add('bg-transparent', 'text-white', 'border', 'border-white/20');
+
+        links.forEach((link, idx) => {
+          setTimeout(() => {
+            link.classList.remove('opacity-0', 'translate-y-4');
+            link.classList.add('translate-y-0', 'opacity-100');
+          }, 60 + (idx * 40));
+        });
+
+        setTimeout(() => {
+          mobileFooter?.classList.remove('opacity-0');
+        }, 300);
+      }
+
+      function closeMenu() {
+        if (!isOpen) return;
+        isOpen = false;
+
+        menu.classList.add('opacity-0', 'pointer-events-none');
+        document.body.classList.remove('overflow-hidden');
+        toggle.setAttribute('aria-expanded', 'false');
+        toggle.setAttribute('aria-label', 'Apri menu di navigazione');
+        toggle.style.opacity = '1';
+        toggle.style.pointerEvents = 'auto';
+
+        logoBox?.classList.remove('bg-transparent', 'text-white', 'border', 'border-white/20');
+        logoBox?.classList.add('bg-white', 'text-black');
+
+        links.forEach(link => {
+          link.classList.remove('translate-y-0', 'opacity-100');
+          link.classList.add('opacity-0', 'translate-y-4');
+        });
+        mobileFooter?.classList.add('opacity-0');
+      }
+
+      // Instant close (no animation) - used when navigating
+      function closeMenuInstant() {
+        if (!isOpen) return;
+        menu.style.transition = 'none';
+        resetMenuState();
+        // Re-enable transitions on next frame
+        requestAnimationFrame(() => {
+          menu.style.transition = '';
+        });
+      }
+
+      toggleListener = () => {
+        if (isOpen) { closeMenu(); } else { openMenu(); }
+      };
+      toggle.addEventListener('click', toggleListener);
+
+      if (closeBtn) {
+        closeListener = () => { closeMenu(); };
+        closeBtn.addEventListener('click', closeListener);
+      }
+
+      // On link click: close instantly, let View Transition handle the page change smoothly
+      links.forEach(link => {
+        const handler = () => { closeMenuInstant(); };
+        link.addEventListener('click', handler);
+        linkListeners.push({ el: link, handler });
+      });
+    }
+
+    // Scroll Effect with RAF throttling
+    const headerBg = document.getElementById('header-bg');
+    let ticking = false;
+
+    scrollListener = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          if (window.scrollY > 20) {
+            headerBg.classList.remove('opacity-0');
+          } else {
+            headerBg.classList.add('opacity-0');
+          }
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+    window.addEventListener('scroll', scrollListener);
+  }
+
+  document.addEventListener('astro:page-load', init);
+  document.addEventListener('astro:before-swap', cleanup);
+</script>

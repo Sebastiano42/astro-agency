@@ -1,0 +1,441 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Page transition keyframes (used by Astro View Transitions) */
+@keyframes pageFadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
+@keyframes pageFadeSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@layer base {
+    html {
+        background-color: #020202;
+        overflow-x: hidden;
+    }
+
+    body {
+        font-family: 'Inter', sans-serif;
+        background-color: theme('colors.background');
+        @apply text-gray-300 antialiased overflow-x-hidden relative;
+    }
+
+
+    ::selection {
+        background: #ffffff;
+        color: #000000;
+    }
+
+    *:focus-visible {
+        outline: 2px solid rgba(255, 255, 255, 0.6);
+        outline-offset: 2px;
+    }
+
+    /* Restore cursor on interactive elements when custom cursor is active */
+    @media (hover: hover) and (pointer: fine) {
+        a:focus-visible,
+        button:focus-visible,
+        input:focus-visible,
+        select:focus-visible,
+        textarea:focus-visible {
+            outline: 2px solid rgba(255, 255, 255, 0.6);
+            outline-offset: 2px;
+        }
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        font-family: 'Space Grotesk', sans-serif;
+    }
+}
+
+@layer components {
+    .container-custom {
+        @apply container mx-auto px-6 md:px-8 lg:px-12 max-w-7xl;
+    }
+
+    .btn-primary {
+        @apply inline-flex items-center justify-center px-8 py-4 bg-white text-black font-bold uppercase tracking-wider text-sm transition-all duration-300 rounded-lg relative overflow-hidden;
+        box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+    }
+
+    .btn-primary::after {
+        content: '';
+        @apply absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent translate-x-[-150%] skew-x-12 transition-transform duration-700 ease-in-out;
+    }
+
+    .btn-primary:hover::after {
+        @apply translate-x-[150%];
+    }
+
+    .btn-primary:hover {
+        box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+        transform: translateY(-1px);
+    }
+
+    .btn-outline {
+        @apply inline-flex items-center justify-center px-8 py-4 bg-transparent border border-gray-700 text-white font-bold uppercase tracking-wider text-sm hover:border-white hover:bg-white/5 transition-all duration-300 rounded-lg relative overflow-hidden;
+    }
+
+    /* ===== CARD DARK - ENHANCED HOVER EFFECTS ===== */
+    .card-dark {
+        background-color: theme('colors.surface');
+        background-image: linear-gradient(135deg, #0f0f0f 0%, #080808 100%);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.03);
+        @apply p-8 rounded-2xl relative overflow-visible;
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                    box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                    border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                    background-image 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Gradient Border Effect on Hover */
+    .card-dark::before {
+        content: "";
+        position: absolute;
+        inset: -2px;
+        border-radius: 18px;
+        padding: 2px;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0) 100%);
+        -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        opacity: 0;
+        transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        pointer-events: none;
+        z-index: -1;
+    }
+
+    /* Glow Effect */
+    .card-dark::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 120%;
+        height: 120%;
+        transform: translate(-50%, -50%);
+        background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.08) 0%, transparent 70%);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        pointer-events: none;
+        z-index: -2;
+    }
+
+    /* Desktop: full hover effects */
+    @media (hover: hover) and (pointer: fine) {
+        .card-dark:hover::before {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.5) 0%, rgba(120, 120, 255, 0.3) 50%, rgba(255, 255, 255, 0.1) 100%);
+            opacity: 1;
+        }
+
+        .card-dark:hover::after {
+            opacity: 1;
+        }
+
+        .card-dark:hover {
+            border-color: rgba(255, 255, 255, 0.15);
+            background-image: linear-gradient(135deg, #151515 0%, #0d0d0d 100%);
+            transform: translateY(-4px) scale(1.01);
+            box-shadow:
+                0 15px 30px rgba(0, 0, 0, 0.9),
+                0 0 20px rgba(255, 255, 255, 0.03),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+    }
+
+    /* Touch/Mobile: reduced active state */
+    @media (hover: none), (pointer: coarse) {
+        .card-dark:active {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.7),
+                        0 0 10px rgba(255, 255, 255, 0.02);
+            transition-duration: 0.15s;
+        }
+    }
+
+    /* Shimmer Effect on Hover */
+    .card-dark .shimmer {
+        position: absolute;
+        top: 0;
+        left: -150%;
+        width: 150%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.04) 50%, transparent 100%);
+        transform: skewX(-20deg);
+        transition: left 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        pointer-events: none;
+    }
+
+    .card-dark:hover .shimmer {
+        left: 150%;
+    }
+
+    .text-balance {
+        text-wrap: balance;
+    }
+
+    /* Mobile Typography Fixes */
+    .hero-text {
+        @apply text-5xl sm:text-7xl md:text-8xl lg:text-9xl font-black leading-[0.9] tracking-tighter uppercase;
+        word-break: break-word;
+    }
+
+    /* ===== INPUT STYLES - ENHANCED ===== */
+    .input-dark {
+        background-color: rgba(0, 0, 0, 0.4);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        @apply w-full p-4 rounded-lg text-white focus:outline-none transition-all duration-300 placeholder:text-gray-500;
+    }
+
+    .input-dark:hover {
+        border-color: rgba(255, 255, 255, 0.25);
+        background-color: rgba(0, 0, 0, 0.5);
+    }
+
+    .input-dark:focus {
+        border-color: rgba(255, 255, 255, 0.6);
+        background-color: rgba(0, 0, 0, 0.6);
+        box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1), 0 0 20px rgba(255, 255, 255, 0.08);
+    }
+
+    /* Form Field Wrapper */
+    .form-field {
+        @apply relative;
+    }
+
+    .form-field label {
+        @apply block text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-3;
+    }
+}
+
+@layer utilities {
+    .text-outline {
+        -webkit-text-stroke: 1px rgba(255, 255, 255, 0.3);
+        color: transparent;
+    }
+
+    .glass {
+        @apply backdrop-blur-xl bg-black/50 border-b border-white/10;
+    }
+
+    /* ===== MODERN SCROLL ANIMATIONS ===== */
+
+    /* Base Reveal - Fade Up */
+    .reveal {
+        opacity: 0;
+        transform: translateY(40px);
+        transition: opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1),
+                    transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+        will-change: transform;
+    }
+
+    .reveal.active {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    /* Reveal with Scale */
+    .reveal-scale {
+        opacity: 0;
+        transform: scale(0.9) translateY(30px);
+        transition: opacity 1s cubic-bezier(0.22, 1, 0.36, 1),
+                    transform 1s cubic-bezier(0.22, 1, 0.36, 1);
+        will-change: transform;
+    }
+
+    .reveal-scale.active {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+
+    /* Reveal from Left */
+    .reveal-left {
+        opacity: 0;
+        transform: translateX(-60px);
+        transition: opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1),
+                    transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+        will-change: transform;
+    }
+
+    .reveal-left.active {
+        opacity: 1;
+        transform: translateX(0);
+    }
+
+    /* Reveal from Right */
+    .reveal-right {
+        opacity: 0;
+        transform: translateX(60px);
+        transition: opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1),
+                    transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+        will-change: transform;
+    }
+
+    .reveal-right.active {
+        opacity: 1;
+        transform: translateX(0);
+    }
+
+    /* Reveal Rotate */
+    .reveal-rotate {
+        opacity: 0;
+        transform: perspective(1000px) rotateX(10deg) translateY(40px);
+        transition: all 1s cubic-bezier(0.22, 1, 0.36, 1);
+        will-change: opacity, transform;
+    }
+
+    .reveal-rotate.active {
+        opacity: 1;
+        transform: perspective(1000px) rotateX(0) translateY(0);
+    }
+
+
+    /* ===== HOVER ANIMATIONS ===== */
+
+    /* Magnetic Hover Effect - Ridotto */
+    .hover-lift {
+        transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .hover-lift:hover {
+        transform: translateY(-3px);
+    }
+
+    /* Glow Pulse on Hover - Ridotto */
+    .hover-glow {
+        transition: box-shadow 0.4s ease, transform 0.4s ease;
+    }
+
+    .hover-glow:hover {
+        box-shadow: 0 0 15px rgba(255, 255, 255, 0.08), 0 0 30px rgba(255, 255, 255, 0.03);
+        transform: translateY(-2px);
+    }
+
+    /* Text Gradient on Hover */
+    .text-hover-gradient {
+        background-size: 200% 200%;
+        background-clip: text;
+        -webkit-background-clip: text;
+        transition: all 0.5s ease;
+    }
+
+    .text-hover-gradient:hover {
+        background-position: 100% 0;
+    }
+
+    /* Underline Animation */
+    .link-underline {
+        position: relative;
+    }
+
+    .link-underline::after {
+        content: '';
+        position: absolute;
+        bottom: -2px;
+        left: 0;
+        width: 0;
+        height: 1px;
+        background: linear-gradient(90deg, white, rgba(255, 255, 255, 0.5));
+        transition: width 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .link-underline:hover::after {
+        width: 100%;
+    }
+
+    /* Icon Animation */
+    .icon-animate {
+        transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease;
+    }
+
+    .group:hover .icon-animate {
+        transform: translate(4px, -4px);
+        opacity: 1;
+    }
+
+    /* Number Counter Animation */
+    .counter-animate {
+        transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), color 0.3s ease;
+    }
+
+    .group:hover .counter-animate {
+        transform: scale(1.05);
+    }
+
+    /* ===== MOUSE TRACKING & CURSOR EFFECTS ===== */
+
+    /* Ripple Click Effect */
+    .ripple {
+        position: fixed;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
+        pointer-events: none;
+        animation: ripple-animation 0.6s ease-out;
+        z-index: 9997;
+    }
+
+    @keyframes ripple-animation {
+        0% {
+            transform: scale(0);
+            opacity: 1;
+        }
+        100% {
+            transform: scale(4);
+            opacity: 0;
+        }
+    }
+
+    /* Cursor Hover States - Add to elements for enhanced cursor effects */
+    .cursor-hover {
+        cursor: none;
+    }
+
+
+    /* Smooth Transitions for Magnetic Effects */
+    .magnetic {
+        will-change: transform;
+    }
+
+    /* Interactive Element Glow on Cursor Proximity */
+    .proximity-glow {
+        position: relative;
+        transition: all 0.3s ease;
+    }
+
+    .proximity-glow::before {
+        content: '';
+        position: absolute;
+        inset: -2px;
+        background: linear-gradient(45deg,
+            rgba(99, 102, 241, 0.4),
+            rgba(168, 85, 247, 0.4),
+            rgba(236, 72, 153, 0.4)
+        );
+        border-radius: inherit;
+        opacity: 0;
+        filter: blur(20px);
+        transition: opacity 0.3s ease;
+        z-index: -1;
+    }
+
+    .proximity-glow:hover::before {
+        opacity: 0.5;
+    }
+}

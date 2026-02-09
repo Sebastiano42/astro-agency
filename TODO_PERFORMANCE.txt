@@ -1,0 +1,1186 @@
+================================================================================
+PROGETTO: STUDIO DIGITALE - PERFORMANCE & UX FIXES
+Data: 09 Febbraio 2026
+================================================================================
+
+CHECK-UP COMPLETO EFFETTUATO
+Problemi identificati: 13 problemi critici
+Focus: Scrolling macchinoso, Navigazione lenta, Problemi mobile
+
+================================================================================
+PRIORITÀ:
+================================================================================
+🔴 CRITICO - Sistemare immediatamente (Performance blocker)
+🟡 ALTA - Importante per UX fluida
+🟢 MEDIA - Miglioramenti consigliati
+🔵 TEST - Validazione finale
+
+================================================================================
+🔴 TASK #1: FIXARE SCROLL LISTENER SENZA THROTTLING
+================================================================================
+Priorità: CRITICO
+File: src/components/Navigation.astro (linee 177-185)
+
+PROBLEMA:
+Il listener scroll viene eseguito ad ogni pixel senza throttling, causando
+centinaia di esecuzioni al secondo e scrolling a scatti.
+
+CODICE ATTUALE (PROBLEMATICO):
+```javascript
+window.addEventListener('scroll', () => {
+    if (window.scrollY > 20) {
+        headerBg.classList.remove('opacity-0');
+    } else {
+        headerBg.classList.add('opacity-0');
+    }
+});
+```
+
+AZIONE:
+1. Implementare throttling con requestAnimationFrame
+2. Rimuovere il listener diretto e usare RAF per aggiornamenti ottimizzati
+3. Testare scrolling fluido su mobile e desktop
+
+IMPLEMENTAZIONE SUGGERITA:
+```javascript
+let ticking = false;
+let lastKnownScrollPosition = 0;
+
+function updateHeaderBg(scrollPos) {
+    if (scrollPos > 20) {
+        headerBg.classList.remove('opacity-0');
+    } else {
+        headerBg.classList.add('opacity-0');
+    }
+}
+
+window.addEventListener('scroll', () => {
+    lastKnownScrollPosition = window.scrollY;
+
+    if (!ticking) {
+        window.requestAnimationFrame(() => {
+            updateHeaderBg(lastKnownScrollPosition);
+            ticking = false;
+        });
+        ticking = true;
+    }
+});
+```
+
+STATUS: [ ] PENDING
+
+
+================================================================================
+🔴 TASK #2: RIMUOVERE BLUR EFFECTS DALLE ANIMAZIONI REVEAL
+================================================================================
+Priorità: CRITICO (MOBILE)
+File: src/styles/global.css (linee 240-313)
+
+PROBLEMA:
+`filter: blur(10px)` su tutte le classi `.reveal` causa frame drop pesanti
+(da 60fps a 15-20fps) su dispositivi mobile low-end.
+
+CLASSI DA MODIFICARE:
+- .reveal (linea 248)
+- .reveal-scale (linea 261)
+- .reveal-left (linea 274)
+- .reveal-right (linea 287)
+
+AZIONE:
+1. Rimuovere completamente `filter: blur()` da tutte le classi reveal
+2. Mantenere solo opacity e transform
+3. Rimuovere `filter` da will-change
+4. Testare animazioni su dispositivi mobile low-end
+
+ESEMPIO MODIFICA:
+DA:
+```css
+.reveal {
+    opacity: 0;
+    transform: translateY(40px);
+    filter: blur(10px);  /* RIMUOVERE */
+    transition: all 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: opacity, transform, filter;  /* RIMUOVERE filter */
+}
+
+.reveal.active {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);  /* RIMUOVERE */
+}
+```
+
+A:
+```css
+.reveal {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: all 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: opacity, transform;
+}
+
+.reveal.active {
+    opacity: 1;
+    transform: translateY(0);
+}
+```
+
+STATUS: [ ] PENDING
+
+
+================================================================================
+🔴 TASK #3: FIXARE MEMORY LEAK NEI COMPONENT INTERATTIVI
+================================================================================
+Priorità: CRITICO
+File: src/components/CursorFollower.astro
+      src/components/MagneticElements.astro
+      src/components/RippleEffect.astro
+      src/components/Navigation.astro
+
+PROBLEMA:
+- Doppia inizializzazione al primo caricamento
+- Event listener non vengono rimossi con View Transitions
+- Ad ogni navigazione i listener si accumulano
+- Dopo 5 navigazioni, hai 5 scroll listener attivi simultaneamente!
+
+PATTERN ATTUALE (PROBLEMATICO):
+```javascript
+document.addEventListener('DOMContentLoaded', initFunction);
+document.addEventListener('astro:page-load', initFunction);
+```
+
+AZIONE:
+1. Rimuovere doppio listener DOMContentLoaded + astro:page-load
+2. Aggiungere cleanup degli event listener con `astro:before-swap`
+3. Implementare pattern di cleanup corretto per tutti i component
+
+IMPLEMENTAZIONE CORRETTA:
+```javascript
+let initialized = false;
+let scrollListener = null;
+let clickListener = null;
+// ... altri listener
+
+function cleanup() {
+  // Rimuovi tutti i listener
+  if (scrollListener) {
+    window.removeEventListener('scroll', scrollListener);
+    scrollListener = null;
+  }
+  if (clickListener) {
+    document.removeEventListener('click', clickListener);
+    clickListener = null;
+  }
+  // ... rimuovi altri listener
+  initialized = false;
+}
+
+function init() {
+  if (initialized) cleanup();
+
+  // Setup listeners (salva riferimenti)
+  scrollListener = () => { /* ... */ };
+  window.addEventListener('scroll', scrollListener);
+
+  clickListener = (e) => { /* ... */ };
+  document.addEventListener('click', clickListener);
+
+  initialized = true;
+}
+
+// Event listeners Astro
+document.addEventListener('astro:page-load', init);
+document.addEventListener('astro:before-swap', cleanup);
+```
+
+APPLICARE A TUTTI I FILE:
+- CursorFollower.astro
+- MagneticElements.astro
+- RippleEffect.astro
+- Navigation.astro (scroll listener per header background)
+
+STATUS: [ ] PENDING
+
+
+================================================================================
+🔴 TASK #4: COMPLETARE VIEWPORT META TAG
+================================================================================
+Priorità: CRITICO (MOBILE)
+File: src/layouts/Layout.astro (linea 72)
+
+PROBLEMA:
+Viewport tag incompleto causa rendering errato e zoom issues su dispositivi
+Android e alcuni iPhone.
+
+CODICE ATTUALE:
+```html
+<meta name="viewport" content="width=device-width" />
+```
+
+SOSTITUIRE CON:
+```html
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0, viewport-fit=cover" />
+```
+
+SPIEGAZIONE PARAMETRI:
+- width=device-width: usa larghezza dispositivo
+- initial-scale=1.0: zoom iniziale 100%
+- minimum-scale=1.0: previene zoom out eccessivo
+- maximum-scale=5.0: permette zoom in accessibilità
+- viewport-fit=cover: gestisce notch iPhone X+
+
+TEST:
+- iPhone SE (viewport piccolo)
+- Android low-end (Samsung Galaxy A series)
+- iPad (landscape/portrait)
+- Dispositivi con notch (iPhone 12+)
+
+STATUS: [ ] PENDING
+
+
+================================================================================
+🔴 TASK #5: RIMUOVERE DOPPIO SCROLL-BEHAVIOR SMOOTH
+================================================================================
+Priorità: CRITICO
+File: src/styles/global.css (linea 7)
+      src/layouts/Layout.astro (linea 69)
+
+PROBLEMA:
+Doppia dichiarazione di smooth scroll causa scrolling pesante e poco reattivo
+su mobile e browser meno performanti.
+
+DICHIARAZIONI DUPLICATE:
+1. global.css linea 7:
+```css
+html {
+    scroll-behavior: smooth;
+}
+```
+
+2. Layout.astro linea 69:
+```html
+<html lang="it" class="scroll-smooth">
+```
+
+AZIONE:
+1. RIMUOVERE completamente `scroll-behavior: smooth` da global.css (linea 7)
+2. RIMUOVERE anche la classe `scroll-smooth` da Layout.astro
+3. Per scroll smooth su link interni, implementare JavaScript specifico solo
+   quando necessario:
+
+```javascript
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+            target.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }
+    });
+});
+```
+
+MOTIVAZIONE:
+Lo scrolling nativo del browser è più performante. Smooth scroll CSS può
+causare stuttering su:
+- Dispositivi mobile low-end
+- Browser con GPU limitata
+- Durante animazioni parallele
+
+TEST:
+Verificare scrolling fluido su:
+- Desktop (Chrome, Firefox, Safari)
+- Mobile (iOS Safari, Android Chrome)
+- Con DevTools Performance monitor (target: 60fps costanti)
+
+STATUS: [ ] PENDING
+
+
+================================================================================
+🟡 TASK #6: OTTIMIZZARE BACKGROUND EFFECTS BODY::BEFORE/AFTER
+================================================================================
+Priorità: ALTA
+File: src/styles/global.css (linee 18-52)
+
+PROBLEMA:
+Due pseudo-elementi fixed position con pattern complessi (gradient radiali +
+dot pattern + line grid) causano jank pesante durante scroll su mobile.
+
+CODICE PROBLEMATICO:
+```css
+body::before {
+    content: "";
+    position: fixed;  /* Fixed su tutto il documento */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 100;
+    opacity: 0.4;
+    background-image:
+        radial-gradient(circle at 25% 25%, rgba(99, 102, 241, 0.03) 0%, transparent 50%),
+        radial-gradient(circle at 75% 75%, rgba(168, 85, 247, 0.03) 0%, transparent 50%),
+        radial-gradient(rgba(255, 255, 255, 0.4) 0.5px, transparent 0.5px);
+    background-size: 100% 100%, 100% 100%, 40px 40px;  /* Pattern ripetuto */
+}
+
+body::after {
+    /* Altro background pesante con grid pattern */
+}
+```
+
+IMPATTO:
+- Rendering di pattern complessi ad ogni frame durante scroll
+- Su schermi high-DPI mobile (Retina, AMOLED) il costo è 4x maggiore
+- Fixed positioning forza repaint continuo
+
+OPZIONI:
+
+OPZIONE A - RIMOZIONE COMPLETA (RACCOMANDATO):
+```css
+/* Rimuovere completamente body::before e body::after */
+```
+
+OPZIONE B - SEMPLIFICAZIONE DRASTICA:
+```css
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 100;
+    opacity: 0.2;  /* Ridotta da 0.4 */
+    /* Solo singolo gradient statico, NO pattern ripetuti */
+    background: radial-gradient(circle at 50% 50%, rgba(99, 102, 241, 0.05) 0%, transparent 70%);
+    will-change: transform;  /* Hint GPU */
+}
+
+/* Rimuovere body::after completamente */
+```
+
+RACCOMANDAZIONE:
+Rimozione completa (Opzione A) per massima performance su mobile.
+
+TEST:
+Misurare FPS con Chrome DevTools Performance:
+- PRIMA: FPS durante scroll
+- DOPO: FPS durante scroll
+- Target: 60fps costanti
+
+STATUS: [ ] PENDING
+
+
+================================================================================
+🟡 TASK #7: RIDURRE WILL-CHANGE SU REVEAL ANIMATIONS
+================================================================================
+Priorità: ALTA
+File: src/styles/global.css (linee 240-313)
+
+PROBLEMA:
+`will-change: opacity, transform, filter` su troppe proprietà crea layer
+compositi pesanti in GPU, specialmente quando applicato a molti elementi
+contemporaneamente.
+
+NOTA: Questo task è collegato al Task #2 (rimozione blur)
+
+AZIONE:
+1. Rimuovere `filter` da will-change (già parte del Task #2)
+2. Limitare will-change solo a `transform` OPPURE rimuoverlo completamente
+3. Valutare uso di `transform: translateZ(0)` come alternativa
+
+OPZIONE A - SOLO TRANSFORM:
+```css
+.reveal {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1),
+                transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: transform;  /* Solo transform */
+}
+```
+
+OPZIONE B - RIMOZIONE COMPLETA + GPU HINT:
+```css
+.reveal {
+    opacity: 0;
+    transform: translateY(40px) translateZ(0);  /* translateZ(0) forza GPU */
+    transition: opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1),
+                transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+    /* Nessun will-change */
+}
+```
+
+APPLICARE A:
+- .reveal
+- .reveal-scale
+- .reveal-left
+- .reveal-right
+
+TEST:
+Verificare performance animazioni con:
+- Chrome DevTools > Rendering > Layer borders
+- Performance monitor durante animazioni
+- Paint flashing per verificare repaint
+
+STATUS: [ ] PENDING
+
+
+================================================================================
+🟡 TASK #8: AUMENTARE THRESHOLD INTERSECTIONOBSERVER
+================================================================================
+Priorità: ALTA
+File: src/layouts/Layout.astro (linee 147-183)
+
+PROBLEMA:
+Threshold 0.1 (10% visibilità) è troppo sensibile. Le animazioni scattano
+troppo presto durante scroll veloce, creando effetto caotico.
+
+CODICE ATTUALE:
+```javascript
+const observerOptions = {
+  root: null,
+  rootMargin: '0px',
+  threshold: 0.1  // Troppo sensibile
+};
+```
+
+INOLTRE:
+Loop di setup observer inefficiente (linee 173-177):
+```javascript
+// Esegue querySelectorAll multipli
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+document.querySelectorAll('.reveal-scale').forEach(el => observer.observe(el));
+// ...
+```
+
+IMPLEMENTAZIONE MIGLIORATA:
+```javascript
+// Threshold più alto + rootMargin negativo per ritardare trigger
+const observerOptions = {
+  root: null,
+  rootMargin: '-50px 0px',  // Triggera solo quando elemento è 50px dentro viewport
+  threshold: 0.25  // 25% visibilità richiesta
+};
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('active');
+      // Opzionale: unobserve dopo prima animazione
+      // observer.unobserve(entry.target);
+    }
+  });
+}, observerOptions);
+
+// Setup ottimizzato: usa selettore singolo
+const elements = document.querySelectorAll('[class*="reveal"]');
+elements.forEach(el => observer.observe(el));
+```
+
+BENEFICI:
+- Animazioni triggerate al momento giusto (quando più visibili)
+- Un solo querySelectorAll invece di multipli
+- Possibilità di unobserve dopo prima animazione (performance++)
+
+TEST:
+- Scroll normale: animazioni smooth e ben temporizzate
+- Scroll veloce: no animazioni caotiche
+- Mobile: animazioni non triggerate troppo presto
+
+STATUS: [ ] PENDING
+
+
+================================================================================
+🟡 TASK #9: AGGIUNGERE DEBOUNCE AL TOGGLE MENU MOBILE
+================================================================================
+Priorità: ALTA
+File: src/components/Navigation.astro (linee 96-175)
+
+PROBLEMA:
+Click rapidi multipli sul menu toggle causano stati inconsistenti:
+- Menu aperto ma icona mostra "chiuso"
+- Menu chiuso ma icona mostra "aperto"
+- Animazioni sovrapposte
+
+INOLTRE:
+I link del menu chiamano `toggle.click()` per chiudere il menu, approccio
+indiretto che può causare race conditions.
+
+IMPLEMENTAZIONE CORRETTA:
+```javascript
+let isAnimating = false;
+const ANIMATION_DURATION = 300; // ms - durata animazione menu
+
+function toggleMenu(shouldOpen) {
+  // Previeni click durante animazione
+  if (isAnimating) return;
+
+  isAnimating = true;
+  const menu = document.getElementById('mobile-menu');
+  const hamburger = toggle.querySelector('.hamburger');
+  const closeIcon = toggle.querySelector('.close-icon');
+
+  if (shouldOpen) {
+    // Apri menu
+    menu.classList.remove('opacity-0', 'pointer-events-none', '-translate-y-full');
+    menu.classList.add('opacity-100', 'translate-y-0');
+    hamburger.classList.add('hidden');
+    closeIcon.classList.remove('hidden');
+  } else {
+    // Chiudi menu
+    menu.classList.remove('opacity-100', 'translate-y-0');
+    menu.classList.add('opacity-0', 'pointer-events-none', '-translate-y-full');
+    hamburger.classList.remove('hidden');
+    closeIcon.classList.add('hidden');
+  }
+
+  // Reset flag dopo animazione
+  setTimeout(() => {
+    isAnimating = false;
+  }, ANIMATION_DURATION);
+}
+
+// Toggle button
+toggle.addEventListener('click', () => {
+  const isOpen = !menu.classList.contains('opacity-0');
+  toggleMenu(!isOpen);
+});
+
+// Link menu - chiamata diretta invece di toggle.click()
+const menuLinks = document.querySelectorAll('#mobile-menu a');
+menuLinks.forEach(link => {
+  link.addEventListener('click', () => {
+    // Chiudi menu direttamente
+    toggleMenu(false);
+  });
+});
+```
+
+MIGLIORAMENTI:
+- Flag `isAnimating` previene click multipli
+- Funzione centralizzata `toggleMenu()` per gestione stato
+- Link chiamano direttamente `toggleMenu(false)` invece di simulare click
+- Timeout sincronizzato con durata animazione CSS
+
+TEST:
+- Click rapidi multipli sul toggle: deve ignorare click durante animazione
+- Click su link menu: deve chiudere menu immediatamente
+- Test su touch mobile: tap veloce non deve causare bug
+
+STATUS: [ ] PENDING
+
+
+================================================================================
+🟢 TASK #10: FIXARE CURSOR CUSTOM SU DISPOSITIVI HYBRID
+================================================================================
+Priorità: MEDIA
+File: src/styles/global.css (linee 441-445)
+      src/components/CursorFollower.astro
+
+PROBLEMA:
+Selettore `* { cursor: none !important; }` è troppo aggressivo. Su laptop
+touchscreen (Surface, MacBook con trackpad) il cursor può scomparire anche
+quando si usa mouse/trackpad.
+
+CODICE PROBLEMATICO (global.css):
+```css
+@media (hover: hover) and (pointer: fine) {
+    * {
+        cursor: none !important;  /* Troppo aggressivo + !important */
+    }
+}
+```
+
+AZIONE:
+1. RIMUOVERE completamente il selettore `*` da global.css
+2. Mantenere solo dichiarazioni specifiche in CursorFollower.astro
+3. Migliorare detection touch device
+
+IMPLEMENTAZIONE MIGLIORATA (CursorFollower.astro):
+```javascript
+// Detection migliorata
+const isTouchDevice = ('ontouchstart' in window) ||
+                      (navigator.maxTouchPoints > 0) ||
+                      (navigator.msMaxTouchPoints > 0);
+
+const hasCoarsePointer = window.matchMedia('(pointer: coarse)').matches;
+const hasNoHover = window.matchMedia('(hover: none)').matches;
+
+// Mostra cursor custom SOLO se:
+// - NON è touch device
+// - Ha pointer fine (mouse/trackpad)
+// - Supporta hover
+const shouldShowCustomCursor = !isTouchDevice && !hasCoarsePointer && !hasNoHover;
+
+if (shouldShowCustomCursor) {
+  // Attiva cursor custom
+  const style = document.createElement('style');
+  style.textContent = `
+    body, a, button, input, textarea, select, [role="button"] {
+      cursor: none !important;
+    }
+  `;
+  document.head.appendChild(style);
+
+  // Inizializza cursor follower
+  initCursor();
+} else {
+  // Nascondi cursor custom element
+  cursor.style.display = 'none';
+}
+```
+
+RIMUOVERE DA global.css (linee 441-445):
+```css
+/* RIMUOVERE COMPLETAMENTE */
+@media (hover: hover) and (pointer: fine) {
+    * {
+        cursor: none !important;
+    }
+}
+```
+
+TEST:
+- Desktop con mouse: cursor custom visibile
+- Laptop touchscreen (Surface): cursor standard quando si usa touch, custom quando si usa mouse
+- Tablet con tastiera (iPad + Magic Keyboard): cursor standard
+- Desktop con touch monitor: cursor adattivo
+
+STATUS: [ ] PENDING
+
+
+================================================================================
+🟢 TASK #11: AGGIUNGERE FALLBACK PER VIEW TRANSITIONS
+================================================================================
+Priorità: MEDIA
+File: src/layouts/Layout.astro (linea 111)
+
+PROBLEMA:
+View Transitions attivo senza configurazione. Nessun fallback per:
+- Browser che non supportano View Transitions API (Firefox < 129, Safari < 18)
+- Connessioni lente
+- Dispositivi low-end dove le transition causano lag
+
+CODICE ATTUALE:
+```astro
+<ViewTransitions />
+```
+
+IMPLEMENTAZIONE CON FALLBACK:
+```astro
+<ViewTransitions fallback="swap" />
+```
+
+OPZIONE AVANZATA (considera disabilitazione su mobile):
+```astro
+---
+const isMobile = Astro.request.headers.get('user-agent')?.includes('Mobile');
+---
+
+{!isMobile && <ViewTransitions fallback="swap" />}
+```
+
+SPIEGAZIONE:
+- `fallback="swap"`: se View Transitions non supportato, usa navigazione normale
+- Disabilitazione su mobile: evita overhead su dispositivi dove l'API può essere costosa
+
+INOLTRE:
+Verificare re-inizializzazione component (collegato a Task #3).
+Con View Transitions, i component devono gestire `astro:after-swap`:
+
+```javascript
+// Pattern per component che devono re-inizializzarsi
+document.addEventListener('astro:after-swap', () => {
+  // Re-inizializza UI elements che dipendono dal DOM
+  initComponent();
+});
+```
+
+TEST:
+- Chrome (supporto nativo): transizioni fluide
+- Firefox/Safari vecchi: fallback a swap, navigazione funzionante
+- Connessione 3G throttled: no lag eccessivo
+- Mobile: valutare se meglio con/senza transitions
+
+DOCUMENTAZIONE:
+https://docs.astro.build/en/guides/view-transitions/#fallback-control
+
+STATUS: [ ] PENDING
+
+
+================================================================================
+🟢 TASK #12: OTTIMIZZARE HOVER EFFECTS CARD PER TOUCH
+================================================================================
+Priorità: MEDIA
+File: src/styles/global.css (linee 114-173)
+
+PROBLEMA:
+- Effetti `:hover` non appropriati per touch device
+- Su mobile, hover si "stuck" dopo tap
+- Transizioni 500ms troppo lente per feedback touch immediato
+- Nessuno stato `:active` specifico per touch
+
+CODICE ATTUALE:
+```css
+.card-dark {
+  @apply p-8 rounded-2xl transition-all duration-500 relative overflow-visible;
+}
+
+.card-dark:hover {
+  transform: translateY(-4px) scale(1.01);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.9),
+              0 0 20px rgba(255, 255, 255, 0.03),
+              inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+```
+
+IMPLEMENTAZIONE OTTIMIZZATA:
+```css
+.card-dark {
+  @apply p-8 rounded-2xl relative overflow-visible;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Desktop: hover effects completi */
+@media (hover: hover) and (pointer: fine) {
+  .card-dark:hover {
+    transform: translateY(-4px) scale(1.01);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.9),
+                0 0 20px rgba(255, 255, 255, 0.03),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  }
+}
+
+/* Touch/Mobile: active state con effetti ridotti */
+@media (hover: none) or (pointer: coarse) {
+  .card-dark:active {
+    transform: translateY(-2px);  /* Effetto più sottile */
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.7),
+                0 0 10px rgba(255, 255, 255, 0.02);
+    transition-duration: 0.15s;  /* Feedback immediato */
+  }
+}
+```
+
+MODIFICHE:
+1. Duration ridotta da 500ms a 300ms (desktop) e 150ms (mobile)
+2. Separazione hover (desktop) e active (mobile) con media queries
+3. Effetti ridotti su mobile (meno transform, shadow più leggere)
+4. Transizioni separate per transform e box-shadow (invece di `all`)
+
+APPLICARE ANCHE A:
+- .card (se esiste)
+- Altri componenti con hover effects pesanti
+- Button hover states
+
+BENEFICI:
+- Touch feedback immediato (< 150ms)
+- No hover stuck su mobile
+- Performance migliorate (no transition su `all`)
+- UX differenziata e ottimizzata per input method
+
+TEST:
+- Desktop: hover smooth, effetti completi
+- Mobile: tap feedback immediato, no stuck hover
+- Hybrid device: comportamento corretto per input corrente
+
+STATUS: [ ] PENDING
+
+
+================================================================================
+🟢 TASK #13: RENDERE DELAY ANIMAZIONI DINAMICI INVECE DI STATICI
+================================================================================
+Priorità: MEDIA
+File: src/styles/global.css (linee 316-338)
+
+PROBLEMA:
+Delay hardcoded nelle classi CSS causano animazioni "fuori sync" quando scrolli
+velocemente. Gli elementi con delay si attivano anche se già fuori viewport.
+
+CLASSI ATTUALI:
+```css
+.delay-100 { transition-delay: 100ms; }
+.delay-200 { transition-delay: 200ms; }
+.delay-300 { transition-delay: 300ms; }
+.delay-400 { transition-delay: 400ms; }
+.delay-500 { transition-delay: 500ms; }
+.delay-600 { transition-delay: 600ms; }
+```
+
+OPZIONE A - RIMOZIONE COMPLETA (RACCOMANDATO):
+```css
+/* Rimuovere tutte le classi delay-* */
+/* Animazioni instant sono più responsive e moderne */
+```
+
+MOTIVAZIONE:
+- Delay creano sensazione di "lentezza"
+- Durante scroll veloce causano animazioni disordinate
+- Trend moderno: animazioni immediate e responsive
+
+OPZIONE B - DELAY DINAMICI CON JAVASCRIPT:
+Se vuoi mantenere effetto stagger, implementare con JS basato su visibilità:
+
+```javascript
+// In Layout.astro, nell'IntersectionObserver callback
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach((entry, index) => {
+    if (entry.isIntersecting) {
+      // Applica delay dinamico solo se elemento visibile
+      const isInViewport = entry.intersectionRatio > 0.2;
+      const delay = isInViewport ? index * 100 : 0;
+
+      entry.target.style.transitionDelay = `${delay}ms`;
+      entry.target.classList.add('active');
+
+      // Cleanup delay dopo animazione
+      setTimeout(() => {
+        entry.target.style.transitionDelay = '';
+      }, 1000 + delay);
+    }
+  });
+}, observerOptions);
+```
+
+RACCOMANDAZIONE:
+- **Opzione A** per massima responsiveness
+- **Opzione B** solo se l'effetto stagger è requirement UX importante
+
+SE SCEGLI OPZIONE A:
+1. Rimuovere classi .delay-* da global.css (linee 316-338)
+2. Rimuovere classi delay-* dall'HTML (cerca nei file .astro)
+3. Testare che animazioni funzionino comunque
+
+SE SCEGLI OPZIONE B:
+1. Mantenere classi CSS ma rimuoverle dall'HTML
+2. Implementare delay dinamici in IntersectionObserver
+3. Testare scroll veloce: no animazioni caotiche
+
+TEST:
+- Scroll lento: animazioni fluide
+- Scroll veloce: no elementi che animano fuori viewport
+- Mobile: feedback immediato, no attese inutili
+
+STATUS: [ ] PENDING
+
+
+================================================================================
+🔵 TASK #14: AUDIT E TEST PERFORMANCE COMPLETO
+================================================================================
+Priorità: TEST FINALE (dopo tutti gli altri task)
+File: N/A (testing)
+
+ESEGUIRE DOPO:
+Completamento di tutti i task #1-13
+
+================================================================================
+TEST DESKTOP
+================================================================================
+
+1. LIGHTHOUSE AUDIT
+   Target: Performance Score > 90
+
+   Comando:
+   ```bash
+   npm run build
+   npx lighthouse https://localhost:4321 --view
+   ```
+
+   Metriche target:
+   - FCP (First Contentful Paint): < 1.8s
+   - LCP (Largest Contentful Paint): < 2.5s
+   - TBT (Total Blocking Time): < 300ms
+   - CLS (Cumulative Layout Shift): < 0.1
+   - Speed Index: < 3.4s
+
+2. CHROME DEVTOOLS PERFORMANCE PROFILING
+
+   a) Scrolling Performance:
+      - Apri DevTools > Performance
+      - Clicca Record
+      - Scrolla pagina per 5 secondi
+      - Stop recording
+      - Analizza:
+        * FPS chart: deve essere costantemente vicino a 60fps
+        * Main thread: no long tasks (> 50ms)
+        * Frames: tutte verdi, no frame drop (gialle/rosse)
+
+   b) Navigation Performance:
+      - Record durante navigazione tra pagine
+      - Verifica:
+        * Total time < 300ms
+        * No layout thrashing
+        * No forced reflow
+
+3. RENDERING PERFORMANCE
+
+   DevTools > More Tools > Rendering:
+   - [x] Paint flashing: verifica aree che re-paint durante scroll (meno è meglio)
+   - [x] Layer borders: verifica numero layer compositi (meno è meglio)
+   - [x] Frame Rendering Stats: FPS in tempo reale
+
+   Target: Scroll con 0 paint flash, layer compositi < 10
+
+4. MEMORY LEAKS CHECK
+
+   a) Test navigazione:
+      - DevTools > Memory > Take heap snapshot
+      - Naviga tra 5 pagine diverse
+      - Torna alla home
+      - Take heap snapshot
+      - Compare snapshots
+      - Verifica: Detached DOM nodes < 50
+
+   b) Test timeline:
+      - DevTools > Performance > Memory checkbox
+      - Record per 30 secondi con navigazioni
+      - JS Heap non deve crescere costantemente
+      - Deve avere garbage collection cycles
+
+================================================================================
+TEST MOBILE
+================================================================================
+
+1. DISPOSITIVI REALI (priorità alta)
+
+   Test su minimo 4 dispositivi:
+
+   a) iPhone SE (low-end iOS)
+      - Screen: 4.7", 750x1334
+      - CPU: A13 Bionic
+      - Test: Scrolling fluido, touch responsive, animazioni 60fps
+
+   b) iPhone 12/13 (mid-range iOS)
+      - Screen: 6.1", 1170x2532
+      - Test: Tutto fluido, View Transitions smooth
+
+   c) Android entry-level (es. Samsung Galaxy A04)
+      - Screen: ~6.5", 720x1600
+      - CPU: weak (quad-core)
+      - Test: Questo è il test più importante! Se funziona qui, funziona ovunque
+      - Target: 30fps minimo, touch < 200ms
+
+   d) Android flagship (es. Pixel 8, Samsung S23)
+      - Test: Performance desktop-level
+      - Target: 60fps costanti
+
+2. CHROME REMOTE DEBUGGING
+
+   Setup:
+   - Collega telefono Android via USB
+   - chrome://inspect
+   - Apri sito su telefono
+   - Inspect da desktop
+
+   Test con DevTools:
+   - Performance profiling durante scroll mobile
+   - Network throttling: Fast 3G
+   - CPU throttling: 4x slowdown
+   - Lighthouse mobile audit
+
+   Target con throttling 4x:
+   - Scrolling: minimo 30fps
+   - Touch response: < 200ms
+   - Page load: < 5s
+
+3. LIGHTHOUSE MOBILE AUDIT
+
+   Target: Performance Score > 85 (mobile è più demanding)
+
+   Comando:
+   ```bash
+   npx lighthouse https://your-site.com --preset=mobile --view
+   ```
+
+   Metriche target mobile:
+   - FCP: < 2.5s
+   - LCP: < 4.0s
+   - TBT: < 600ms
+   - CLS: < 0.1
+   - Speed Index: < 5.8s
+
+4. TOUCH RESPONSIVENESS TEST
+
+   Test manuale su dispositivo:
+   - Tap su buttons: feedback visivo < 100ms
+   - Menu toggle: apertura immediata, no lag
+   - Link navigation: < 100ms perceived response
+   - Scroll: inizia immediatamente al touch, no delay
+   - Pinch zoom: smooth (se abilitato)
+
+   Test con touchscreen simulator:
+   - DevTools > Toggle device toolbar
+   - Emulate: iPhone SE, Pixel 5, iPad
+   - Test tutti i touch interactions
+
+5. VIEWPORT E ORIENTAMENTO
+
+   Test rotazione device:
+   - Portrait → Landscape → Portrait
+   - Verifica:
+     * No content cut-off
+     * Layout adattivo corretto
+     * Animazioni non si rompono
+     * Menu funziona in entrambi orientamenti
+
+================================================================================
+TEST CROSS-BROWSER
+================================================================================
+
+Desktop:
+[ ] Chrome (latest)
+[ ] Firefox (latest)
+[ ] Safari (latest)
+[ ] Edge (latest)
+
+Mobile:
+[ ] iOS Safari (iPhone)
+[ ] Android Chrome
+[ ] Samsung Internet (se targeting mercato Samsung)
+
+================================================================================
+TOOLS E COMANDI
+================================================================================
+
+1. Lighthouse CI (automation)
+```bash
+npm install -g @lhci/cli
+lhci autorun --config=lighthouserc.json
+```
+
+2. WebPageTest
+URL: https://www.webpagetest.org/
+- Test location: Amsterdam (EU) o New York (US)
+- Test device: Motorola G4 (rappresentativo low-end Android)
+- Connection: 3G
+- Target: Speed Index < 5.0s
+
+3. Chrome Frame Rate Counter
+- chrome://flags
+- Cerca "Show frame rate"
+- Enable
+- Restart browser
+- Vedrai FPS counter in alto a destra durante browsing
+
+4. Bundle Size Analysis
+```bash
+npm run build
+npx vite-bundle-visualizer
+```
+Target:
+- JS < 100KB (gzipped)
+- CSS < 50KB (gzipped)
+
+================================================================================
+CHECKLIST FINALE
+================================================================================
+
+PERFORMANCE:
+[ ] Lighthouse Desktop Score > 90
+[ ] Lighthouse Mobile Score > 85
+[ ] Scrolling 60fps desktop
+[ ] Scrolling 30fps+ mobile low-end
+[ ] No memory leaks dopo 10 navigazioni
+[ ] Bundle size JS < 100KB gzipped
+
+UX DESKTOP:
+[ ] Click response < 100ms
+[ ] Page navigation < 300ms perceived
+[ ] Hover effects smooth
+[ ] Menu toggle immediate
+[ ] No visual glitches
+
+UX MOBILE:
+[ ] Touch response < 100ms
+[ ] Scroll inizia immediatamente
+[ ] Pinch zoom funzionante (se abilitato)
+[ ] Menu mobile fluido
+[ ] No hover stuck
+[ ] Orientamento landscape/portrait OK
+
+CROSS-BROWSER:
+[ ] Chrome: tutto funzionante
+[ ] Firefox: tutto funzionante
+[ ] Safari: tutto funzionante
+[ ] Edge: tutto funzionante
+[ ] iOS Safari: tutto funzionante
+[ ] Android Chrome: tutto funzionante
+
+REGRESSIONI (verificare che fix non abbiano rotto):
+[ ] Animazioni reveal ancora funzionanti
+[ ] View Transitions funzionanti
+[ ] Custom cursor funzionante (desktop)
+[ ] Tutti i link cliccabili
+[ ] Form contatti funzionante
+
+================================================================================
+METRICHE ATTESE POST-FIX
+================================================================================
+
+SCROLLING:
+Prima:  30-40fps, scatti visibili, input lag
+Dopo:   60fps costanti, fluido, responsive
+
+NAVIGAZIONE:
+Prima:  300-500ms lag, incerta, memory leak
+Dopo:   <100ms response, immediata, no leak
+
+MOBILE:
+Prima:  15-20fps, frame drop, touch lag 200ms+
+Dopo:   30-60fps, smooth, touch <100ms
+
+LIGHTHOUSE SCORES:
+                Desktop         Mobile
+Prima:          60-70          40-50
+Dopo:           90+            85+
+
+STATUS: [ ] PENDING
+
+
+================================================================================
+RIEPILOGO ESECUZIONE
+================================================================================
+
+ORDINE CONSIGLIATO:
+1. Task #1-5 (CRITICI) - Eseguire in sequenza
+2. Task #6-9 (ALTA) - Possono essere paralleli
+3. Task #10-13 (MEDIA) - Possono essere paralleli
+4. Task #14 (TEST) - Eseguire alla fine
+
+TEMPO STIMATO:
+- Task critici (#1-5): 3-4 ore
+- Task alta priorità (#6-9): 2-3 ore
+- Task media priorità (#10-13): 2-3 ore
+- Test finale (#14): 2-3 ore
+TOTALE: 9-13 ore
+
+DEPENDENCIES:
+- Task #7 dipende da Task #2 (blur removal)
+- Task #14 dipende da tutti gli altri
+- Task #3 si collega a Task #11 (View Transitions)
+
+================================================================================
+DOCUMENTAZIONE UTILE
+================================================================================
+
+Performance:
+- Web.dev Performance: https://web.dev/performance/
+- MDN Performance: https://developer.mozilla.org/en-US/docs/Web/Performance
+
+Astro:
+- View Transitions: https://docs.astro.build/en/guides/view-transitions/
+- Performance Guide: https://docs.astro.build/en/concepts/why-astro/#fast-by-default
+
+Tools:
+- Lighthouse: https://developer.chrome.com/docs/lighthouse/
+- WebPageTest: https://www.webpagetest.org/
+- Chrome DevTools: https://developer.chrome.com/docs/devtools/
+
+================================================================================
+Fine TODO Performance - Buon Lavoro! 🚀
+================================================================================

@@ -1,0 +1,127 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+const features = [
+  { icon: '🔍', title: 'Keyword Research', desc: 'Analisi approfondita di cosa cercano i tuoi clienti.' },
+  { icon: '⚙️', title: 'Technical SEO', desc: 'Ottimizzazione del codice per i crawler di Google.' },
+  { icon: '📝', title: 'Content Strategy', desc: 'Contenuti di valore che rispondono ai bisogni degli utenti.' },
+  { icon: '📍', title: 'Local SEO', desc: 'Fatti trovare dai clienti nella tua zona geografica.' }
+];
+
+const chartData = [40, 55, 50, 75, 85, 95];
+
+// Schema.org JSON-LD for Service
+const serviceSchema = {
+  "@context": "https://schema.org",
+  "@type": "Service",
+  "serviceType": "SEO & Digital Marketing",
+  "provider": {
+    "@type": "Organization",
+    "name": "Studio Digitale"
+  },
+  "areaServed": {
+    "@type": "Country",
+    "name": "Italy"
+  },
+  "description": "Servizi SEO e Digital Growth: keyword research, technical SEO, content strategy e local SEO. Aumenta la visibilità organica e domina la SERP.",
+  "offers": {
+    "@type": "Offer",
+    "availability": "https://schema.org/InStock"
+  }
+};
+---
+
+<Layout
+  title="SEO & Digital Growth"
+  description="Servizi SEO e Digital Growth: keyword research, technical SEO, content strategy e local SEO. Aumenta la visibilità organica e domina la SERP con strategie data-driven."
+>
+  <!-- Schema.org JSON-LD for Service -->
+  <script type="application/ld+json" set:html={JSON.stringify(serviceSchema)} />
+  <!-- Hero Section -->
+  <section class="pt-32 pb-20 md:pt-48 md:pb-32 container-custom">
+    <a href="/servizi" class="inline-flex items-center gap-2 text-gray-500 hover:text-white transition-colors mb-8 text-sm font-mono uppercase tracking-widest reveal">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M19 12H5M12 19l-7-7 7-7"/>
+      </svg>
+      Torna ai servizi
+    </a>
+    
+    <div class="grid lg:grid-cols-2 gap-16 items-center">
+      <div>
+        <span class="inline-block px-4 py-2 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-400 text-xs font-mono uppercase tracking-widest mb-6 reveal">
+          SEO & Content Strategy
+        </span>
+        <h1 class="text-5xl md:text-7xl lg:text-8xl font-black text-white mb-8 tracking-tight leading-none reveal-scale">
+          Fatti Trovare<br/><span class="text-gray-600">su Google.</span>
+        </h1>
+        <p class="text-lg md:text-xl text-gray-400 leading-relaxed max-w-xl reveal">
+          Non basta avere un sito, bisogna essere visibili. Ti aiutiamo a scalare le posizioni nella ricerca organica.
+        </p>
+      </div>
+      
+      <div class="hidden lg:block reveal-scale">
+        <!-- Chart visualization -->
+        <div class="relative bg-gradient-to-br from-white/[0.08] to-transparent border border-white/10 rounded-2xl p-8 overflow-hidden">
+          <div class="absolute -top-24 -right-24 w-48 h-48 bg-gradient-to-br from-orange-500/20 to-yellow-500/10 rounded-full blur-3xl"></div>
+          
+          <div class="flex items-end gap-3 h-48 mb-6 relative">
+            {chartData.map((height, i) => (
+              <div 
+                class="flex-1 bg-gradient-to-t from-orange-500 to-yellow-500 rounded-t-lg transition-all duration-700 hover:opacity-80"
+                style={`height: ${height}%;`}
+              ></div>
+            ))}
+          </div>
+          
+          <div class="flex items-center justify-between text-xs font-mono text-gray-500 border-t border-white/10 pt-4">
+            <span>Gen</span>
+            <span>Feb</span>
+            <span>Mar</span>
+            <span>Apr</span>
+            <span>Mag</span>
+            <span>Giu</span>
+          </div>
+          
+          <p class="text-center text-white font-bold mt-6">Crescita Traffico Organico</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section class="py-24 bg-gradient-to-b from-surface/50 to-background border-y border-white/5">
+    <div class="container-custom">
+      <h2 class="text-3xl md:text-4xl font-black text-white mb-12 reveal-scale">Il Nostro Approccio</h2>
+      
+      <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {features.map((feature, index) => (
+          <div class={`group reveal-scale delay-${(index + 1) * 100}`}>
+            <div class="relative h-full bg-gradient-to-br from-white/[0.08] to-transparent border border-white/10 rounded-2xl p-6 transition-all duration-500 hover:border-white/30 hover:bg-white/[0.05] overflow-hidden">
+              <div class="absolute -top-16 -right-16 w-32 h-32 bg-gradient-to-br from-orange-500/20 to-yellow-500/10 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+              
+              <span class="text-4xl mb-6 block relative">{feature.icon}</span>
+              <h3 class="text-xl font-bold text-white mb-3 group-hover:translate-x-1 transition-transform relative">{feature.title}</h3>
+              <p class="font-mono text-sm text-gray-500 group-hover:text-gray-400 transition-colors relative">{feature.desc}</p>
+              
+              <div class="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-orange-500/50 to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-500"></div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="py-32 relative overflow-hidden">
+    <div class="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_50%,_var(--tw-gradient-stops))] from-orange-500/5 via-orange-500/2 via-30% via-transparent via-60% to-transparent"></div>
+    <div class="container-custom relative z-10">
+      <div class="max-w-2xl mx-auto text-center">
+        <h2 class="text-4xl md:text-5xl font-black text-white mb-6 reveal-scale">Il tuo sito<br/>non riceve visite?</h2>
+        <p class="text-gray-400 mb-10 text-lg reveal">Scopri come migliorare la tua visibilità organica.</p>
+        <a href="/contatti" class="btn-primary reveal">
+          Analisi SEO Gratuita
+        </a>
+      </div>
+    </div>
+  </section>
+</Layout>
