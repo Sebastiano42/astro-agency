@@ -34,7 +34,7 @@ const posts = [
   <section class="pt-32 pb-20 md:pt-40 container-custom">
     <div class="text-center">
       <span class="text-xs font-mono uppercase tracking-widest text-gray-500 mb-6 block reveal">Insights & Trend</span>
-      <h1 class="hero-text text-white mb-8 reveal-scale">Il Nostro <br/><span class="text-gray-600">Blog.</span></h1>
+      <h1 class="hero-text text-white mb-8 reveal-scale">Il Mio <br/><span class="text-gray-600">Blog.</span></h1>
       <p class="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto reveal">Idee, approfondimenti e novità dal mondo del digital design e dello sviluppo.</p>
     </div>
   </section>
@@ -43,7 +43,7 @@ const posts = [
     <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
       {posts.map((post, index) => (
         <article class={`group reveal-scale delay-${(index % 3 + 1) * 100}`}>
-          <div class="relative bg-gradient-to-br from-white/[0.08] to-transparent border border-white/10 rounded-2xl overflow-hidden transition-all duration-500 hover:border-white/30 hover:bg-white/[0.05]">
+          <div class="glow-border relative bg-gradient-to-br from-white/[0.08] to-transparent border border-white/10 rounded-2xl overflow-hidden transition-all duration-500 hover:border-white/30 hover:bg-white/[0.05]">
             <div class="h-48 bg-white/[0.02] border-b border-white/5 flex items-center justify-center text-5xl transition-all duration-500 group-hover:bg-white/[0.05]">
               {post.image}
             </div>

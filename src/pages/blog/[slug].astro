@@ -25,12 +25,12 @@ const articleSchema = {
   "datePublished": post.date,
   "dateModified": post.date,
   "author": {
-    "@type": "Organization",
+    "@type": "Person",
     "name": post.author
   },
   "publisher": {
-    "@type": "Organization",
-    "name": "Studio Digitale",
+    "@type": "Person",
+    "name": "Sebastiano Moniaci",
     "logo": {
       "@type": "ImageObject",
       "url": new URL("/logo.png", Astro.site)
@@ -91,7 +91,7 @@ const articleSchema = {
 
       <!-- Featured Image Placeholder -->
       <div class="my-12 reveal">
-        <div class="aspect-video bg-gradient-to-br from-white/[0.08] to-transparent border border-white/10 rounded-2xl overflow-hidden flex items-center justify-center">
+        <div class="glow-border relative aspect-video bg-gradient-to-br from-white/[0.08] to-transparent border border-white/10 rounded-2xl overflow-hidden flex items-center justify-center">
           <svg class="w-20 h-20 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
           </svg>
@@ -128,7 +128,7 @@ const articleSchema = {
           <div class="grid md:grid-cols-2 gap-8">
             {relatedPosts.map((related, idx) => (
               <a href={`/blog/${related.slug}`} class={`group reveal delay-${(idx + 1) * 100}`}>
-                <article class="bg-gradient-to-br from-white/[0.08] to-transparent border border-white/10 rounded-2xl overflow-hidden transition-all duration-500 hover:border-white/30 hover:bg-white/[0.05]">
+                <article class="glow-border relative bg-gradient-to-br from-white/[0.08] to-transparent border border-white/10 rounded-2xl overflow-hidden transition-all duration-500 hover:border-white/30 hover:bg-white/[0.05]">
                   <!-- Image placeholder -->
                   <div class="aspect-video bg-gradient-to-br from-white/5 to-transparent flex items-center justify-center border-b border-white/10">
                     <svg class="w-12 h-12 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -164,10 +164,10 @@ const articleSchema = {
           Hai un progetto <span class="text-gray-600">in mente?</span>
         </h2>
         <p class="text-lg text-gray-400 mb-10 reveal">
-          Parliamone. Trasformiamo la tua idea in realtà.
+          Parliamone. Trasformo la tua idea in realtà.
         </p>
         <a href="/contatti" class="btn-primary reveal">
-          Contattaci
+          Contattami
         </a>
       </div>
     </div>

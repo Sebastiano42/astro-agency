@@ -18,7 +18,7 @@ export const blogPosts: BlogPost[] = [
     slug: 'web-design-trends-2026',
     title: 'Web Design Trends 2026: Il Futuro È Minimalista',
     date: '2026-02-01',
-    author: 'Studio Team',
+    author: 'Sebastiano Moniaci',
     category: 'Design',
     readTime: '5 min',
     image: '/images/blog/design-trends.jpg',
@@ -39,7 +39,7 @@ export const blogPosts: BlogPost[] = [
       <p>Il 2026 segna la fine del compromesso tra bellezza e velocità. I siti moderni devono essere sia visivamente stunning che ultra-performanti.</p>
 
       <blockquote>
-        "Il miglior design è quello che non si nota, ma si sente." - Studio Team
+        "Il miglior design è quello che non si nota, ma si sente." - Sebastiano Moniaci
       </blockquote>
 
       <h2>Conclusione</h2>
@@ -50,7 +50,7 @@ export const blogPosts: BlogPost[] = [
     slug: 'performance-web-optimization',
     title: 'Come Ottimizzare un Sito per Performance Estreme',
     date: '2026-01-20',
-    author: 'Studio Team',
+    author: 'Sebastiano Moniaci',
     category: 'Development',
     readTime: '8 min',
     image: '/images/blog/performance.jpg',
@@ -76,14 +76,14 @@ export const blogPosts: BlogPost[] = [
       </ul>
 
       <h2>Real World Results</h2>
-      <p>Seguendo queste tecniche, abbiamo ridotto i tempi di caricamento dei nostri progetti del 70% in media, con un impatto diretto sulle conversioni.</p>
+      <p>Seguendo queste tecniche, ho ridotto i tempi di caricamento dei miei progetti del 70% in media, con un impatto diretto sulle conversioni.</p>
     `
   },
   {
     slug: 'seo-strategy-2026',
     title: 'SEO Strategy 2026: Oltre i Keyword',
     date: '2026-01-15',
-    author: 'Studio Team',
+    author: 'Sebastiano Moniaci',
     category: 'SEO',
     readTime: '6 min',
     image: '/images/blog/seo.jpg',

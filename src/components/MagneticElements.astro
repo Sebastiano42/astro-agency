@@ -1,12 +1,17 @@
 ---
 // src/components/MagneticElements.astro
-// Magnetic hover effect for interactive elements
+// LERP-based magnetic hover effect for interactive elements
 ---
 
 <script>
   let magneticCleanups = [];
+  let magneticRAF = null;
 
   function cleanupMagnetic() {
+    if (magneticRAF !== null) {
+      cancelAnimationFrame(magneticRAF);
+      magneticRAF = null;
+    }
     magneticCleanups.forEach(fn => fn());
     magneticCleanups = [];
   }
@@ -20,8 +25,13 @@
     const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
     if (isTouchDevice) return;
 
+    // Track each element's state for LERP animation
+    const elementStates = new Map();
+
     magneticElements.forEach((element) => {
       const el = element;
+      const state = { targetX: 0, targetY: 0, currentX: 0, currentY: 0, active: false, scale: 1, targetScale: 1 };
+      elementStates.set(el, state);
 
       const handleMouseMove = (e) => {
         const rect = el.getBoundingClientRect();
@@ -30,21 +40,26 @@
         const deltaX = e.clientX - centerX;
         const deltaY = e.clientY - centerY;
         const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-        const maxDistance = Math.max(rect.width, rect.height);
+        const maxDistance = Math.max(rect.width, rect.height) * 0.8;
 
         if (distance < maxDistance) {
-          const strength = 0.25;
-          el.style.transform = `translate(${deltaX * strength}px, ${deltaY * strength}px) scale(1.02)`;
+          const strength = 0.3;
+          const distanceFactor = 1 - (distance / maxDistance);
+          state.targetX = deltaX * strength * distanceFactor;
+          state.targetY = deltaY * strength * distanceFactor;
+          state.targetScale = 1 + 0.04 * distanceFactor;
         }
       };
 
       const handleMouseEnter = () => {
-        el.style.transition = 'transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)';
+        state.active = true;
       };
 
       const handleMouseLeave = () => {
-        el.style.transform = 'translate(0px, 0px) scale(1)';
-        el.style.transition = 'transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)';
+        state.active = false;
+        state.targetX = 0;
+        state.targetY = 0;
+        state.targetScale = 1;
       };
 
       el.addEventListener('mouseenter', handleMouseEnter);
@@ -56,9 +71,33 @@
         el.removeEventListener('mousemove', handleMouseMove);
         el.removeEventListener('mouseleave', handleMouseLeave);
         el.style.transform = '';
-        el.style.transition = '';
+        elementStates.delete(el);
       });
     });
+
+    // Single animation loop for all magnetic elements
+    function animateMagnetic() {
+      const LERP_IN = 0.1;
+      const LERP_OUT = 0.08;
+
+      elementStates.forEach((state, el) => {
+        const lerp = state.active ? LERP_IN : LERP_OUT;
+        state.currentX += (state.targetX - state.currentX) * lerp;
+        state.currentY += (state.targetY - state.currentY) * lerp;
+        state.scale += (state.targetScale - state.scale) * lerp;
+
+        // Skip DOM writes when values are negligible
+        if (Math.abs(state.currentX) > 0.01 || Math.abs(state.currentY) > 0.01 || Math.abs(state.scale - 1) > 0.001) {
+          el.style.transform = `translate(${state.currentX}px, ${state.currentY}px) scale(${state.scale})`;
+        } else if (!state.active) {
+          el.style.transform = '';
+        }
+      });
+
+      magneticRAF = requestAnimationFrame(animateMagnetic);
+    }
+
+    magneticRAF = requestAnimationFrame(animateMagnetic);
   }
 
   document.addEventListener('astro:page-load', initMagneticEffect);

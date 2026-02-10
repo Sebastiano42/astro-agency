@@ -14,8 +14,8 @@ const serviceSchema = {
   "@type": "Service",
   "serviceType": "Web Design & UI/UX",
   "provider": {
-    "@type": "Organization",
-    "name": "Studio Digitale"
+    "@type": "Person",
+    "name": "Sebastiano Moniaci"
   },
   "areaServed": {
     "@type": "Country",
@@ -31,7 +31,7 @@ const serviceSchema = {
 
 <Layout
   title="Web Design & UI/UX"
-  description="Servizi di Web Design e UI/UX a Milano. Interfacce di lusso, micro-interazioni fluide e design system scalabili. Design pixel perfect per brand che vogliono distinguersi."
+  description="Servizi di Web Design e UI/UX a Rovigo. Interfacce di lusso, micro-interazioni fluide e design system scalabili. Design pixel perfect per brand che vogliono distinguersi."
 >
   <!-- Schema.org JSON-LD for Service -->
   <script type="application/ld+json" set:html={JSON.stringify(serviceSchema)} />
@@ -49,17 +49,17 @@ const serviceSchema = {
         <span class="inline-block px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-mono uppercase tracking-widest mb-6 reveal">
           Servizio Core
         </span>
-        <h1 class="text-5xl md:text-7xl lg:text-8xl font-black text-white mb-8 tracking-tight leading-none reveal-scale">
+        <h1 class="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-black text-white mb-8 tracking-tight leading-none reveal-scale">
           Web Design<br/><span class="text-gray-600">Moderno.</span>
         </h1>
         <p class="text-lg md:text-xl text-gray-400 leading-relaxed max-w-xl reveal">
-          Progettiamo interfacce che non sono solo belle da vedere, ma studiate per convertire visitatori in clienti.
+          Progetto interfacce che non sono solo belle da vedere, ma studiate per convertire visitatori in clienti.
         </p>
       </div>
       
       <div class="hidden lg:block reveal-scale">
         <!-- Visual mockup -->
-        <div class="relative bg-gradient-to-br from-white/[0.08] to-transparent border border-white/10 rounded-2xl overflow-hidden">
+        <div class="glow-border relative bg-gradient-to-br from-white/[0.08] to-transparent border border-white/10 rounded-2xl overflow-hidden">
           <!-- Browser header -->
           <div class="flex items-center gap-2 px-4 py-3 border-b border-white/10 bg-white/[0.02]">
             <div class="flex gap-1.5">
@@ -95,7 +95,7 @@ const serviceSchema = {
       <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
         {features.map((feature, index) => (
           <div class={`group reveal-scale delay-${(index + 1) * 100}`}>
-            <div class="relative h-full bg-gradient-to-br from-white/[0.08] to-transparent border border-white/10 rounded-2xl p-6 transition-all duration-500 hover:border-white/30 hover:bg-white/[0.05] overflow-hidden">
+            <div class="glow-border relative h-full bg-gradient-to-br from-white/[0.08] to-transparent border border-white/10 rounded-2xl p-6 transition-all duration-500 hover:border-white/30 hover:bg-white/[0.05] overflow-hidden">
               <div class="absolute -top-16 -right-16 w-32 h-32 bg-gradient-to-br from-blue-500/20 to-purple-500/10 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
               
               <span class="text-4xl mb-6 block relative">{feature.icon}</span>
@@ -116,7 +116,7 @@ const serviceSchema = {
     <div class="container-custom relative z-10">
       <div class="max-w-2xl mx-auto text-center">
         <h2 class="text-4xl md:text-5xl font-black text-white mb-6 reveal-scale">Vuoi un design<br/>che parli di te?</h2>
-        <p class="text-gray-400 mb-10 text-lg reveal">Trasformiamo le tue idee in esperienze digitali memorabili.</p>
+        <p class="text-gray-400 mb-10 text-lg reveal">Trasformo le tue idee in esperienze digitali memorabili.</p>
         <a href="/contatti" class="btn-primary reveal">
           Richiedi un audit gratuito
         </a>
