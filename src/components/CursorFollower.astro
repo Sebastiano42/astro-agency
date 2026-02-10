@@ -1,123 +1,155 @@
 ---
 // src/components/CursorFollower.astro
+// Card border glow - borders illuminate following mouse position
 ---
 
-<!-- Custom Cursor - Circle to Dot Style -->
-<div id="cursor" class="cursor"></div>
-
 <style>
-  /* Custom Cursor - Modern Circle to Dot */
-  .cursor {
-    width: 32px;
-    height: 32px;
-    border: 1.5px solid rgba(255, 255, 255, 0.6);
-    border-radius: 50%;
-    position: fixed;
+  /* ===== CARD BORDER GLOW OVERLAY (injected via JS) ===== */
+  .glow-border-effect {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
     pointer-events: none;
-    z-index: 9999;
-    transition: all 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    mix-blend-mode: difference;
+    z-index: 2;
     opacity: 0;
-    transform: translate(-50%, -50%);
+    transition: opacity 0.35s ease;
+    overflow: hidden;
   }
 
-  /* Hover State - Transforms to Dot */
-  .cursor.hover {
-    width: 8px;
-    height: 8px;
-    border-width: 0;
-    background: rgba(255, 255, 255, 0.9);
+  /* The glowing border ring */
+  .glow-border-ring {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: radial-gradient(
+      400px circle at var(--glow-x, 50%) var(--glow-y, 50%),
+      rgba(255, 255, 255, 0.4),
+      rgba(255, 255, 255, 0.12) 35%,
+      transparent 65%
+    );
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
   }
 
-  /* Hide custom cursor on touch devices */
+  /* Subtle inner surface glow */
+  .glow-border-fill {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: radial-gradient(
+      350px circle at var(--glow-x, 50%) var(--glow-y, 50%),
+      rgba(255, 255, 255, 0.035),
+      transparent 65%
+    );
+  }
+
+  /* Hide on touch devices */
   @media (hover: none) and (pointer: coarse) {
-    .cursor,
-    .cursor-follower,
-    .mouse-glow {
+    .glow-border-effect {
       display: none !important;
-    }
-  }
-
-  /* Hide default cursor on desktop */
-  @media (hover: hover) and (pointer: fine) {
-    body {
-      cursor: none;
-    }
-
-    a, button, input, textarea, select, [role="button"] {
-      cursor: none;
     }
   }
 </style>
 
 <script>
-  let mouseMoveHandler = null;
-  let hoverEnterHandler = null;
-  let hoverLeaveHandler = null;
-  const interactiveElements = 'a, button, input, textarea, select, [role="button"], .cursor-hover';
+  let animationLoop = null;
+  let eventCleanups = [];
+  const injectedOverlays = new WeakMap();
 
-  function cleanupCursor() {
-    if (mouseMoveHandler) {
-      document.removeEventListener('mousemove', mouseMoveHandler);
-      mouseMoveHandler = null;
+  function cleanupCursorEffects() {
+    if (animationLoop !== null) {
+      cancelAnimationFrame(animationLoop);
+      animationLoop = null;
     }
-    if (hoverEnterHandler) {
-      document.querySelectorAll(interactiveElements).forEach(el => {
-        el.removeEventListener('mouseenter', hoverEnterHandler);
-        el.removeEventListener('mouseleave', hoverLeaveHandler);
-      });
-      hoverEnterHandler = null;
-      hoverLeaveHandler = null;
-    }
+    eventCleanups.forEach(fn => fn());
+    eventCleanups = [];
+    document.querySelectorAll('.glow-border-effect').forEach(el => el.remove());
   }
 
-  function initCursor() {
-    cleanupCursor();
-
-    const cursor = document.getElementById('cursor');
-    if (!cursor) return;
+  function initCursorEffects() {
+    cleanupCursorEffects();
 
     const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
     const hasCoarsePointer = window.matchMedia('(pointer: coarse)').matches;
-    const hasNoHover = window.matchMedia('(hover: none)').matches;
+    if (isTouchDevice || hasCoarsePointer) return;
 
-    if (isTouchDevice || hasCoarsePointer || hasNoHover) {
-      cursor.style.display = 'none';
-      return;
+    let mouseX = 0, mouseY = 0;
+
+    // ===== CARD BORDER GLOW =====
+    const CARD_SELECTOR = '.card-dark, .glow-border';
+    const GLOW_PROXIMITY = 80;
+
+    function ensureGlowOverlays() {
+      const cards = document.querySelectorAll(CARD_SELECTOR);
+      cards.forEach(card => {
+        if (injectedOverlays.has(card)) return;
+
+        const pos = getComputedStyle(card).position;
+        if (pos === 'static') card.style.position = 'relative';
+
+        const overlay = document.createElement('div');
+        overlay.className = 'glow-border-effect';
+        overlay.innerHTML = '<div class="glow-border-ring"></div><div class="glow-border-fill"></div>';
+        card.appendChild(overlay);
+        injectedOverlays.set(card, overlay);
+      });
     }
 
-    let mouseX = 0;
-    let mouseY = 0;
-    let hasMouseMoved = false;
-    let rafId = null;
+    function updateCardGlow() {
+      const cards = document.querySelectorAll(CARD_SELECTOR);
+      for (const card of cards) {
+        const overlay = injectedOverlays.get(card);
+        if (!overlay) continue;
 
-    mouseMoveHandler = (e) => {
-      if (!hasMouseMoved) {
-        hasMouseMoved = true;
-        cursor.style.opacity = '1';
+        const rect = card.getBoundingClientRect();
+        const nearX = mouseX >= rect.left - GLOW_PROXIMITY && mouseX <= rect.right + GLOW_PROXIMITY;
+        const nearY = mouseY >= rect.top - GLOW_PROXIMITY && mouseY <= rect.bottom + GLOW_PROXIMITY;
+
+        if (nearX && nearY) {
+          const relX = mouseX - rect.left;
+          const relY = mouseY - rect.top;
+
+          const insideX = mouseX >= rect.left && mouseX <= rect.right;
+          const insideY = mouseY >= rect.top && mouseY <= rect.bottom;
+          let opacity = 1;
+
+          if (!insideX || !insideY) {
+            const distX = insideX ? 0 : Math.min(Math.abs(mouseX - rect.left), Math.abs(mouseX - rect.right));
+            const distY = insideY ? 0 : Math.min(Math.abs(mouseY - rect.top), Math.abs(mouseY - rect.bottom));
+            const dist = Math.sqrt(distX * distX + distY * distY);
+            opacity = Math.max(0, 1 - dist / GLOW_PROXIMITY);
+          }
+
+          overlay.style.setProperty('--glow-x', `${relX}px`);
+          overlay.style.setProperty('--glow-y', `${relY}px`);
+          overlay.style.opacity = `${opacity}`;
+        } else {
+          overlay.style.opacity = '0';
+        }
       }
+    }
+
+    // ===== MOUSE TRACKING =====
+    const onMouseMove = (e) => {
       mouseX = e.clientX;
       mouseY = e.clientY;
-      if (rafId === null) {
-        rafId = requestAnimationFrame(() => {
-          cursor.style.left = `${mouseX}px`;
-          cursor.style.top = `${mouseY}px`;
-          rafId = null;
-        });
-      }
     };
+    document.addEventListener('mousemove', onMouseMove);
+    eventCleanups.push(() => document.removeEventListener('mousemove', onMouseMove));
 
-    hoverEnterHandler = () => { cursor.classList.add('hover'); };
-    hoverLeaveHandler = () => { cursor.classList.remove('hover'); };
+    // ===== INIT & ANIMATION LOOP =====
+    ensureGlowOverlays();
 
-    document.addEventListener('mousemove', mouseMoveHandler);
+    function animate() {
+      updateCardGlow();
+      animationLoop = requestAnimationFrame(animate);
+    }
 
-    document.querySelectorAll(interactiveElements).forEach(el => {
-      el.addEventListener('mouseenter', hoverEnterHandler);
-      el.addEventListener('mouseleave', hoverLeaveHandler);
-    });
+    animationLoop = requestAnimationFrame(animate);
   }
 
-  document.addEventListener('astro:page-load', initCursor);
-  document.addEventListener('astro:before-swap', cleanupCursor);
+  document.addEventListener('astro:page-load', initCursorEffects);
+  document.addEventListener('astro:before-swap', cleanupCursorEffects);
 </script>

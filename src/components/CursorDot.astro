@@ -1,0 +1,165 @@
+---
+// src/components/CursorDot.astro
+// Minimal cursor dot with LERP following + expand on hover over interactive elements
+// Desktop only - hidden on touch devices
+---
+
+<div id="cursor-dot" aria-hidden="true"></div>
+<div id="cursor-ring" aria-hidden="true"></div>
+
+<style>
+  #cursor-dot {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 8px;
+    height: 8px;
+    background: white;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0;
+    transform: translate(-50%, -50%);
+    transition: width 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+                height 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+                background 0.3s ease,
+                opacity 0.3s ease;
+    mix-blend-mode: difference;
+  }
+
+  #cursor-ring {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 40px;
+    height: 40px;
+    border: 1.5px solid rgba(255, 255, 255, 0.5);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9998;
+    opacity: 0;
+    transform: translate(-50%, -50%);
+    transition: width 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+                height 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+                border-color 0.3s ease,
+                opacity 0.4s ease;
+  }
+
+  /* Hide on touch devices */
+  @media (hover: none) and (pointer: coarse) {
+    #cursor-dot,
+    #cursor-ring {
+      display: none !important;
+    }
+  }
+</style>
+
+<script>
+  let dotRAF = null;
+  let dotCleanups = [];
+
+  function cleanupCursorDot() {
+    if (dotRAF !== null) {
+      cancelAnimationFrame(dotRAF);
+      dotRAF = null;
+    }
+    dotCleanups.forEach(fn => fn());
+    dotCleanups = [];
+  }
+
+  function initCursorDot() {
+    cleanupCursorDot();
+
+    const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+    const hasCoarsePointer = window.matchMedia('(pointer: coarse)').matches;
+    if (isTouchDevice || hasCoarsePointer) return;
+
+    const dot = document.getElementById('cursor-dot');
+    const ring = document.getElementById('cursor-ring');
+    if (!dot || !ring) return;
+
+    let mouseX = -100, mouseY = -100;
+    let dotX = -100, dotY = -100;
+    let ringX = -100, ringY = -100;
+    let visible = false;
+    let isHovering = false;
+
+    const INTERACTIVE_SELECTOR = 'a, button, input, textarea, select, [role="button"], .btn-primary, .btn-outline, .magnetic';
+
+    const onMouseMove = (e) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+
+      if (!visible) {
+        visible = true;
+        dot.style.opacity = '1';
+        ring.style.opacity = '1';
+      }
+    };
+
+    const onMouseLeave = () => {
+      visible = false;
+      dot.style.opacity = '0';
+      ring.style.opacity = '0';
+    };
+
+    const onMouseOver = (e) => {
+      if (e.target.closest(INTERACTIVE_SELECTOR)) {
+        if (!isHovering) {
+          isHovering = true;
+          dot.style.width = '40px';
+          dot.style.height = '40px';
+          dot.style.background = 'rgba(255, 255, 255, 0.1)';
+          ring.style.width = '56px';
+          ring.style.height = '56px';
+          ring.style.borderColor = 'rgba(255, 255, 255, 0.3)';
+        }
+      } else {
+        if (isHovering) {
+          isHovering = false;
+          dot.style.width = '8px';
+          dot.style.height = '8px';
+          dot.style.background = 'white';
+          ring.style.width = '40px';
+          ring.style.height = '40px';
+          ring.style.borderColor = 'rgba(255, 255, 255, 0.5)';
+        }
+      }
+    };
+
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseleave', onMouseLeave);
+    document.addEventListener('mouseover', onMouseOver);
+
+    dotCleanups.push(() => {
+      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseleave', onMouseLeave);
+      document.removeEventListener('mouseover', onMouseOver);
+      dot.style.opacity = '0';
+      ring.style.opacity = '0';
+    });
+
+    // LERP animation loop
+    const DOT_LERP = 0.18;
+    const RING_LERP = 0.09;
+
+    function animate() {
+      dotX += (mouseX - dotX) * DOT_LERP;
+      dotY += (mouseY - dotY) * DOT_LERP;
+      ringX += (mouseX - ringX) * RING_LERP;
+      ringY += (mouseY - ringY) * RING_LERP;
+
+      dot.style.left = `${dotX}px`;
+      dot.style.top = `${dotY}px`;
+      ring.style.left = `${ringX}px`;
+      ring.style.top = `${ringY}px`;
+
+      dotRAF = requestAnimationFrame(animate);
+    }
+
+    dotRAF = requestAnimationFrame(animate);
+  }
+
+  document.addEventListener('astro:page-load', initCursorDot);
+  document.addEventListener('astro:before-swap', cleanupCursorDot);
+</script>

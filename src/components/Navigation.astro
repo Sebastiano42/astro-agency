@@ -18,7 +18,6 @@ import ThemeToggle from './ThemeToggle.astro';
         <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center text-black font-black text-xl logo-box transition-colors duration-300">
           S.
         </div>
-        <span class="text-xl font-bold uppercase tracking-widest text-white hidden sm:block">Studio</span>
       </a>
 
       <!-- Desktop Menu -->
@@ -55,6 +54,9 @@ import ThemeToggle from './ThemeToggle.astro';
   <!-- Mobile Menu Overlay — uses display:none when closed (guaranteed no click blocking) -->
   <div id="mobile-menu" class="nav-menu fixed inset-0 bg-background z-[100] md:hidden" role="dialog" aria-label="Menu di navigazione" aria-hidden="true" style="display:none;">
 
+    <!-- Subtle grid background -->
+    <div class="absolute inset-0 bg-grid-pattern opacity-[0.04] pointer-events-none"></div>
+
     <!-- Close button -->
     <div class="container-custom pt-5 relative z-20 flex justify-end">
       <button class="mobile-close w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-gray-400 hover:text-white hover:border-white/25 transition-colors duration-200 cursor-pointer bg-transparent" aria-label="Chiudi menu">
@@ -66,35 +68,36 @@ import ThemeToggle from './ThemeToggle.astro';
     </div>
 
     <!-- Menu content -->
-    <div class="flex-1 overflow-y-auto container-custom relative z-10 flex flex-col justify-center py-6">
-        <ul class="flex flex-col gap-0 list-none p-0 text-left w-full">
-          {['Home', 'Servizi', 'Portfolio', 'Chi Siamo', 'Contatti'].map((item, id) => (
-            <li class="border-b border-white/[0.06] last:border-0">
-              <a href={item === 'Home' ? '/' : `/${item.toLowerCase().replace(' ', '-')}`}
-                 class="mobile-link group flex items-center gap-3 py-4 text-2xl font-bold uppercase tracking-wide text-gray-500 hover:text-white no-underline opacity-0 translate-y-4 transition-[opacity,transform,color] duration-300 ease-out">
-                 <span class="text-[10px] font-mono text-gray-700 group-hover:text-gray-400 transition-colors duration-200 tabular-nums">0{id + 1}</span>
-                {item}
-              </a>
-            </li>
-          ))}
-        </ul>
+    <div class="flex-1 overflow-y-auto container-custom relative z-10 flex flex-col justify-between py-6">
+        <!-- Navigation links -->
+        <nav class="flex-1 flex flex-col justify-center">
+          <ul class="flex flex-col gap-1 list-none p-0 text-left w-full">
+            {['Home', 'Servizi', 'Portfolio', 'Chi Siamo', 'Contatti'].map((item, id) => (
+              <li>
+                <a href={item === 'Home' ? '/' : `/${item.toLowerCase().replace(' ', '-')}`}
+                   class="mobile-link group flex items-center gap-4 py-3 no-underline opacity-0 translate-y-4 transition-[opacity,transform,color] duration-300 ease-out">
+                   <span class="text-xs font-mono text-gray-700 group-hover:text-gray-400 transition-colors duration-200 tabular-nums w-6">0{id + 1}</span>
+                   <span class="text-3xl font-bold tracking-wide text-white">{item}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
 
-        <div class="mt-8 pt-6 border-t border-white/[0.06] flex flex-col sm:flex-row sm:items-center gap-5 sm:gap-10 opacity-0 mobile-footer transition-opacity duration-300">
-            <div>
-                <span class="text-[10px] font-mono text-gray-600 uppercase tracking-widest block mb-1.5">Contatto</span>
-                <a href="mailto:hello@studio.com" class="text-white text-sm font-medium no-underline hover:text-gray-300 transition-colors duration-200">hello@studio.com</a>
+        <!-- Footer -->
+        <div class="pt-6 border-t border-white/[0.08] flex items-end justify-between gap-6 opacity-0 mobile-footer transition-opacity duration-300">
+            <div class="flex flex-col gap-4">
+              <div>
+                  <span class="text-[10px] font-mono text-gray-600 uppercase tracking-widest block mb-1.5">Email</span>
+                  <a href="mailto:info@sebastianomoniaci.it" class="text-white text-sm font-medium no-underline hover:text-gray-300 transition-colors duration-200">info@sebastianomoniaci.it</a>
+              </div>
+              <div class="flex gap-6">
+                  <a href="https://www.instagram.com/sebastianomoniaci" target="_blank" rel="noopener noreferrer" class="text-[10px] font-mono uppercase tracking-widest text-gray-500 no-underline hover:text-white transition-colors duration-200">Instagram</a>
+                  <a href="https://twitter.com/sebastianomoniaci" target="_blank" rel="noopener noreferrer" class="text-[10px] font-mono uppercase tracking-widest text-gray-500 no-underline hover:text-white transition-colors duration-200">Twitter</a>
+                  <a href="https://www.linkedin.com/in/sebastianomoniaci" target="_blank" rel="noopener noreferrer" class="text-[10px] font-mono uppercase tracking-widest text-gray-500 no-underline hover:text-white transition-colors duration-200">LinkedIn</a>
+              </div>
             </div>
-            <div>
-                <span class="text-[10px] font-mono text-gray-600 uppercase tracking-widest block mb-1.5">Social</span>
-                <div class="flex gap-4 text-white font-medium text-xs">
-                    <a href="https://www.instagram.com/studiodigital" target="_blank" rel="noopener noreferrer" class="no-underline hover:text-gray-300 transition-colors duration-200">IG</a>
-                    <a href="https://twitter.com/studiodigital" target="_blank" rel="noopener noreferrer" class="no-underline hover:text-gray-300 transition-colors duration-200">TW</a>
-                    <a href="https://www.linkedin.com/company/studio-digital" target="_blank" rel="noopener noreferrer" class="no-underline hover:text-gray-300 transition-colors duration-200">LN</a>
-                </div>
-            </div>
-            <div class="sm:ml-auto">
-                <ThemeToggle />
-            </div>
+            <ThemeToggle />
         </div>
     </div>
   </div>
@@ -160,8 +163,7 @@ import ThemeToggle from './ThemeToggle.astro';
       toggleListener = null;
     }
     if (closeListener) {
-      const closeBtn = document.querySelector('.mobile-close');
-      closeBtn?.removeEventListener('click', closeListener);
+      document.removeEventListener('click', closeListener, true);
       closeListener = null;
     }
     linkListeners.forEach(({ el, handler }) => {
@@ -174,7 +176,6 @@ import ThemeToggle from './ThemeToggle.astro';
     cleanup();
 
     const toggle = document.querySelector('.mobile-toggle');
-    const closeBtn = document.querySelector('.mobile-close');
     const menu = document.getElementById('mobile-menu');
     const links = document.querySelectorAll('.mobile-link');
     const mobileFooter = document.querySelector('.mobile-footer');
@@ -292,10 +293,11 @@ import ThemeToggle from './ThemeToggle.astro';
       };
       toggle.addEventListener('click', toggleListener);
 
-      if (closeBtn) {
-        closeListener = () => { closeMenu(); };
-        closeBtn.addEventListener('click', closeListener);
-      }
+      // Use event delegation for close button (robust with transition:persist)
+      closeListener = (e) => {
+        if (e.target.closest('.mobile-close')) { closeMenu(); }
+      };
+      document.addEventListener('click', closeListener, true);
 
       // On link click: close instantly, let View Transition handle navigation
       links.forEach(link => {

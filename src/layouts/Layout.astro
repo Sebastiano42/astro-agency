@@ -5,7 +5,7 @@ import Navigation from '../components/Navigation.astro';
 import Footer from '../components/Footer.astro';
 import CursorFollower from '../components/CursorFollower.astro';
 import MagneticElements from '../components/MagneticElements.astro';
-import RippleEffect from '../components/RippleEffect.astro';
+import CursorDot from '../components/CursorDot.astro';
 import ScrollButton from '../components/ScrollButton.astro';
 import '../styles/global.css';
 
@@ -18,8 +18,8 @@ interface Props {
 }
 
 const {
-	title = "Studio Digitale",
-	description = "Costruiamo esperienze digitali che definiscono il futuro dei brand. Web design, sviluppo e digital marketing a Milano.",
+	title = "Sebastiano Moniaci",
+	description = "Costruisco esperienze digitali che definiscono il futuro dei brand. Web design, sviluppo e digital marketing a Rovigo.",
 	ogImage = "/og-image.jpg",
 	ogType = "website",
 	noindex = false
@@ -65,36 +65,35 @@ const fullOgImage = new URL(ogImage, Astro.site);
 // Schema.org JSON-LD - Organization & Website
 const organizationSchema = {
 	"@context": "https://schema.org",
-	"@type": "Organization",
-	"name": "Studio Digitale",
+	"@type": "Person",
+	"name": "Sebastiano Moniaci",
 	"url": Astro.site,
 	"logo": new URL("/logo.png", Astro.site),
-	"description": "Studio di web design e sviluppo a Milano. Creiamo esperienze digitali che definiscono il futuro dei brand.",
+	"description": "Freelance web designer e developer a Rovigo. Creo esperienze digitali che definiscono il futuro dei brand.",
 	"address": {
 		"@type": "PostalAddress",
-		"addressLocality": "Milano",
+		"addressLocality": "Rovigo",
 		"addressCountry": "IT"
 	},
 	"contactPoint": {
 		"@type": "ContactPoint",
-		"telephone": "+39-02-1234-5678",
 		"contactType": "customer service",
-		"email": "hello@studio.com",
+		"email": "info@sebastianomoniaci.it",
 		"availableLanguage": ["it", "en"]
 	},
 	"sameAs": [
-		"https://www.linkedin.com/company/studio-digital",
-		"https://www.instagram.com/studiodigital",
-		"https://twitter.com/studiodigital"
+		"https://www.linkedin.com/in/sebastianomoniaci",
+		"https://www.instagram.com/sebastianomoniaci",
+		"https://twitter.com/sebastianomoniaci"
 	]
 };
 
 const websiteSchema = {
 	"@context": "https://schema.org",
 	"@type": "WebSite",
-	"name": "Studio Digitale",
+	"name": "Sebastiano Moniaci",
 	"url": Astro.site,
-	"description": "Web Design & Development Studio",
+	"description": "Freelance Web Designer & Developer",
 	"inLanguage": "it-IT"
 };
 ---
@@ -122,7 +121,7 @@ const websiteSchema = {
 		<meta property="og:title" content={`${title} | Web Design & Development`} />
 		<meta property="og:description" content={description} />
 		<meta property="og:image" content={fullOgImage} />
-		<meta property="og:site_name" content="Studio Digitale" />
+		<meta property="og:site_name" content="Sebastiano Moniaci" />
 		<meta property="og:locale" content="it_IT" />
 
 		<!-- Twitter -->
@@ -198,8 +197,8 @@ const websiteSchema = {
     <Footer transition:persist />
 
     <CursorFollower />
+    <CursorDot />
     <MagneticElements />
-    <RippleEffect />
     <ScrollButton />
 
     <script>
