@@ -1,0 +1,64 @@
+---
+// src/components/MockupTilt.astro
+// 3D tilt effect on .mockup-float elements - follows mouse position
+// Desktop only
+---
+
+<script>
+  let tiltCleanups = [];
+
+  function cleanupTilt() {
+    tiltCleanups.forEach(fn => fn());
+    tiltCleanups = [];
+  }
+
+  function initTilt() {
+    cleanupTilt();
+
+    const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+    if (isTouchDevice) return;
+
+    const elements = document.querySelectorAll('.mockup-float');
+    if (!elements.length) return;
+
+    const MAX_ROTATE = 8; // degrees
+
+    elements.forEach(el => {
+      const onMouseMove = (e) => {
+        const rect = el.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+
+        // Normalize mouse position relative to element center (-1 to 1)
+        const normalX = (e.clientX - centerX) / (rect.width / 2);
+        const normalY = (e.clientY - centerY) / (rect.height / 2);
+
+        // Clamp values
+        const clampedX = Math.max(-1, Math.min(1, normalX));
+        const clampedY = Math.max(-1, Math.min(1, normalY));
+
+        // rotateY for horizontal movement, rotateX for vertical (inverted)
+        const rotateY = clampedX * MAX_ROTATE;
+        const rotateX = -clampedY * MAX_ROTATE;
+
+        el.style.transform = `perspective(800px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(10px)`;
+      };
+
+      const onMouseLeave = () => {
+        el.style.transform = '';
+      };
+
+      el.addEventListener('mousemove', onMouseMove);
+      el.addEventListener('mouseleave', onMouseLeave);
+
+      tiltCleanups.push(() => {
+        el.removeEventListener('mousemove', onMouseMove);
+        el.removeEventListener('mouseleave', onMouseLeave);
+        el.style.transform = '';
+      });
+    });
+  }
+
+  document.addEventListener('astro:page-load', initTilt);
+  document.addEventListener('astro:before-swap', cleanupTilt);
+</script>
