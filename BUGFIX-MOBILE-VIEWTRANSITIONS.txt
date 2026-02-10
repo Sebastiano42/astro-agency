@@ -1,0 +1,74 @@
+========================================================================
+  BUGFIX: Schermo nero e pagina bloccata su mobile
+  Data: 09/02/2026
+  Progetto: Astro Agency (astro-agency-main)
+========================================================================
+
+PROBLEMA
+--------
+Su mobile, cliccando un link interno (es. Servizi, Chi Siamo, card
+homepage, pulsante "Esplora Lavori"):
+- La pagina diventava completamente nera
+- Nessun elemento era cliccabile
+- Il sito risultava completamente bloccato
+Su desktop tutto funzionava perfettamente.
+
+CAUSA
+-----
+Le Astro View Transitions usano un client-side router che:
+1. Cattura uno screenshot della pagina corrente
+2. Scarica la nuova pagina in background
+3. Anima la transizione (fade out -> fade in)
+4. Scambia il DOM
+
+Su mobile questo processo falliva: la pagina veniva portata a
+opacity: 0 (schermo nero) ma lo swap non completava correttamente,
+lasciando il sito bloccato con un overlay invisibile sopra tutto.
+
+Un problema secondario: il menu mobile usava opacity:0 +
+pointer-events:none per nascondersi. Su alcuni browser mobile
+l'overlay (fixed inset-0 z-100) intercettava comunque i tocchi,
+bloccando click su card e pulsanti.
+
+FIX APPLICATI (4 commit)
+------------------------
+
+1. [41e8e58] CSS + JS safety nets
+   - global.css: Override @keyframes su mobile (pointer: coarse)
+     per mantenere opacity: 1 durante le transizioni
+   - Layout.astro: Cleanup IntersectionObserver e scroll listeners
+     per prevenire memory leak tra navigazioni
+
+2. [e6d0df0] Skip animazione View Transition su mobile
+   - Layout.astro: Aggiunto e.viewTransition.skipTransition() in
+     astro:before-swap su mobile
+   - Pre-attivazione elementi .reveal nel nuovo documento
+   - Safety net in astro:after-swap per forzare visibilita contenuto
+
+3. [7d00375] Riscrittura completa menu mobile
+   - Navigation.astro: Sostituito opacity:0/pointer-events:none
+     con display:none (rimuove completamente l'overlay dal rendering)
+   - Apertura: display:flex + fade opacity via JS
+   - Chiusura: fade opacity + display:none dopo timeout
+   - forceHideMenu() come safety net su ogni page swap
+
+4. [f37be20] FIX DEFINITIVO - Bypass View Transitions su mobile
+   - Layout.astro: Script inline (capture phase) che intercetta
+     tutti i click su link interni su dispositivi touch e usa
+     window.location.href al posto del router Astro
+   - astro.config.mjs: Prefetch strategy da 'load' a 'viewport'
+     per ridurre carico di rete su mobile
+   - Desktop non viene toccato: View Transitions restano attive
+
+FILE MODIFICATI
+---------------
+- src/layouts/Layout.astro
+- src/components/Navigation.astro
+- src/styles/global.css
+- astro.config.mjs
+
+RISULTATO
+---------
+- Mobile: navigazione classica del browser, zero bug
+- Desktop: View Transitions animate, nessun cambiamento
+========================================================================

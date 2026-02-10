@@ -21,31 +21,61 @@
     const elements = document.querySelectorAll('.mockup-float');
     if (!elements.length) return;
 
-    const MAX_ROTATE = 8; // degrees
+    const MAX_ROTATE = 4; // degrees - subtle effect
 
     elements.forEach(el => {
+      let currentRotateX = 0;
+      let currentRotateY = 0;
+      let targetRotateX = 0;
+      let targetRotateY = 0;
+      let rafId = null;
+
+      const lerp = (start, end, factor) => start + (end - start) * factor;
+
+      const animate = () => {
+        currentRotateX = lerp(currentRotateX, targetRotateX, 0.08);
+        currentRotateY = lerp(currentRotateY, targetRotateY, 0.08);
+
+        // Stop animating when close enough
+        if (Math.abs(currentRotateX - targetRotateX) < 0.01 && Math.abs(currentRotateY - targetRotateY) < 0.01) {
+          currentRotateX = targetRotateX;
+          currentRotateY = targetRotateY;
+          el.style.transform = currentRotateX === 0 && currentRotateY === 0
+            ? ''
+            : `perspective(1000px) rotateX(${currentRotateX}deg) rotateY(${currentRotateY}deg)`;
+          rafId = null;
+          return;
+        }
+
+        el.style.transform = `perspective(1000px) rotateX(${currentRotateX}deg) rotateY(${currentRotateY}deg)`;
+        rafId = requestAnimationFrame(animate);
+      };
+
+      const startAnimation = () => {
+        if (!rafId) rafId = requestAnimationFrame(animate);
+      };
+
       const onMouseMove = (e) => {
         const rect = el.getBoundingClientRect();
         const centerX = rect.left + rect.width / 2;
         const centerY = rect.top + rect.height / 2;
 
-        // Normalize mouse position relative to element center (-1 to 1)
         const normalX = (e.clientX - centerX) / (rect.width / 2);
         const normalY = (e.clientY - centerY) / (rect.height / 2);
 
-        // Clamp values
         const clampedX = Math.max(-1, Math.min(1, normalX));
         const clampedY = Math.max(-1, Math.min(1, normalY));
 
-        // rotateY for horizontal movement, rotateX for vertical (inverted)
-        const rotateY = clampedX * MAX_ROTATE;
-        const rotateX = -clampedY * MAX_ROTATE;
+        targetRotateY = clampedX * MAX_ROTATE;
+        targetRotateX = -clampedY * MAX_ROTATE;
 
-        el.style.transform = `perspective(800px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(10px)`;
+        startAnimation();
       };
 
       const onMouseLeave = () => {
-        el.style.transform = '';
+        targetRotateX = 0;
+        targetRotateY = 0;
+        startAnimation();
       };
 
       el.addEventListener('mousemove', onMouseMove);
@@ -54,6 +84,7 @@
       tiltCleanups.push(() => {
         el.removeEventListener('mousemove', onMouseMove);
         el.removeEventListener('mouseleave', onMouseLeave);
+        if (rafId) cancelAnimationFrame(rafId);
         el.style.transform = '';
       });
     });
