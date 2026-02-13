@@ -12,6 +12,7 @@
     "@astrojs/node": "^9.5.3",
     "@astrojs/sitemap": "^3.7.0",
     "@astrojs/tailwind": "^6.0.2",
+    "@astrojs/vercel": "^9.0.4",
     "astro": "^5.17.1",
     "autoprefixer": "^10.4.24",
     "postcss": "^8.5.6",
