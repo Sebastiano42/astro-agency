@@ -1,30 +1,13 @@
 ---
 // src/pages/blog.astro
 import Layout from '../layouts/Layout.astro';
+import { blogPosts } from '../data/blog-posts';
 
-const posts = [
-  {
-    slug: "web-design-trends-2026",
-    title: "Web Design Trends 2026: Il Futuro È Minimalista",
-    date: "1 Febbraio 2026",
-    excerpt: "Scopri i trend di design che domineranno il 2026: minimalismo brutale, tipografia bold e animazioni fluide.",
-    image: "✨"
-  },
-  {
-    slug: "performance-web-optimization",
-    title: "Come Ottimizzare un Sito per Performance Estreme",
-    date: "20 Gennaio 2026",
-    excerpt: "Tecniche avanzate per ottenere un Lighthouse score perfetto e tempi di caricamento sotto i 2 secondi.",
-    image: "🚀"
-  },
-  {
-    slug: "seo-strategy-2026",
-    title: "SEO Strategy 2026: Oltre i Keyword",
-    date: "15 Gennaio 2026",
-    excerpt: "La SEO moderna non è più solo keyword. Scopri come dominare la SERP con contenuti di valore e technical excellence.",
-    image: "📈"
-  }
-];
+const categoryIcons: Record<string, string> = {
+  Design: 'M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z',
+  Development: 'M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4',
+  SEO: 'M13 7h8m0 0v8m0-8l-8 8-4-4-6 6',
+};
 ---
 
 <Layout
@@ -41,17 +24,23 @@ const posts = [
 
   <section class="pb-32 container-custom">
     <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-      {posts.map((post, index) => (
-        <article class={`group reveal-scale delay-${(index % 3 + 1) * 100}`}>
+      {blogPosts.map((post, index) => (
+        <article class="group reveal-scale" style={`transition-delay: ${(index % 3 + 1) * 100}ms`}>
           <div class="glow-border relative bg-gradient-to-br from-white/[0.08] to-transparent border border-white/10 rounded-2xl overflow-hidden transition-all duration-500 hover:border-white/30 hover:bg-white/[0.05]">
-            <div class="h-48 bg-white/[0.02] border-b border-white/5 flex items-center justify-center text-5xl transition-all duration-500 group-hover:bg-white/[0.05]">
-              {post.image}
+            <div class="h-48 bg-white/[0.02] border-b border-white/5 flex items-center justify-center transition-all duration-500 group-hover:bg-white/[0.05]">
+              <svg class="w-12 h-12 text-white/20 group-hover:text-white/40 transition-colors duration-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d={categoryIcons[post.category] || categoryIcons.Design} />
+              </svg>
             </div>
             <div class="p-8">
-              <span class="text-xs font-mono uppercase tracking-widest text-gray-500 mb-3 block">{post.date}</span>
+              <div class="flex items-center gap-3 mb-3">
+                <span class="text-xs font-mono uppercase tracking-widest text-gray-500">{new Date(post.date).toLocaleDateString('it-IT', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
+                <span class="text-gray-700">·</span>
+                <span class="text-xs font-mono text-gray-500">{post.readTime}</span>
+              </div>
               <h2 class="text-2xl font-bold text-white mb-4 line-clamp-2 leading-tight group-hover:translate-x-1 transition-transform duration-300">{post.title}</h2>
               <p class="text-gray-400 mb-8 line-clamp-3 text-sm">{post.excerpt}</p>
-              <a href={`/blog/${post.slug}`} class="w-full flex items-center justify-center gap-2 bg-white/5 border border-white/10 text-white font-bold uppercase text-xs tracking-widest py-4 rounded-xl hover:bg-white hover:text-black transition-all duration-300 group/btn">
+              <a href={`/blog/${post.slug}`} class="btn-card group/btn">
                 <span>Leggi tutto</span>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="transform group-hover/btn:translate-x-1 transition-transform">
                   <path d="M5 12h14M12 5l7 7-7 7"/>

@@ -3,11 +3,7 @@
 import Layout from '../layouts/Layout.astro';
 import ContactForm from '../components/ContactForm.astro';
 
-// Import local logos
-import cssLogo from '../assets/logos/css-3.png';
-import illustratorLogo from '../assets/logos/adobe-illustrator-seeklogo.svg';
-import photoshopLogo from '../assets/logos/adobe-photoshop-seeklogo.svg';
-import magentoLogo from '../assets/logos/magento-seeklogo.png';
+import TechStackMarquee from '../components/TechStackMarquee.astro';
 
 const services = [
   { icon: '01', title: 'Design System', desc: 'Linguaggi visivi scalabili per prodotti digitali complessi.', color: 'from-blue-500/20 to-purple-500/10', href: '/servizi/web-design' },
@@ -103,7 +99,7 @@ const testimonials = [
 
       <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
         {services.map((item, index) => (
-          <a href={item.href} class={`group text-center md:text-left reveal-scale h-full flex flex-col no-underline`}>
+          <a href={item.href} class={`group text-center md:text-left reveal-scale h-full flex flex-col`}>
             <div class="glow-border relative h-full bg-gradient-to-br from-white/[0.08] to-transparent border border-white/10 rounded-2xl p-8 transition-all duration-500 hover:border-white/30 hover:bg-white/[0.05] overflow-hidden flex flex-col">
               <!-- Gradient Glow Effect -->
               <div class={`absolute -top-20 -right-20 w-40 h-40 bg-gradient-to-br ${item.color} rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700`}></div>
@@ -145,144 +141,7 @@ const testimonials = [
   </section>
 
   <!-- TECH & DESIGN STACK MARQUEE -->
-  <section class="relative overflow-hidden">
-    <div class="border-y border-white/5 bg-surface/30 py-8 overflow-hidden reveal w-full">
-      <div class="flex animate-marquee whitespace-nowrap">
-        <div class="flex items-center gap-16">
-          <!-- Tech Stack -->
-          <div class="flex items-center gap-3">
-            <img src="https://cdn.simpleicons.org/php/FFFFFF" alt="PHP" class="w-10 h-10 opacity-40" />
-            <span class="text-sm font-mono text-gray-400">PHP</span>
-          </div>
-          <div class="flex items-center gap-3">
-            <img src="https://cdn.simpleicons.org/javascript/FFFFFF" alt="JavaScript" class="w-10 h-10 opacity-40" />
-            <span class="text-sm font-mono text-gray-400">JavaScript</span>
-          </div>
-          <div class="flex items-center gap-3">
-            <img src="https://cdn.simpleicons.org/html5/FFFFFF" alt="HTML5" class="w-10 h-10 opacity-40" />
-            <span class="text-sm font-mono text-gray-400">HTML</span>
-          </div>
-          <div class="flex items-center gap-3">
-            <img src={cssLogo.src} alt="CSS3" class="w-10 h-10 opacity-40 brightness-0 invert" />
-            <span class="text-sm font-mono text-gray-400">CSS</span>
-          </div>
-          <div class="flex items-center gap-3">
-            <img src="https://cdn.simpleicons.org/tailwindcss/FFFFFF" alt="Tailwind CSS" class="w-10 h-10 opacity-40" />
-            <span class="text-sm font-mono text-gray-400">Tailwind</span>
-          </div>
-          <div class="flex items-center gap-3">
-            <img src="https://cdn.simpleicons.org/bootstrap/FFFFFF" alt="Bootstrap" class="w-10 h-10 opacity-40" />
-            <span class="text-sm font-mono text-gray-400">Bootstrap</span>
-          </div>
-          <div class="flex items-center gap-3">
-            <img src="https://cdn.simpleicons.org/astro/FFFFFF" alt="Astro" class="w-10 h-10 opacity-40" />
-            <span class="text-sm font-mono text-gray-400">Astro</span>
-          </div>
-          <div class="flex items-center gap-3">
-            <img src="https://cdn.simpleicons.org/wordpress/FFFFFF" alt="WordPress" class="w-10 h-10 opacity-40" />
-            <span class="text-sm font-mono text-gray-400">WordPress</span>
-          </div>
-          <div class="flex items-center gap-3">
-            <img src="https://cdn.simpleicons.org/woo/FFFFFF" alt="WooCommerce" class="w-10 h-10 opacity-40" />
-            <span class="text-sm font-mono text-gray-400">WooCommerce</span>
-          </div>
-          <div class="flex items-center gap-3">
-            <img src={magentoLogo.src} alt="Magento" class="w-10 h-10 opacity-40 brightness-0 invert" />
-            <span class="text-sm font-mono text-gray-400">Magento</span>
-          </div>
-
-          <!-- Separator Label -->
-          <div class="flex items-center px-4">
-            <span class="text-xs font-mono uppercase tracking-widest text-gray-500 border border-white/10 px-3 py-1 rounded-full bg-white/5">DESIGN</span>
-          </div>
-
-          <!-- Design Stack -->
-          <div class="flex items-center gap-3">
-            <img src="https://cdn.simpleicons.org/figma/FFFFFF" alt="Figma" class="w-10 h-10 opacity-40" />
-            <span class="text-sm font-mono text-gray-400">Figma</span>
-          </div>
-          <div class="flex items-center gap-3">
-            <img src="https://cdn.simpleicons.org/sketch/FFFFFF" alt="Sketch" class="w-10 h-10 opacity-40" />
-            <span class="text-sm font-mono text-gray-400">Sketch</span>
-          </div>
-          <div class="flex items-center gap-3">
-            <img src={illustratorLogo.src} alt="Illustrator" class="w-10 h-10 opacity-40 brightness-0 invert" />
-            <span class="text-sm font-mono text-gray-400">Illustrator</span>
-          </div>
-          <div class="flex items-center gap-3">
-            <img src={photoshopLogo.src} alt="Photoshop" class="w-10 h-10 opacity-40 brightness-0 invert" />
-            <span class="text-sm font-mono text-gray-400">Photoshop</span>
-          </div>
-        </div>
-        <div class="flex items-center gap-16 ml-16">
-          <!-- Tech Stack -->
-          <div class="flex items-center gap-3">
-            <img src="https://cdn.simpleicons.org/php/FFFFFF" alt="PHP" class="w-10 h-10 opacity-40" />
-            <span class="text-sm font-mono text-gray-400">PHP</span>
-          </div>
-          <div class="flex items-center gap-3">
-            <img src="https://cdn.simpleicons.org/javascript/FFFFFF" alt="JavaScript" class="w-10 h-10 opacity-40" />
-            <span class="text-sm font-mono text-gray-400">JavaScript</span>
-          </div>
-          <div class="flex items-center gap-3">
-            <img src="https://cdn.simpleicons.org/html5/FFFFFF" alt="HTML5" class="w-10 h-10 opacity-40" />
-            <span class="text-sm font-mono text-gray-400">HTML</span>
-          </div>
-          <div class="flex items-center gap-3">
-            <img src={cssLogo.src} alt="CSS3" class="w-10 h-10 opacity-40 brightness-0 invert" />
-            <span class="text-sm font-mono text-gray-400">CSS</span>
-          </div>
-          <div class="flex items-center gap-3">
-            <img src="https://cdn.simpleicons.org/tailwindcss/FFFFFF" alt="Tailwind CSS" class="w-10 h-10 opacity-40" />
-            <span class="text-sm font-mono text-gray-400">Tailwind</span>
-          </div>
-          <div class="flex items-center gap-3">
-            <img src="https://cdn.simpleicons.org/bootstrap/FFFFFF" alt="Bootstrap" class="w-10 h-10 opacity-40" />
-            <span class="text-sm font-mono text-gray-400">Bootstrap</span>
-          </div>
-          <div class="flex items-center gap-3">
-            <img src="https://cdn.simpleicons.org/astro/FFFFFF" alt="Astro" class="w-10 h-10 opacity-40" />
-            <span class="text-sm font-mono text-gray-400">Astro</span>
-          </div>
-          <div class="flex items-center gap-3">
-            <img src="https://cdn.simpleicons.org/wordpress/FFFFFF" alt="WordPress" class="w-10 h-10 opacity-40" />
-            <span class="text-sm font-mono text-gray-400">WordPress</span>
-          </div>
-          <div class="flex items-center gap-3">
-            <img src="https://cdn.simpleicons.org/woo/FFFFFF" alt="WooCommerce" class="w-10 h-10 opacity-40" />
-            <span class="text-sm font-mono text-gray-400">WooCommerce</span>
-          </div>
-          <div class="flex items-center gap-3">
-            <img src={magentoLogo.src} alt="Magento" class="w-10 h-10 opacity-40 brightness-0 invert" />
-            <span class="text-sm font-mono text-gray-400">Magento</span>
-          </div>
-
-          <!-- Separator Label -->
-          <div class="flex items-center px-4">
-            <span class="text-xs font-mono uppercase tracking-widest text-gray-500 border border-white/10 px-3 py-1 rounded-full bg-white/5">DESIGN</span>
-          </div>
-
-          <!-- Design Stack -->
-          <div class="flex items-center gap-3">
-            <img src="https://cdn.simpleicons.org/figma/FFFFFF" alt="Figma" class="w-10 h-10 opacity-40" />
-            <span class="text-sm font-mono text-gray-400">Figma</span>
-          </div>
-          <div class="flex items-center gap-3">
-            <img src="https://cdn.simpleicons.org/sketch/FFFFFF" alt="Sketch" class="w-10 h-10 opacity-40" />
-            <span class="text-sm font-mono text-gray-400">Sketch</span>
-          </div>
-          <div class="flex items-center gap-3">
-            <img src={illustratorLogo.src} alt="Illustrator" class="w-10 h-10 opacity-40 brightness-0 invert" />
-            <span class="text-sm font-mono text-gray-400">Illustrator</span>
-          </div>
-          <div class="flex items-center gap-3">
-            <img src={photoshopLogo.src} alt="Photoshop" class="w-10 h-10 opacity-40 brightness-0 invert" />
-            <span class="text-sm font-mono text-gray-400">Photoshop</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
+  <TechStackMarquee />
 
   <!-- PORTFOLIO PREVIEW -->
   <section class="py-24 md:py-36 relative">
@@ -294,7 +153,7 @@ const testimonials = [
 
       <div class="grid md:grid-cols-3 gap-8">
         {portfolioPreview.map((project, index) => (
-          <a href="/portfolio" class={`group reveal-scale delay-${(index + 1) * 100} no-underline`}>
+          <a href="/portfolio" class="group reveal-scale" style={`transition-delay: ${(index + 1) * 100}ms`}>
             <div class="glow-border relative bg-gradient-to-br from-white/[0.08] to-transparent border border-white/10 rounded-2xl overflow-hidden transition-all duration-500 hover:border-white/30 hover:bg-white/[0.05]">
               <!-- Image Placeholder with Gradient -->
               <div class="aspect-video relative overflow-hidden bg-white/[0.02]">
@@ -324,8 +183,10 @@ const testimonials = [
   </section>
 
   <!-- STATS -->
-  <section class="py-20 md:py-24 border-y border-white/5 relative">
-    <div class="container-custom">
+  <section class="py-20 md:py-24 border-y border-white/5 relative overflow-hidden">
+    <!-- Background Grid -->
+    <div class="absolute inset-0 bg-grid-pattern opacity-35 pointer-events-none"></div>
+    <div class="container-custom relative z-10">
       <div class="grid grid-cols-1 md:grid-cols-3 gap-16 text-center reveal">
         {stats.map((stat, index) => (
           <div class={`flex flex-col items-center gap-4 group hover:-translate-y-2 transition-transform duration-300`}>
@@ -348,7 +209,7 @@ const testimonials = [
 
       <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8 relative">
         {steps.map((step, index) => (
-          <div class={`group reveal-scale delay-${(index + 1) * 100}`}>
+          <div class="group reveal-scale" style={`transition-delay: ${(index + 1) * 100}ms`}>
             <div class="glow-border relative h-full bg-gradient-to-br from-white/[0.08] to-transparent border border-white/10 rounded-2xl p-8 transition-all duration-500 hover:border-white/30 hover:bg-white/[0.05] overflow-hidden">
               <!-- Gradient Glow -->
               <div class={`absolute -top-20 -right-20 w-40 h-40 bg-gradient-to-br ${index === 0 ? 'from-blue-500/20 to-cyan-500/10' : index === 1 ? 'from-violet-500/20 to-purple-500/10' : index === 2 ? 'from-emerald-500/20 to-teal-500/10' : 'from-orange-500/20 to-amber-500/10'} rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700`}></div>
@@ -380,6 +241,8 @@ const testimonials = [
   <!-- TESTIMONIALS -->
   <section class="py-24 md:py-36 border-y border-white/5 relative overflow-hidden">
     <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-white/5 via-transparent to-transparent"></div>
+    <!-- Background Grid -->
+    <div class="absolute inset-0 bg-grid-pattern-sm opacity-30 pointer-events-none"></div>
     <div class="container-custom relative z-10">
       <div class="text-center mb-16 md:mb-24">
         <h2 class="text-4xl md:text-6xl lg:text-7xl font-black text-white mb-6 reveal-scale">Dicono di Me</h2>
@@ -388,7 +251,7 @@ const testimonials = [
 
       <div class="grid md:grid-cols-3 gap-8">
         {testimonials.map((testimonial, index) => (
-          <div class={`group reveal-scale delay-${(index + 1) * 100}`}>
+          <div class="group reveal-scale" style={`transition-delay: ${(index + 1) * 100}ms`}>
             <div class="relative h-full bg-white/[0.03] backdrop-blur-sm border border-white/10 rounded-2xl p-8 transition-all duration-500 hover:border-white/20 hover:bg-white/[0.06] overflow-hidden">
               <!-- Decorative Quote -->
               <div class="absolute -top-2 -left-1 text-8xl font-black text-white/[0.05] leading-none select-none pointer-events-none">"</div>

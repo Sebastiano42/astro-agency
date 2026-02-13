@@ -1,6 +1,8 @@
 // src/pages/api/contact.ts
 import type { APIRoute } from 'astro';
 
+export const prerender = false;
+
 // Rate limiting store (in-memory, per IP)
 // In production, consider using Redis or a database
 const rateLimitStore = new Map<string, { count: number; timestamp: number }>();

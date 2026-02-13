@@ -1,0 +1,65 @@
+---
+// src/components/TechStackMarquee.astro
+import phpLogo from '../assets/logos/php.svg';
+import jsLogo from '../assets/logos/javascript.svg';
+import htmlLogo from '../assets/logos/html5.svg';
+import cssLogo from '../assets/logos/css-3.png';
+import tailwindLogo from '../assets/logos/tailwindcss.svg';
+import bootstrapLogo from '../assets/logos/bootstrap.svg';
+import astroLogo from '../assets/logos/astro-icon.svg';
+import wordpressLogo from '../assets/logos/wordpress.svg';
+import wooLogo from '../assets/logos/woocommerce.svg';
+import magentoLogo from '../assets/logos/magento-seeklogo.png';
+import figmaLogo from '../assets/logos/figma.svg';
+import sketchLogo from '../assets/logos/sketch.svg';
+import illustratorLogo from '../assets/logos/adobe-illustrator-seeklogo.svg';
+import photoshopLogo from '../assets/logos/adobe-photoshop-seeklogo.svg';
+
+const techItems = [
+  { name: "PHP", icon: phpLogo.src },
+  { name: "JavaScript", icon: jsLogo.src },
+  { name: "HTML", icon: htmlLogo.src },
+  { name: "CSS", icon: cssLogo.src, invert: true },
+  { name: "Tailwind", icon: tailwindLogo.src },
+  { name: "Bootstrap", icon: bootstrapLogo.src },
+  { name: "Astro", icon: astroLogo.src },
+  { name: "WordPress", icon: wordpressLogo.src },
+  { name: "WooCommerce", icon: wooLogo.src },
+  { name: "Magento", icon: magentoLogo.src, invert: true },
+];
+
+const designItems = [
+  { name: "Figma", icon: figmaLogo.src },
+  { name: "Sketch", icon: sketchLogo.src },
+  { name: "Illustrator", icon: illustratorLogo.src, invert: true },
+  { name: "Photoshop", icon: photoshopLogo.src, invert: true },
+];
+---
+
+<section class="relative overflow-hidden">
+  <div class="border-y border-white/5 bg-surface/30 py-8 overflow-hidden reveal w-full">
+    <div class="flex animate-marquee whitespace-nowrap">
+      {[0, 1].map(() => (
+        <div class:list={["flex items-center gap-16", { "ml-16": true }]}>
+          {techItems.map(item => (
+            <div class="flex items-center gap-3">
+              <img src={item.icon} alt={item.name} class:list={["w-10 h-10 opacity-40", { "brightness-0 invert": item.invert }]} loading="lazy" />
+              <span class="text-sm font-mono text-gray-400">{item.name}</span>
+            </div>
+          ))}
+
+          <div class="flex items-center px-4">
+            <span class="text-xs font-mono uppercase tracking-widest text-gray-500 border border-white/10 px-3 py-1 rounded-full bg-white/5">DESIGN</span>
+          </div>
+
+          {designItems.map(item => (
+            <div class="flex items-center gap-3">
+              <img src={item.icon} alt={item.name} class:list={["w-10 h-10 opacity-40", { "brightness-0 invert": item.invert }]} loading="lazy" />
+              <span class="text-sm font-mono text-gray-400">{item.name}</span>
+            </div>
+          ))}
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

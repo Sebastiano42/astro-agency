@@ -54,14 +54,14 @@
 </style>
 
 <script>
-  let animationLoop = null;
+  let rafId = null;
   let eventCleanups = [];
   const injectedOverlays = new WeakMap();
 
   function cleanupCursorEffects() {
-    if (animationLoop !== null) {
-      cancelAnimationFrame(animationLoop);
-      animationLoop = null;
+    if (rafId !== null) {
+      cancelAnimationFrame(rafId);
+      rafId = null;
     }
     eventCleanups.forEach(fn => fn());
     eventCleanups = [];
@@ -76,34 +76,37 @@
     if (isTouchDevice || hasCoarsePointer) return;
 
     let mouseX = 0, mouseY = 0;
+    let needsUpdate = false;
 
     // ===== CARD BORDER GLOW =====
     const CARD_SELECTOR = '.card-dark, .glow-border';
     const GLOW_PROXIMITY = 80;
 
-    function ensureGlowOverlays() {
-      const cards = document.querySelectorAll(CARD_SELECTOR);
-      cards.forEach(card => {
-        if (injectedOverlays.has(card)) return;
+    // Cache card list - rebuild only on DOM changes
+    let cards = [];
 
-        const pos = getComputedStyle(card).position;
-        if (pos === 'static') card.style.position = 'relative';
+    function cacheCards() {
+      cards = [];
+      document.querySelectorAll(CARD_SELECTOR).forEach(card => {
+        // Inject overlay if not already there
+        if (!injectedOverlays.has(card)) {
+          const pos = getComputedStyle(card).position;
+          if (pos === 'static') card.style.position = 'relative';
 
-        const overlay = document.createElement('div');
-        overlay.className = 'glow-border-effect';
-        overlay.innerHTML = '<div class="glow-border-ring"></div><div class="glow-border-fill"></div>';
-        card.appendChild(overlay);
-        injectedOverlays.set(card, overlay);
+          const overlay = document.createElement('div');
+          overlay.className = 'glow-border-effect';
+          overlay.innerHTML = '<div class="glow-border-ring"></div><div class="glow-border-fill"></div>';
+          card.appendChild(overlay);
+          injectedOverlays.set(card, overlay);
+        }
+
+        cards.push({ el: card, overlay: injectedOverlays.get(card) });
       });
     }
 
     function updateCardGlow() {
-      const cards = document.querySelectorAll(CARD_SELECTOR);
-      for (const card of cards) {
-        const overlay = injectedOverlays.get(card);
-        if (!overlay) continue;
-
-        const rect = card.getBoundingClientRect();
+      for (const { el, overlay } of cards) {
+        const rect = el.getBoundingClientRect();
         const nearX = mouseX >= rect.left - GLOW_PROXIMITY && mouseX <= rect.right + GLOW_PROXIMITY;
         const nearY = mouseY >= rect.top - GLOW_PROXIMITY && mouseY <= rect.bottom + GLOW_PROXIMITY;
 
@@ -126,8 +129,37 @@
           overlay.style.setProperty('--glow-y', `${relY}px`);
           overlay.style.opacity = `${opacity}`;
         } else {
-          overlay.style.opacity = '0';
+          if (overlay.style.opacity !== '0') {
+            overlay.style.opacity = '0';
+          }
         }
+      }
+    }
+
+    // ===== ANIMATION LOOP - starts on demand, stops when idle =====
+    let idleFrames = 0;
+    const MAX_IDLE_FRAMES = 3;
+
+    function animate() {
+      if (needsUpdate) {
+        updateCardGlow();
+        needsUpdate = false;
+        idleFrames = 0;
+      } else {
+        idleFrames++;
+      }
+      // Stop loop after a few idle frames to save battery
+      if (idleFrames >= MAX_IDLE_FRAMES) {
+        rafId = null;
+        return;
+      }
+      rafId = requestAnimationFrame(animate);
+    }
+
+    function startLoop() {
+      if (rafId === null) {
+        idleFrames = 0;
+        rafId = requestAnimationFrame(animate);
       }
     }
 
@@ -135,19 +167,27 @@
     const onMouseMove = (e) => {
       mouseX = e.clientX;
       mouseY = e.clientY;
+      needsUpdate = true;
+      startLoop();
     };
-    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mousemove', onMouseMove, { passive: true });
     eventCleanups.push(() => document.removeEventListener('mousemove', onMouseMove));
 
-    // ===== INIT & ANIMATION LOOP =====
-    ensureGlowOverlays();
+    // ===== INIT =====
+    cacheCards();
 
-    function animate() {
-      updateCardGlow();
-      animationLoop = requestAnimationFrame(animate);
-    }
-
-    animationLoop = requestAnimationFrame(animate);
+    // Rebuild card cache when new elements appear - debounced
+    let cacheTimeout = null;
+    const debouncedCacheCards = () => {
+      if (cacheTimeout) clearTimeout(cacheTimeout);
+      cacheTimeout = setTimeout(cacheCards, 200);
+    };
+    const observer = new MutationObserver(debouncedCacheCards);
+    observer.observe(document.body, { childList: true, subtree: true });
+    eventCleanups.push(() => {
+      observer.disconnect();
+      if (cacheTimeout) clearTimeout(cacheTimeout);
+    });
   }
 
   document.addEventListener('astro:page-load', initCursorEffects);

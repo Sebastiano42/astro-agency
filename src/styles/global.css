@@ -19,19 +19,6 @@
     }
 }
 
-/* Mobile: disable page transition opacity animation to prevent black screen.
-   The old page stays visible until the instant swap, then new page appears immediately.
-   This fixes the bug where mobile gets stuck on a black unresponsive screen. */
-@media (pointer: coarse) {
-    @keyframes pageFadeOut {
-        from { opacity: 1; }
-        to { opacity: 1; }
-    }
-    @keyframes pageFadeSlideIn {
-        from { opacity: 1; transform: translateY(0); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-}
 
 @layer base {
     html {
@@ -40,7 +27,7 @@
     }
 
     body {
-        font-family: 'Inter', sans-serif;
+        font-family: 'Space Grotesk', sans-serif;
         background-color: theme('colors.background');
         hyphens: none;
         -webkit-hyphens: none;
@@ -60,20 +47,22 @@
         outline-offset: 2px;
     }
 
-    /* Hide native cursor on desktop - custom cursor dot replaces it */
-    @media (hover: hover) and (pointer: fine) {
-        *, *::before, *::after {
-            cursor: none !important;
-        }
+    /* Card-wrapping links: show focus on the inner card, not the link itself */
+    a:focus-visible > .glow-border,
+    a:focus-visible > [class*="border-white/10"] {
+        outline: 2px solid rgba(255, 255, 255, 0.6);
+        outline-offset: 2px;
+        border-color: rgba(255, 255, 255, 0.3);
+    }
 
-        a:focus-visible,
-        button:focus-visible,
-        input:focus-visible,
-        select:focus-visible,
-        textarea:focus-visible {
-            outline: 2px solid rgba(255, 255, 255, 0.6);
-            outline-offset: 2px;
-        }
+    a:has(> .glow-border):focus-visible,
+    a:has(> [class*="rounded-2xl"]):focus-visible {
+        outline: none;
+    }
+
+    /* Hide native cursor on desktop - only when custom cursor is active (class added by JS) */
+    html.custom-cursor *, html.custom-cursor *::before, html.custom-cursor *::after {
+        cursor: none !important;
     }
 
     h1,
@@ -110,8 +99,16 @@
         transform: translateY(-1px);
     }
 
+    .btn-secondary {
+        @apply inline-flex items-center justify-center px-8 py-4 bg-white/5 border border-white/10 text-white font-bold uppercase tracking-wider text-sm hover:bg-white/10 hover:border-white/20 transition-all duration-300 rounded-lg;
+    }
+
     .btn-outline {
         @apply inline-flex items-center justify-center px-8 py-4 bg-transparent border border-gray-700 text-white font-bold uppercase tracking-wider text-sm hover:border-white hover:bg-white/5 transition-all duration-300 rounded-lg relative overflow-hidden;
+    }
+
+    .btn-card {
+        @apply w-full flex items-center justify-center gap-2 bg-white/5 border border-white/10 text-white font-bold uppercase text-xs tracking-widest py-4 rounded-xl hover:bg-white hover:text-black transition-all duration-300;
     }
 
     /* ===== CARD DARK - WITH JS-INJECTED BORDER GLOW ===== */
@@ -148,27 +145,6 @@
                         0 0 10px rgba(255, 255, 255, 0.02);
             transition-duration: 0.15s;
         }
-    }
-
-    /* Shimmer Effect on Hover */
-    .card-dark .shimmer {
-        position: absolute;
-        top: 0;
-        left: -150%;
-        width: 150%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.04) 50%, transparent 100%);
-        transform: skewX(-20deg);
-        transition: left 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-        pointer-events: none;
-    }
-
-    .card-dark:hover .shimmer {
-        left: 150%;
-    }
-
-    .text-balance {
-        text-wrap: balance;
     }
 
     /* 3D tilt hover for hero mockups */
@@ -221,13 +197,22 @@
 }
 
 @layer utilities {
-    .text-outline {
-        -webkit-text-stroke: 1px rgba(255, 255, 255, 0.3);
-        color: transparent;
+    /* Grid Pattern Background - Subtle and Modern */
+    .bg-grid-pattern {
+        background-image:
+            linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+        background-size: 80px 80px;
+        background-position: center center;
     }
 
-    .glass {
-        @apply backdrop-blur-xl bg-black/50 border-b border-white/10;
+    /* Alternative grid patterns for variety */
+    .bg-grid-pattern-sm {
+        background-image:
+            linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+        background-size: 60px 60px;
+        background-position: center center;
     }
 
     /* ===== MODERN SCROLL ANIMATIONS ===== */
@@ -258,91 +243,16 @@
         transform: scale(1) translateY(0);
     }
 
-    /* Reveal from Left */
-    .reveal-left {
-        opacity: 0;
-        transform: translateX(-60px);
-        transition: opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1),
-                    transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
-    }
-
-    .reveal-left.active {
-        opacity: 1;
-        transform: translateX(0);
-    }
-
-    /* Reveal from Right */
-    .reveal-right {
-        opacity: 0;
-        transform: translateX(60px);
-        transition: opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1),
-                    transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
-    }
-
-    .reveal-right.active {
-        opacity: 1;
-        transform: translateX(0);
-    }
-
-    /* Reveal Rotate */
-    .reveal-rotate {
-        opacity: 0;
-        transform: perspective(1000px) rotateX(10deg) translateY(40px);
-        transition: opacity 1s cubic-bezier(0.22, 1, 0.36, 1),
-                    transform 1s cubic-bezier(0.22, 1, 0.36, 1);
-    }
-
-    .reveal-rotate.active {
-        opacity: 1;
-        transform: perspective(1000px) rotateX(0) translateY(0);
-    }
-
     /* Mobile: reduce animation distances for snappier feel */
     @media (hover: none) and (pointer: coarse) {
         .reveal { transform: translateY(20px); }
         .reveal-scale { transform: scale(0.95) translateY(15px); }
-        .reveal-left { transform: translateX(-30px); }
-        .reveal-right { transform: translateX(30px); }
-        .reveal-rotate { transform: perspective(1000px) rotateX(5deg) translateY(20px); }
 
-        .reveal, .reveal-scale, .reveal-left, .reveal-right, .reveal-rotate {
+        .reveal, .reveal-scale {
             transition-duration: 0.6s;
         }
     }
 
-
-    /* ===== HOVER ANIMATIONS ===== */
-
-    /* Magnetic Hover Effect - Ridotto */
-    .hover-lift {
-        transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-    }
-
-    .hover-lift:hover {
-        transform: translateY(-3px);
-    }
-
-    /* Glow Pulse on Hover - Ridotto */
-    .hover-glow {
-        transition: box-shadow 0.4s ease, transform 0.4s ease;
-    }
-
-    .hover-glow:hover {
-        box-shadow: 0 0 15px rgba(255, 255, 255, 0.08), 0 0 30px rgba(255, 255, 255, 0.03);
-        transform: translateY(-2px);
-    }
-
-    /* Text Gradient on Hover */
-    .text-hover-gradient {
-        background-size: 200% 200%;
-        background-clip: text;
-        -webkit-background-clip: text;
-        transition: all 0.5s ease;
-    }
-
-    .text-hover-gradient:hover {
-        background-position: 100% 0;
-    }
 
     /* Underline Animation */
     .link-underline {
@@ -364,53 +274,4 @@
         width: 100%;
     }
 
-    /* Icon Animation */
-    .icon-animate {
-        transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease;
-    }
-
-    .group:hover .icon-animate {
-        transform: translate(4px, -4px);
-        opacity: 1;
-    }
-
-    /* Number Counter Animation */
-    .counter-animate {
-        transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), color 0.3s ease;
-    }
-
-    .group:hover .counter-animate {
-        transform: scale(1.05);
-    }
-
-    /* Smooth Transitions for Magnetic Effects */
-    .magnetic {
-        will-change: transform;
-    }
-
-    /* Interactive Element Glow on Cursor Proximity */
-    .proximity-glow {
-        position: relative;
-        transition: all 0.3s ease;
-    }
-
-    .proximity-glow::before {
-        content: '';
-        position: absolute;
-        inset: -2px;
-        background: linear-gradient(45deg,
-            rgba(99, 102, 241, 0.4),
-            rgba(168, 85, 247, 0.4),
-            rgba(236, 72, 153, 0.4)
-        );
-        border-radius: inherit;
-        opacity: 0;
-        filter: blur(20px);
-        transition: opacity 0.3s ease;
-        z-index: -1;
-    }
-
-    .proximity-glow:hover::before {
-        opacity: 0.5;
-    }
 }

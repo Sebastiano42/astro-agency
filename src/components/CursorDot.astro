@@ -1,165 +1,231 @@
 ---
 // src/components/CursorDot.astro
-// Minimal cursor dot with LERP following + expand on hover over interactive elements
-// Desktop only - hidden on touch devices
+// Lightweight custom cursor - single element, no RAF loop
+// Position: instant via translate3d (GPU). State changes: CSS transitions.
 ---
 
-<div id="cursor-dot" aria-hidden="true"></div>
-<div id="cursor-ring" aria-hidden="true"></div>
+<div id="cursor" aria-hidden="true">
+  <span id="cursor-label"></span>
+</div>
 
 <style>
-  #cursor-dot {
+  #cursor {
     position: fixed;
     top: 0;
     left: 0;
-    width: 8px;
-    height: 8px;
-    background: white;
-    border-radius: 50%;
+    width: 12px;
+    height: 12px;
     pointer-events: none;
     z-index: 9999;
     opacity: 0;
-    transform: translate(-50%, -50%);
-    transition: width 0.3s cubic-bezier(0.22, 1, 0.36, 1),
-                height 0.3s cubic-bezier(0.22, 1, 0.36, 1),
-                background 0.3s ease,
-                opacity 0.3s ease;
+    will-change: transform;
+    /* Smooth state transitions */
+    transition:
+      width 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+      height 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+      background-color 0.3s ease,
+      border-color 0.3s ease,
+      opacity 0.3s ease,
+      border-width 0.3s ease,
+      backdrop-filter 0.3s ease;
+
+    /* Default state: small filled dot */
+    background-color: white;
+    border: 2px solid white;
+    border-radius: 50%;
+    mix-blend-mode: difference;
+
+    /* Center the element on the cursor point */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #cursor-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: white;
+    opacity: 0;
+    white-space: nowrap;
+    transition: opacity 0.25s ease;
+    pointer-events: none;
+  }
+
+  /* --- States via data attribute --- */
+
+  /* Interactive: link, button */
+  #cursor[data-state="interactive"] {
+    width: 48px;
+    height: 48px;
+    background-color: rgba(255, 255, 255, 0.06);
+    border: 1.5px solid rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(4px);
+  }
+
+  /* Text input fields */
+  #cursor[data-state="text"] {
+    width: 4px;
+    height: 28px;
+    border-radius: 2px;
+    background-color: white;
+    border: none;
     mix-blend-mode: difference;
   }
 
-  #cursor-ring {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 40px;
-    height: 40px;
-    border: 1.5px solid rgba(255, 255, 255, 0.5);
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 9998;
+  /* Labeled: shows text (e.g. "Vedi", "Apri") */
+  #cursor[data-state="labeled"] {
+    width: 72px;
+    height: 72px;
+    background-color: white;
+    border: none;
+    mix-blend-mode: difference;
+  }
+
+  #cursor[data-state="labeled"] #cursor-label {
+    opacity: 1;
+    color: black;
+    mix-blend-mode: normal;
+  }
+
+  /* Hidden: when leaving the viewport */
+  #cursor[data-state="hidden"] {
     opacity: 0;
-    transform: translate(-50%, -50%);
-    transition: width 0.35s cubic-bezier(0.22, 1, 0.36, 1),
-                height 0.35s cubic-bezier(0.22, 1, 0.36, 1),
-                border-color 0.3s ease,
-                opacity 0.4s ease;
   }
 
   /* Hide on touch devices */
   @media (hover: none) and (pointer: coarse) {
-    #cursor-dot,
-    #cursor-ring {
+    #cursor {
       display: none !important;
     }
   }
 </style>
 
 <script>
-  let dotRAF = null;
-  let dotCleanups = [];
+  let cleanups = [];
 
-  function cleanupCursorDot() {
-    if (dotRAF !== null) {
-      cancelAnimationFrame(dotRAF);
-      dotRAF = null;
-    }
-    dotCleanups.forEach(fn => fn());
-    dotCleanups = [];
+  function cleanupCursor() {
+    cleanups.forEach(fn => fn());
+    cleanups = [];
   }
 
-  function initCursorDot() {
-    cleanupCursorDot();
+  function initCursor() {
+    cleanupCursor();
 
     const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
     const hasCoarsePointer = window.matchMedia('(pointer: coarse)').matches;
     if (isTouchDevice || hasCoarsePointer) return;
 
-    const dot = document.getElementById('cursor-dot');
-    const ring = document.getElementById('cursor-ring');
-    if (!dot || !ring) return;
+    const cursor = document.getElementById('cursor');
+    const label = document.getElementById('cursor-label');
+    if (!cursor || !label) return;
 
-    let mouseX = -100, mouseY = -100;
-    let dotX = -100, dotY = -100;
-    let ringX = -100, ringY = -100;
-    let visible = false;
-    let isHovering = false;
+    // Enable cursor:none via CSS class now that custom cursor is ready
+    document.documentElement.classList.add('custom-cursor');
+    cleanups.push(() => document.documentElement.classList.remove('custom-cursor'));
 
-    const INTERACTIVE_SELECTOR = 'a, button, input, textarea, select, [role="button"], .btn-primary, .btn-outline, .magnetic';
+    let currentState = 'default';
 
-    const onMouseMove = (e) => {
-      mouseX = e.clientX;
-      mouseY = e.clientY;
-
-      if (!visible) {
-        visible = true;
-        dot.style.opacity = '1';
-        ring.style.opacity = '1';
-      }
-    };
-
-    const onMouseLeave = () => {
-      visible = false;
-      dot.style.opacity = '0';
-      ring.style.opacity = '0';
-    };
-
-    const onMouseOver = (e) => {
-      if (e.target.closest(INTERACTIVE_SELECTOR)) {
-        if (!isHovering) {
-          isHovering = true;
-          dot.style.width = '40px';
-          dot.style.height = '40px';
-          dot.style.background = 'rgba(255, 255, 255, 0.1)';
-          ring.style.width = '56px';
-          ring.style.height = '56px';
-          ring.style.borderColor = 'rgba(255, 255, 255, 0.3)';
-        }
+    function setState(state) {
+      if (state === currentState) return;
+      currentState = state;
+      if (state === 'default') {
+        cursor.removeAttribute('data-state');
       } else {
-        if (isHovering) {
-          isHovering = false;
-          dot.style.width = '8px';
-          dot.style.height = '8px';
-          dot.style.background = 'white';
-          ring.style.width = '40px';
-          ring.style.height = '40px';
-          ring.style.borderColor = 'rgba(255, 255, 255, 0.5)';
-        }
+        cursor.dataset.state = state;
       }
-    };
-
-    document.addEventListener('mousemove', onMouseMove);
-    document.addEventListener('mouseleave', onMouseLeave);
-    document.addEventListener('mouseover', onMouseOver);
-
-    dotCleanups.push(() => {
-      document.removeEventListener('mousemove', onMouseMove);
-      document.removeEventListener('mouseleave', onMouseLeave);
-      document.removeEventListener('mouseover', onMouseOver);
-      dot.style.opacity = '0';
-      ring.style.opacity = '0';
-    });
-
-    // LERP animation loop
-    const DOT_LERP = 0.18;
-    const RING_LERP = 0.09;
-
-    function animate() {
-      dotX += (mouseX - dotX) * DOT_LERP;
-      dotY += (mouseY - dotY) * DOT_LERP;
-      ringX += (mouseX - ringX) * RING_LERP;
-      ringY += (mouseY - ringY) * RING_LERP;
-
-      dot.style.left = `${dotX}px`;
-      dot.style.top = `${dotY}px`;
-      ring.style.left = `${ringX}px`;
-      ring.style.top = `${ringY}px`;
-
-      dotRAF = requestAnimationFrame(animate);
     }
 
-    dotRAF = requestAnimationFrame(animate);
+    function setLabel(text) {
+      label.textContent = text;
+    }
+
+    // --- Position: instant, via translate3d ---
+    const onMouseMove = (e) => {
+      const x = e.clientX;
+      const y = e.clientY;
+      cursor.style.transform = `translate3d(calc(${x}px - 50%), calc(${y}px - 50%), 0)`;
+
+      if (cursor.style.opacity === '0' || cursor.style.opacity === '') {
+        cursor.style.opacity = '1';
+      }
+    };
+
+    // --- Detect element type on hover ---
+    const INTERACTIVE = 'a[href], button, [role="button"], input[type="submit"], input[type="button"], .btn-primary, .btn-outline, select';
+    const TEXT_INPUT = 'input[type="text"], input[type="email"], input[type="password"], input[type="search"], input[type="url"], input[type="tel"], input[type="number"], textarea, [contenteditable]';
+    const LABELED = '[data-cursor]';
+
+    const onMouseOver = (e) => {
+      const target = e.target;
+
+      // Check labeled first (custom data-cursor="Vedi")
+      const labeledEl = target.closest(LABELED);
+      if (labeledEl) {
+        setLabel(labeledEl.dataset.cursor);
+        setState('labeled');
+        return;
+      }
+
+      // Text inputs
+      if (target.closest(TEXT_INPUT)) {
+        setState('text');
+        return;
+      }
+
+      // Interactive elements
+      if (target.closest(INTERACTIVE)) {
+        setState('interactive');
+        return;
+      }
+
+      // Default
+      setState('default');
+    };
+
+    // --- Leave viewport ---
+    const onMouseLeave = () => {
+      cursor.style.opacity = '0';
+    };
+
+    const onMouseEnter = () => {
+      cursor.style.opacity = '1';
+    };
+
+    // --- Click feedback ---
+    const onMouseDown = () => {
+      cursor.style.transition = 'transform 0.1s ease, width 0.15s ease, height 0.15s ease, background-color 0.3s ease, border-color 0.3s ease, opacity 0.3s ease, border-width 0.3s ease, backdrop-filter 0.3s ease';
+      cursor.style.transform = cursor.style.transform.replace(/scale\([^)]*\)/, '') + ' scale(0.85)';
+    };
+
+    const onMouseUp = () => {
+      cursor.style.transform = cursor.style.transform.replace(/ ?scale\([^)]*\)/, '');
+      // Restore default transition
+      requestAnimationFrame(() => {
+        cursor.style.transition = '';
+      });
+    };
+
+    document.addEventListener('mousemove', onMouseMove, { passive: true });
+    document.addEventListener('mouseover', onMouseOver, { passive: true });
+    document.documentElement.addEventListener('mouseleave', onMouseLeave);
+    document.documentElement.addEventListener('mouseenter', onMouseEnter);
+    document.addEventListener('mousedown', onMouseDown);
+    document.addEventListener('mouseup', onMouseUp);
+
+    cleanups.push(
+      () => document.removeEventListener('mousemove', onMouseMove),
+      () => document.removeEventListener('mouseover', onMouseOver),
+      () => document.documentElement.removeEventListener('mouseleave', onMouseLeave),
+      () => document.documentElement.removeEventListener('mouseenter', onMouseEnter),
+      () => document.removeEventListener('mousedown', onMouseDown),
+      () => document.removeEventListener('mouseup', onMouseUp),
+      () => { cursor.style.opacity = '0'; }
+    );
   }
 
-  document.addEventListener('astro:page-load', initCursorDot);
-  document.addEventListener('astro:before-swap', cleanupCursorDot);
+  document.addEventListener('astro:page-load', initCursor);
+  document.addEventListener('astro:before-swap', cleanupCursor);
 </script>

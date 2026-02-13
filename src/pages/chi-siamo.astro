@@ -3,10 +3,21 @@
 import Layout from '../layouts/Layout.astro';
 
 // Import local logos
+import phpLogo from '../assets/logos/php-color.svg';
+import jsLogo from '../assets/logos/javascript-color.svg';
+import htmlLogo from '../assets/logos/html5-color.svg';
 import cssLogo from '../assets/logos/css-3.png';
+import tailwindLogo from '../assets/logos/tailwindcss-color.svg';
+import bootstrapLogo from '../assets/logos/bootstrap-color.svg';
+import astroLogo from '../assets/logos/astro-icon-color.svg';
+import wordpressLogo from '../assets/logos/wordpress-color.svg';
+import wooLogo from '../assets/logos/woocommerce-color.svg';
+import magentoLogo from '../assets/logos/magento-seeklogo.png';
+import figmaLogo from '../assets/logos/figma-color.svg';
+import sketchLogo from '../assets/logos/sketch-color.svg';
 import illustratorLogo from '../assets/logos/adobe-illustrator-seeklogo.svg';
 import photoshopLogo from '../assets/logos/adobe-photoshop-seeklogo.svg';
-import magentoLogo from '../assets/logos/magento-seeklogo.png';
+import elementorLogo from '../assets/logos/elementor-color.svg';
 
 const values = [
   { icon: '01', title: 'Velocità', desc: 'Codice ottimizzato per performance istantanee. Nessun compromesso.', color: 'from-blue-500/20 to-cyan-500/10' },
@@ -80,7 +91,7 @@ const values = [
   </div>
 
   <!-- MANIFESTO -->
-  <section class="py-32 border-y border-white/5 bg-gradient-to-b from-surface/50 to-background relative overflow-hidden">
+  <section class="py-24 md:py-32 border-y border-white/5 bg-gradient-to-b from-surface/50 to-background relative overflow-hidden">
     <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-white/5 via-transparent to-transparent"></div>
     <div class="container-custom relative z-10">
       <div class="max-w-4xl mx-auto text-center">
@@ -93,7 +104,7 @@ const values = [
   </section>
 
   <!-- VALUES -->
-  <section class="py-32 container-custom">
+  <section class="py-24 md:py-32 container-custom">
     <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-16">
         <h2 class="text-4xl md:text-6xl lg:text-7xl font-black text-white reveal-scale">Valori</h2>
         <p class="text-sm font-mono text-gray-500 mt-4 md:mt-0 reveal">I pilastri del mio lavoro.</p>
@@ -101,7 +112,7 @@ const values = [
 
     <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
       {values.map((val, idx) => (
-        <div class={`group reveal-scale delay-${(idx + 1) * 100}`}>
+        <div class="group reveal-scale" style={`transition-delay: ${(idx + 1) * 100}ms`}>
           <div class="glow-border relative h-full bg-gradient-to-br from-white/[0.08] to-transparent border border-white/10 rounded-2xl p-8 transition-all duration-500 hover:border-white/30 hover:bg-white/[0.05] overflow-hidden">
             
             <!-- Gradient Glow -->
@@ -125,7 +136,7 @@ const values = [
   </section>
 
   <!-- TECH & DESIGN STACK -->
-  <section class="py-32 container-custom">
+  <section class="py-24 md:py-32 container-custom">
     <!-- Tech Stack -->
     <div class="mb-20">
       <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-16">
@@ -137,7 +148,7 @@ const values = [
           <!-- PHP -->
           <div class="group reveal-scale">
             <div class="relative border border-white/10 rounded-xl p-8 transition-all duration-300 hover:border-white/20 flex flex-col items-center justify-center gap-4 aspect-square bg-surface/50">
-              <img src="https://cdn.simpleicons.org/php/777BB4" alt="PHP" class="w-12 h-12 md:w-14 md:h-14 opacity-60 group-hover:opacity-100 transition-opacity duration-300" />
+              <img src={phpLogo.src} alt="PHP" class="w-12 h-12 md:w-14 md:h-14 opacity-60 group-hover:opacity-100 transition-opacity duration-300" />
               <span class="text-xs md:text-sm font-mono text-gray-500 group-hover:text-gray-300 transition-colors duration-300">PHP</span>
             </div>
           </div>
@@ -145,7 +156,7 @@ const values = [
           <!-- JavaScript -->
           <div class="group reveal-scale">
             <div class="relative border border-white/10 rounded-xl p-8 transition-all duration-300 hover:border-white/20 flex flex-col items-center justify-center gap-4 aspect-square bg-surface/50">
-              <img src="https://cdn.simpleicons.org/javascript/F7DF1E" alt="JavaScript" class="w-12 h-12 md:w-14 md:h-14 opacity-60 group-hover:opacity-100 transition-opacity duration-300" />
+              <img src={jsLogo.src} alt="JavaScript" class="w-12 h-12 md:w-14 md:h-14 opacity-60 group-hover:opacity-100 transition-opacity duration-300" />
               <span class="text-xs md:text-sm font-mono text-gray-500 group-hover:text-gray-300 transition-colors duration-300">JavaScript</span>
             </div>
           </div>
@@ -153,7 +164,7 @@ const values = [
           <!-- HTML -->
           <div class="group reveal-scale">
             <div class="relative border border-white/10 rounded-xl p-8 transition-all duration-300 hover:border-white/20 flex flex-col items-center justify-center gap-4 aspect-square bg-surface/50">
-              <img src="https://cdn.simpleicons.org/html5/E34F26" alt="HTML5" class="w-12 h-12 md:w-14 md:h-14 opacity-60 group-hover:opacity-100 transition-opacity duration-300" />
+              <img src={htmlLogo.src} alt="HTML5" class="w-12 h-12 md:w-14 md:h-14 opacity-60 group-hover:opacity-100 transition-opacity duration-300" />
               <span class="text-xs md:text-sm font-mono text-gray-500 group-hover:text-gray-300 transition-colors duration-300">HTML</span>
             </div>
           </div>
@@ -169,7 +180,7 @@ const values = [
           <!-- Tailwind -->
           <div class="group reveal-scale">
             <div class="relative border border-white/10 rounded-xl p-8 transition-all duration-300 hover:border-white/20 flex flex-col items-center justify-center gap-4 aspect-square bg-surface/50">
-              <img src="https://cdn.simpleicons.org/tailwindcss/06B6D4" alt="Tailwind CSS" class="w-12 h-12 md:w-14 md:h-14 opacity-60 group-hover:opacity-100 transition-opacity duration-300" />
+              <img src={tailwindLogo.src} alt="Tailwind CSS" class="w-12 h-12 md:w-14 md:h-14 opacity-60 group-hover:opacity-100 transition-opacity duration-300" />
               <span class="text-xs md:text-sm font-mono text-gray-500 group-hover:text-gray-300 transition-colors duration-300">Tailwind</span>
             </div>
           </div>
@@ -177,7 +188,7 @@ const values = [
           <!-- Bootstrap -->
           <div class="group reveal-scale">
             <div class="relative border border-white/10 rounded-xl p-8 transition-all duration-300 hover:border-white/20 flex flex-col items-center justify-center gap-4 aspect-square bg-surface/50">
-              <img src="https://cdn.simpleicons.org/bootstrap/7952B3" alt="Bootstrap" class="w-12 h-12 md:w-14 md:h-14 opacity-60 group-hover:opacity-100 transition-opacity duration-300" />
+              <img src={bootstrapLogo.src} alt="Bootstrap" class="w-12 h-12 md:w-14 md:h-14 opacity-60 group-hover:opacity-100 transition-opacity duration-300" />
               <span class="text-xs md:text-sm font-mono text-gray-500 group-hover:text-gray-300 transition-colors duration-300">Bootstrap</span>
             </div>
           </div>
@@ -185,7 +196,7 @@ const values = [
           <!-- Astro -->
           <div class="group reveal-scale">
             <div class="relative border border-white/10 rounded-xl p-8 transition-all duration-300 hover:border-white/20 flex flex-col items-center justify-center gap-4 aspect-square bg-surface/50">
-              <img src="https://cdn.simpleicons.org/astro/FF5D01" alt="Astro" class="w-12 h-12 md:w-14 md:h-14 opacity-60 group-hover:opacity-100 transition-opacity duration-300" />
+              <img src={astroLogo.src} alt="Astro" class="w-12 h-12 md:w-14 md:h-14 opacity-60 group-hover:opacity-100 transition-opacity duration-300" />
               <span class="text-xs md:text-sm font-mono text-gray-500 group-hover:text-gray-300 transition-colors duration-300">Astro</span>
             </div>
           </div>
@@ -193,7 +204,7 @@ const values = [
           <!-- WordPress -->
           <div class="group reveal-scale">
             <div class="relative border border-white/10 rounded-xl p-8 transition-all duration-300 hover:border-white/20 flex flex-col items-center justify-center gap-4 aspect-square bg-surface/50">
-              <img src="https://cdn.simpleicons.org/wordpress/21759B" alt="WordPress" class="w-12 h-12 md:w-14 md:h-14 opacity-60 group-hover:opacity-100 transition-opacity duration-300" />
+              <img src={wordpressLogo.src} alt="WordPress" class="w-12 h-12 md:w-14 md:h-14 opacity-60 group-hover:opacity-100 transition-opacity duration-300" />
               <span class="text-xs md:text-sm font-mono text-gray-500 group-hover:text-gray-300 transition-colors duration-300">WordPress</span>
             </div>
           </div>
@@ -201,7 +212,7 @@ const values = [
           <!-- WooCommerce -->
           <div class="group reveal-scale">
             <div class="relative border border-white/10 rounded-xl p-8 transition-all duration-300 hover:border-white/20 flex flex-col items-center justify-center gap-4 aspect-square bg-surface/50">
-              <img src="https://cdn.simpleicons.org/woo/96588A" alt="WooCommerce" class="w-12 h-12 md:w-14 md:h-14 opacity-60 group-hover:opacity-100 transition-opacity duration-300" />
+              <img src={wooLogo.src} alt="WooCommerce" class="w-12 h-12 md:w-14 md:h-14 opacity-60 group-hover:opacity-100 transition-opacity duration-300" />
               <span class="text-xs md:text-sm font-mono text-gray-500 group-hover:text-gray-300 transition-colors duration-300">WooCommerce</span>
             </div>
           </div>
@@ -227,7 +238,7 @@ const values = [
           <!-- Figma -->
           <div class="group reveal-scale">
             <div class="relative border border-white/10 rounded-xl p-8 transition-all duration-300 hover:border-white/20 flex flex-col items-center justify-center gap-4 aspect-square bg-surface/50">
-              <img src="https://cdn.simpleicons.org/figma/F24E1E" alt="Figma" class="w-12 h-12 md:w-14 md:h-14 opacity-60 group-hover:opacity-100 transition-opacity duration-300" />
+              <img src={figmaLogo.src} alt="Figma" class="w-12 h-12 md:w-14 md:h-14 opacity-60 group-hover:opacity-100 transition-opacity duration-300" />
               <span class="text-xs md:text-sm font-mono text-gray-500 group-hover:text-gray-300 transition-colors duration-300">Figma</span>
             </div>
           </div>
@@ -235,7 +246,7 @@ const values = [
           <!-- Sketch -->
           <div class="group reveal-scale">
             <div class="relative border border-white/10 rounded-xl p-8 transition-all duration-300 hover:border-white/20 flex flex-col items-center justify-center gap-4 aspect-square bg-surface/50">
-              <img src="https://cdn.simpleicons.org/sketch/F7B500" alt="Sketch" class="w-12 h-12 md:w-14 md:h-14 opacity-60 group-hover:opacity-100 transition-opacity duration-300" />
+              <img src={sketchLogo.src} alt="Sketch" class="w-12 h-12 md:w-14 md:h-14 opacity-60 group-hover:opacity-100 transition-opacity duration-300" />
               <span class="text-xs md:text-sm font-mono text-gray-500 group-hover:text-gray-300 transition-colors duration-300">Sketch</span>
             </div>
           </div>
@@ -259,7 +270,7 @@ const values = [
           <!-- Elementor -->
           <div class="group reveal-scale">
             <div class="relative border border-white/10 rounded-xl p-8 transition-all duration-300 hover:border-white/20 flex flex-col items-center justify-center gap-4 aspect-square bg-surface/50">
-              <img src="https://cdn.simpleicons.org/elementor/92003B" alt="Elementor" class="w-12 h-12 md:w-14 md:h-14 opacity-60 group-hover:opacity-100 transition-opacity duration-300" />
+              <img src={elementorLogo.src} alt="Elementor" class="w-12 h-12 md:w-14 md:h-14 opacity-60 group-hover:opacity-100 transition-opacity duration-300" />
               <span class="text-xs md:text-sm font-mono text-gray-500 group-hover:text-gray-300 transition-colors duration-300">Elementor</span>
             </div>
           </div>
@@ -269,7 +280,7 @@ const values = [
   </section>
 
   <!-- CTA -->
-  <section class="py-32 border-t border-white/5 relative overflow-hidden">
+  <section class="py-24 md:py-32 border-t border-white/5 relative overflow-hidden">
     <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-white/5 via-transparent to-transparent"></div>
     <div class="container-custom text-center relative z-10">
         <div class="inline-block p-1 rounded-full bg-gradient-to-r from-white/20 to-white/5 mb-8 reveal">

@@ -212,3 +212,95 @@ Rimosso `break-all` dal link email. Font ridotto per evitare overflow su mobile.
 | `src/pages/servizi/web-design.astro` | 1, 2, 7 |
 
 **Totale: 21 file modificati, 0 errori di build, 18 pagine generate.**
+
+---
+
+## [2026-02-13] - Audit Tecnico: Performance, Grafica & Accessibilita
+
+### FASE 8: Ottimizzazioni Performance & Pulizia Codice
+
+#### Font & Asset
+
+- **Font ottimizzati:** rimosso font Inter (dichiarato ma mai caricato), unificato tutto su Space Grotesk come body font. Caricamento reso non-blocking via `preload` + `media="print"` + `onload` (`Layout.astro`, `global.css`)
+- **Font weights corretti:** aggiunti pesi 500 (medium) e 600 (semibold) mancanti a Space Grotesk. Nota: `font-black` (900) mappa automaticamente a 700 poiche Space Grotesk non ha pesi superiori (`Layout.astro`)
+- **Icone SVG localizzate:** scaricate 22 icone SVG da cdn.simpleicons.org in `src/assets/logos/`, eliminando ~20 richieste HTTP esterne (`TechStackMarquee.astro`, `chi-siamo.astro`, `ecommerce-luxury.astro`)
+
+#### Prefetch & Navigazione
+
+- **Prefetch ottimizzato:** disattivato `prefetchAll`, strategia cambiata da `viewport` a `hover` con `data-astro-prefetch` sui link di navigazione (`astro.config.mjs`, `Navigation.astro`)
+- **Migrazione a ClientRouter:** sostituito `ViewTransitions` (deprecato in Astro 5) con `ClientRouter` da `astro:transitions`. Rimossi ~50 righe di workaround mobile per View Transitions (`Layout.astro`, `global.css`)
+
+#### RAF & Observer
+
+- **CursorFollower RAF intelligente:** il loop `requestAnimationFrame` si ferma dopo 3 frame inattivi e riparte al mousemove, evitando consumo CPU a mouse fermo (`CursorFollower.astro`)
+- **CursorFollower MutationObserver debounced:** aggiunto debounce da 200ms al MutationObserver che monitorava `document.body` con `subtree: true` (`CursorFollower.astro`)
+- **MagneticElements RAF ottimizzato:** stesso pattern idle-frames applicato. Il loop si ferma quando nessun elemento magnetico e in movimento e riparte su mouseenter/mouseleave (`MagneticElements.astro`)
+
+#### Pulizia Codice
+
+- **ThemeToggle rimosso:** il toggle dark/light esisteva ma nessuna classe `dark:` era implementata (sito dark-only). Eliminato componente, importazioni e `darkMode: 'class'` da Tailwind (`ThemeToggle.astro`, `Navigation.astro`, `tailwind.config.mjs`)
+- **RippleEffect rimosso:** componente importato nel Layout ma mai usato in nessuna pagina (`RippleEffect.astro`)
+- **Welcome.astro eliminato:** componente starter di default Astro, mai importato (`Welcome.astro`)
+- **8 classi CSS inutilizzate rimosse:** `shimmer`, `hover-lift`, `hover-glow`, `text-hover-gradient`, `bg-grid-pattern-lg`, `reveal-left`, `reveal-right`, `reveal-rotate`, `text-balance` (`global.css`)
+- **Classi no-underline rimosse:** eliminate tutte le classi `no-underline` ridondanti - Tailwind non applica underline di default (`index.astro`, `Navigation.astro`, `Footer.astro`)
+
+---
+
+### FASE 9: Bug Fix CSS & SEO
+
+#### CSS
+
+- **btn-secondary definito:** la pagina 404 usava `btn-secondary` mai definito. Aggiunta classe con stile coerente al design system (`global.css`)
+- **animate-pulse-slow definito:** il badge hero usava `animate-pulse-slow` non registrato in Tailwind. Aggiunta animazione con durata 4s (`tailwind.config.mjs`)
+- **Conflitto transition risolto:** in contatti.astro un link aveva sia `transition-colors` che `transition-transform` (la seconda sovrascriveva la prima). Unificati in `transition-all duration-200` (`contatti.astro`)
+- **cursor:none sicuro:** la regola `cursor: none !important` ora si attiva solo tramite classe `html.custom-cursor` aggiunta via JS, evitando che un errore JS lasci l'utente senza cursore nativo (`global.css`, `CursorDot.astro`)
+
+#### SEO
+
+- **Title pattern corretto:** Home mostra "Sebastiano Moniaci - Web Designer & Developer a Rovigo", le altre pagine usano il pattern "{Titolo} | Sebastiano Moniaci" (`Layout.astro`)
+- **ogType blog corretto:** i blog post ora dichiarano `ogType="article"` invece del default `"website"` (`[slug].astro`)
+- **Breadcrumb leggibile:** il breadcrumb dei post mostra il titolo leggibile (es. "Web Design Trends 2026") invece dello slug URL raw (es. "web-design-trends-2026") (`[slug].astro`)
+- **Blog sincronizzato:** la pagina blog ora usa `blogPosts` da `blog-posts.ts` come unica fonte dati, con icone SVG per categoria e tempi di lettura (`blog.astro`)
+
+---
+
+### FASE 10: Accessibilita
+
+- **Focus trap mobile menu:** aggiunto focus trap completo: Tab cicla tra gli elementi interni al menu, Shift+Tab torna indietro, Escape chiude il menu e ripristina il focus sul toggle. Focus iniziale impostato sul bottone chiudi (`Navigation.astro`)
+- **aria-modal aggiunto:** il dialog del menu mobile ora dichiara `aria-modal="true"` (`Navigation.astro`)
+- **aria-current="page":** i link di navigazione attivi ricevono `aria-current="page"` dinamicamente ad ogni cambio pagina, compatibile con `transition:persist` (`Navigation.astro`)
+
+---
+
+### File Eliminati (Fasi 8-10)
+
+- `src/components/ThemeToggle.astro`
+- `src/components/RippleEffect.astro`
+- `src/components/Welcome.astro`
+
+### File Aggiunti (Fasi 8-10)
+
+- `src/assets/logos/*.svg` (22 icone SVG locali: php, javascript, html5, tailwindcss, bootstrap, astro, wordpress, woocommerce, figma, sketch, react, shopify, typescript + varianti colorate)
+
+### File Modificati (Fasi 8-10)
+
+| File | Modifiche |
+|------|-----------|
+| `astro.config.mjs` | Prefetch strategy hover |
+| `tailwind.config.mjs` | Rimosso darkMode, font sans → Space Grotesk, animate-pulse-slow |
+| `src/layouts/Layout.astro` | ClientRouter, font loading non-blocking, title pattern |
+| `src/styles/global.css` | cursor:none JS-driven, btn-secondary, pulizia 8 classi CSS |
+| `src/components/Navigation.astro` | Focus trap, aria-modal, aria-current, prefetch links |
+| `src/components/Footer.astro` | Rimosso no-underline |
+| `src/components/CursorFollower.astro` | Debounce MutationObserver + idle RAF |
+| `src/components/CursorDot.astro` | Classe html.custom-cursor via JS |
+| `src/components/MagneticElements.astro` | Idle RAF loop con auto-stop/restart |
+| `src/components/TechStackMarquee.astro` | SVG locali con lazy loading |
+| `src/pages/index.astro` | Rimosso no-underline |
+| `src/pages/contatti.astro` | Fix conflitto transition-colors/transform |
+| `src/pages/blog.astro` | Sync con blog-posts.ts, icone SVG categorie |
+| `src/pages/blog/[slug].astro` | ogType article, breadcrumb con titolo |
+| `src/pages/chi-siamo.astro` | SVG locali per tech stack |
+| `src/pages/portfolio/ecommerce-luxury.astro` | SVG locali |
+
+**Totale Fasi 8-10: 16 file modificati, 3 file eliminati, 22 file aggiunti, 0 errori di build.**

@@ -46,7 +46,7 @@ const articleSchema = {
 };
 ---
 
-<Layout title={post.title} description={post.excerpt}>
+<Layout title={post.title} description={post.excerpt} ogType="article">
   <!-- Schema.org JSON-LD for Article -->
   <script type="application/ld+json" set:html={JSON.stringify(articleSchema)} slot="head" />
   <!-- Article Header -->
@@ -58,7 +58,7 @@ const articleSchema = {
         <span class="mx-2">/</span>
         <a href="/blog" class="hover:text-white transition-colors">Blog</a>
         <span class="mx-2">/</span>
-        <span class="text-gray-400">{post.slug}</span>
+        <span class="text-gray-400">{post.title}</span>
       </nav>
 
       <!-- Category & Read Time -->
@@ -127,7 +127,7 @@ const articleSchema = {
           <h2 class="text-3xl md:text-5xl font-black text-white mb-12 reveal">Articoli Correlati</h2>
           <div class="grid md:grid-cols-2 gap-8">
             {relatedPosts.map((related, idx) => (
-              <a href={`/blog/${related.slug}`} class={`group reveal delay-${(idx + 1) * 100}`}>
+              <a href={`/blog/${related.slug}`} class="group reveal" style={`transition-delay: ${(idx + 1) * 100}ms`}>
                 <article class="glow-border relative bg-gradient-to-br from-white/[0.08] to-transparent border border-white/10 rounded-2xl overflow-hidden transition-all duration-500 hover:border-white/30 hover:bg-white/[0.05]">
                   <!-- Image placeholder -->
                   <div class="aspect-video bg-gradient-to-br from-white/5 to-transparent flex items-center justify-center border-b border-white/10">

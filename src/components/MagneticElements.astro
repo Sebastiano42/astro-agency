@@ -53,6 +53,7 @@
 
       const handleMouseEnter = () => {
         state.active = true;
+        startMagneticLoop();
       };
 
       const handleMouseLeave = () => {
@@ -60,6 +61,7 @@
         state.targetX = 0;
         state.targetY = 0;
         state.targetScale = 1;
+        startMagneticLoop();
       };
 
       el.addEventListener('mouseenter', handleMouseEnter);
@@ -75,10 +77,21 @@
       });
     });
 
-    // Single animation loop for all magnetic elements
+    // Single animation loop - stops after idle frames to save CPU
+    let idleFrames = 0;
+    const MAX_IDLE = 3;
+
+    function startMagneticLoop() {
+      if (magneticRAF === null) {
+        idleFrames = 0;
+        magneticRAF = requestAnimationFrame(animateMagnetic);
+      }
+    }
+
     function animateMagnetic() {
       const LERP_IN = 0.1;
       const LERP_OUT = 0.08;
+      let anyActive = false;
 
       elementStates.forEach((state, el) => {
         const lerp = state.active ? LERP_IN : LERP_OUT;
@@ -86,18 +99,27 @@
         state.currentY += (state.targetY - state.currentY) * lerp;
         state.scale += (state.targetScale - state.scale) * lerp;
 
-        // Skip DOM writes when values are negligible
         if (Math.abs(state.currentX) > 0.01 || Math.abs(state.currentY) > 0.01 || Math.abs(state.scale - 1) > 0.001) {
           el.style.transform = `translate(${state.currentX}px, ${state.currentY}px) scale(${state.scale})`;
+          anyActive = true;
         } else if (!state.active) {
           el.style.transform = '';
         }
       });
 
+      if (anyActive) {
+        idleFrames = 0;
+      } else {
+        idleFrames++;
+      }
+
+      if (idleFrames >= MAX_IDLE) {
+        magneticRAF = null;
+        return;
+      }
+
       magneticRAF = requestAnimationFrame(animateMagnetic);
     }
-
-    magneticRAF = requestAnimationFrame(animateMagnetic);
   }
 
   document.addEventListener('astro:page-load', initMagneticEffect);

@@ -1,10 +1,9 @@
 ---
 // src/layouts/Layout.astro
-import { ViewTransitions } from 'astro:transitions';
+import { ClientRouter } from 'astro:transitions';
 import Navigation from '../components/Navigation.astro';
 import Footer from '../components/Footer.astro';
 import CursorFollower from '../components/CursorFollower.astro';
-import MagneticElements from '../components/MagneticElements.astro';
 import CursorDot from '../components/CursorDot.astro';
 import ScrollButton from '../components/ScrollButton.astro';
 import MockupTilt from '../components/MockupTilt.astro';
@@ -25,6 +24,11 @@ const {
 	ogType = "website",
 	noindex = false
 } = Astro.props;
+
+const isHome = title === "Home";
+const pageTitle = isHome
+	? "Sebastiano Moniaci - Web Designer & Developer a Rovigo"
+	: `${title} | Sebastiano Moniaci`;
 
 const smoothPage = {
 	forwards: {
@@ -108,8 +112,8 @@ const websiteSchema = {
 		<meta name="generator" content={Astro.generator} />
 
 		<!-- Primary Meta Tags -->
-		<title>{title} | Web Design & Development</title>
-		<meta name="title" content={`${title} | Web Design & Development`} />
+		<title>{pageTitle}</title>
+		<meta name="title" content={pageTitle} />
 		<meta name="description" content={description} />
 		{noindex && <meta name="robots" content="noindex, nofollow" />}
 
@@ -119,7 +123,7 @@ const websiteSchema = {
 		<!-- Open Graph / Facebook -->
 		<meta property="og:type" content={ogType} />
 		<meta property="og:url" content={canonicalURL} />
-		<meta property="og:title" content={`${title} | Web Design & Development`} />
+		<meta property="og:title" content={pageTitle} />
 		<meta property="og:description" content={description} />
 		<meta property="og:image" content={fullOgImage} />
 		<meta property="og:site_name" content="Sebastiano Moniaci" />
@@ -128,67 +132,25 @@ const websiteSchema = {
 		<!-- Twitter -->
 		<meta property="twitter:card" content="summary_large_image" />
 		<meta property="twitter:url" content={canonicalURL} />
-		<meta property="twitter:title" content={`${title} | Web Design & Development`} />
+		<meta property="twitter:title" content={pageTitle} />
 		<meta property="twitter:description" content={description} />
 		<meta property="twitter:image" content={fullOgImage} />
 
 		<!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"></noscript>
 
 		<!-- Schema.org JSON-LD -->
 		<script type="application/ld+json" set:html={JSON.stringify(organizationSchema)} />
 		<script type="application/ld+json" set:html={JSON.stringify(websiteSchema)} />
 
-		<!-- View Transitions -->
-		<ViewTransitions fallback="swap" />
+		<!-- Client Router (replaces deprecated ViewTransitions) -->
+		<ClientRouter fallback="swap" />
 	</head>
-	<body class="selection:bg-indigo-500/30 selection:text-indigo-900 dark:selection:text-indigo-200">
-    <script is:inline>
-      // Theme detection (runs immediately to prevent flash)
-      const theme = (() => {
-        if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
-          return localStorage.getItem('theme');
-        }
-        if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-          return 'dark';
-        }
-        return 'light';
-      })();
-
-      if (theme === 'dark') {
-        document.documentElement.classList.add('dark');
-      } else {
-        document.documentElement.classList.remove('dark');
-      }
-
-      window.localStorage.setItem('theme', theme);
-
-      // MOBILE FIX: Bypass Astro View Transitions entirely on touch devices.
-      // View Transitions cause black screen / frozen page on mobile browsers.
-      // This intercepts all internal link clicks and uses regular full-page
-      // navigation instead of Astro's client-side router.
-      if (window.matchMedia('(pointer: coarse)').matches && !window.__mobileNavFixed) {
-        window.__mobileNavFixed = true;
-        document.addEventListener('click', function(e) {
-          var link = e.target.closest('a[href]');
-          if (!link) return;
-          var href = link.getAttribute('href');
-          // Only intercept internal relative links
-          if (!href) return;
-          if (href.startsWith('#') || href.startsWith('http') || href.startsWith('mailto:') || href.startsWith('tel:') || href.startsWith('javascript:')) return;
-          // Don't intercept if modifier keys are held
-          if (e.ctrlKey || e.metaKey || e.shiftKey || e.altKey) return;
-          // Don't intercept if link has external target
-          if (link.target && link.target !== '_self') return;
-          e.preventDefault();
-          e.stopImmediatePropagation();
-          window.location.href = href;
-        }, true); // capture phase - runs before Astro's router
-      }
-    </script>
-    
+	<body>
     <Navigation transition:persist />
 
 		<main id="main-content" class="overflow-x-hidden" transition:animate={smoothPage}>
@@ -199,7 +161,6 @@ const websiteSchema = {
 
     <CursorFollower />
     <CursorDot />
-    <MagneticElements />
     <MockupTilt />
     <ScrollButton />
 
@@ -207,55 +168,19 @@ const websiteSchema = {
       let currentObserver = null;
       let smoothScrollCleanups = [];
 
-      const isMobileDevice = () => window.matchMedia('(pointer: coarse)').matches;
-
       // Cleanup before every page swap to prevent memory leaks
-      document.addEventListener('astro:before-swap', (e) => {
-        // Disconnect old IntersectionObserver
+      document.addEventListener('astro:before-swap', () => {
         if (currentObserver) {
           currentObserver.disconnect();
           currentObserver = null;
         }
-        // Remove old smooth-scroll listeners
         smoothScrollCleanups.forEach(fn => fn());
         smoothScrollCleanups = [];
-
-        if (isMobileDevice()) {
-          // Skip the View Transition animation entirely on mobile.
-          try { e.viewTransition?.skipTransition(); } catch (_) {}
-
-          // Pre-activate reveal elements in the NEW document BEFORE the DOM swap.
-          e.newDocument.querySelectorAll('[class*="reveal"]').forEach(el => {
-            el.classList.add('active');
-          });
-        }
       });
 
-      // Safety net: after swap, force page content visible on mobile
+      // After swap: ensure body scroll is restored
       document.addEventListener('astro:after-swap', () => {
         document.body.classList.remove('overflow-hidden');
-
-        if (isMobileDevice()) {
-          // Force main content visible - remove any leftover animation/opacity
-          const main = document.getElementById('main-content');
-          if (main) {
-            main.style.animation = 'none';
-            main.removeAttribute('data-astro-transition-fallback');
-            requestAnimationFrame(() => { main.style.animation = ''; });
-          }
-
-          // Force all reveals active
-          document.querySelectorAll('[class*="reveal"]:not(.active)').forEach(el => {
-            el.classList.add('active');
-          });
-
-          // Force-hide mobile menu (display:none)
-          const menu = document.getElementById('mobile-menu');
-          if (menu) {
-            menu.style.display = 'none';
-            menu.style.opacity = '0';
-          }
-        }
       });
 
       // Scroll Reveal Animation System
@@ -280,7 +205,6 @@ const websiteSchema = {
           });
         }, observerOptions);
 
-        // Only observe elements not yet activated
         document.querySelectorAll('[class*="reveal"]:not(.active)').forEach(el => {
           currentObserver.observe(el);
         });

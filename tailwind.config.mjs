@@ -1,7 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 export default {
     content: ['./src/**/*.{astro,html,js,jsx,md,mdx,svelte,ts,tsx,vue}'],
-    darkMode: 'class',
     theme: {
         extend: {
             colors: {
@@ -17,7 +16,7 @@ export default {
                 },
             },
             fontFamily: {
-                sans: ['"Inter"', 'sans-serif'],
+                sans: ['"Space Grotesk"', 'sans-serif'],
                 display: ['"Space Grotesk"', 'sans-serif'],
                 mono: ['"Space Mono"', 'monospace'],
             },
@@ -29,6 +28,7 @@ export default {
                 'float': 'float 6s ease-in-out infinite',
                 'marquee': 'marquee 30s linear infinite',
                 'fade-in': 'fadeIn 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards',
+                'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
             },
             keyframes: {
                 float: {

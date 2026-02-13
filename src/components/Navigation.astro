@@ -1,6 +1,5 @@
 ---
 // src/components/Navigation.astro
-import ThemeToggle from './ThemeToggle.astro';
 ---
 
 <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[200] focus:bg-white focus:text-black focus:px-4 focus:py-2 focus:rounded-lg focus:font-bold focus:text-sm">
@@ -14,7 +13,7 @@ import ThemeToggle from './ThemeToggle.astro';
   <nav class="container-custom py-5 relative">
     <div class="flex justify-between items-center">
       <!-- Logo -->
-      <a href="/" class="flex items-center gap-3 no-underline group relative z-[110]">
+      <a href="/" class="flex items-center gap-3 group relative z-[110]">
         <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center text-black font-black text-xl logo-box transition-colors duration-300">
           S.
         </div>
@@ -26,7 +25,8 @@ import ThemeToggle from './ThemeToggle.astro';
           {['Home', 'Servizi', 'Portfolio', 'Chi Siamo'].map((item) => (
             <li>
               <a href={item === 'Home' ? '/' : `/${item.toLowerCase().replace(' ', '-')}`}
-                 class="text-xs font-bold uppercase tracking-widest text-gray-400 hover:text-white transition-colors duration-200 no-underline">
+                 class="text-xs font-bold uppercase tracking-widest text-gray-400 hover:text-white transition-colors duration-200"
+                 data-astro-prefetch>
                 {item}
               </a>
             </li>
@@ -35,8 +35,7 @@ import ThemeToggle from './ThemeToggle.astro';
       </div>
 
       <div class="hidden md:flex items-center gap-4">
-         <ThemeToggle />
-         <a href="/contatti" class="btn-primary !py-2.5 !px-6 !text-xs rounded-full">
+         <a href="/contatti" class="btn-primary !py-2.5 !px-6 !text-xs rounded-full" data-astro-prefetch>
             Inizia Progetto
           </a>
       </div>
@@ -52,7 +51,7 @@ import ThemeToggle from './ThemeToggle.astro';
   </nav>
 
   <!-- Mobile Menu Overlay — uses display:none when closed (guaranteed no click blocking) -->
-  <div id="mobile-menu" class="nav-menu fixed inset-0 bg-background z-[100] md:hidden" role="dialog" aria-label="Menu di navigazione" aria-hidden="true" style="display:none;">
+  <div id="mobile-menu" class="nav-menu fixed inset-0 bg-background z-[100] md:hidden" role="dialog" aria-modal="true" aria-label="Menu di navigazione" aria-hidden="true" style="display:none;">
 
     <!-- Subtle grid background -->
     <div class="absolute inset-0 bg-grid-pattern opacity-[0.04] pointer-events-none"></div>
@@ -75,7 +74,7 @@ import ThemeToggle from './ThemeToggle.astro';
             {['Home', 'Servizi', 'Portfolio', 'Chi Siamo', 'Contatti'].map((item, id) => (
               <li>
                 <a href={item === 'Home' ? '/' : `/${item.toLowerCase().replace(' ', '-')}`}
-                   class="mobile-link group flex items-center gap-4 py-3 no-underline opacity-0 translate-y-4 transition-[opacity,transform,color] duration-300 ease-out">
+                   class="mobile-link group flex items-center gap-4 py-3 opacity-0 translate-y-4 transition-[opacity,transform,color] duration-300 ease-out">
                    <span class="text-xs font-mono text-gray-700 group-hover:text-gray-400 transition-colors duration-200 tabular-nums w-6">0{id + 1}</span>
                    <span class="text-3xl font-bold tracking-wide text-white">{item}</span>
                 </a>
@@ -89,15 +88,14 @@ import ThemeToggle from './ThemeToggle.astro';
             <div class="flex flex-col gap-4">
               <div>
                   <span class="text-[10px] font-mono text-gray-600 uppercase tracking-widest block mb-1.5">Email</span>
-                  <a href="mailto:info@sebastianomoniaci.it" class="text-white text-sm font-medium no-underline hover:text-gray-300 transition-colors duration-200">info@sebastianomoniaci.it</a>
+                  <a href="mailto:info@sebastianomoniaci.it" class="text-white text-sm font-medium hover:text-gray-300 transition-colors duration-200">info@sebastianomoniaci.it</a>
               </div>
               <div class="flex gap-6">
-                  <a href="https://www.instagram.com/sebastianomoniaci" target="_blank" rel="noopener noreferrer" class="text-[10px] font-mono uppercase tracking-widest text-gray-500 no-underline hover:text-white transition-colors duration-200">Instagram</a>
-                  <a href="https://twitter.com/sebastianomoniaci" target="_blank" rel="noopener noreferrer" class="text-[10px] font-mono uppercase tracking-widest text-gray-500 no-underline hover:text-white transition-colors duration-200">Twitter</a>
-                  <a href="https://www.linkedin.com/in/sebastianomoniaci" target="_blank" rel="noopener noreferrer" class="text-[10px] font-mono uppercase tracking-widest text-gray-500 no-underline hover:text-white transition-colors duration-200">LinkedIn</a>
+                  <a href="https://www.instagram.com/sebastianomoniaci" target="_blank" rel="noopener noreferrer" class="text-[10px] font-mono uppercase tracking-widest text-gray-500 hover:text-white transition-colors duration-200">Instagram</a>
+                  <a href="https://twitter.com/sebastianomoniaci" target="_blank" rel="noopener noreferrer" class="text-[10px] font-mono uppercase tracking-widest text-gray-500 hover:text-white transition-colors duration-200">Twitter</a>
+                  <a href="https://www.linkedin.com/in/sebastianomoniaci" target="_blank" rel="noopener noreferrer" class="text-[10px] font-mono uppercase tracking-widest text-gray-500 hover:text-white transition-colors duration-200">LinkedIn</a>
               </div>
             </div>
-            <ThemeToggle />
         </div>
     </div>
   </div>
@@ -107,6 +105,7 @@ import ThemeToggle from './ThemeToggle.astro';
   let scrollListener = null;
   let toggleListener = null;
   let closeListener = null;
+  let keydownListener = null;
   let linkListeners = [];
   let linkTimeouts = [];
   let footerTimeout = null;
@@ -165,6 +164,10 @@ import ThemeToggle from './ThemeToggle.astro';
     if (closeListener) {
       document.removeEventListener('click', closeListener, true);
       closeListener = null;
+    }
+    if (keydownListener) {
+      document.removeEventListener('keydown', keydownListener);
+      keydownListener = null;
     }
     linkListeners.forEach(({ el, handler }) => {
       el.removeEventListener('click', handler);
@@ -226,6 +229,10 @@ import ThemeToggle from './ThemeToggle.astro';
         footerTimeout = setTimeout(() => {
           mobileFooter?.classList.remove('opacity-0');
         }, 300);
+
+        // Focus the close button for keyboard users
+        const closeBtn = menu.querySelector('.mobile-close');
+        if (closeBtn) closeBtn.focus();
       }
 
       function closeMenu() {
@@ -299,6 +306,37 @@ import ThemeToggle from './ThemeToggle.astro';
       };
       document.addEventListener('click', closeListener, true);
 
+      // Focus trap + Escape key
+      keydownListener = (e) => {
+        if (!isOpen) return;
+
+        if (e.key === 'Escape') {
+          closeMenu();
+          toggle.focus();
+          return;
+        }
+
+        if (e.key === 'Tab') {
+          const focusable = menu.querySelectorAll('a[href], button, [tabindex]:not([tabindex="-1"])');
+          if (!focusable.length) return;
+          const first = focusable[0];
+          const last = focusable[focusable.length - 1];
+
+          if (e.shiftKey) {
+            if (document.activeElement === first) {
+              e.preventDefault();
+              last.focus();
+            }
+          } else {
+            if (document.activeElement === last) {
+              e.preventDefault();
+              first.focus();
+            }
+          }
+        }
+      };
+      document.addEventListener('keydown', keydownListener);
+
       // On link click: close instantly, let View Transition handle navigation
       links.forEach(link => {
         const handler = () => { closeMenuInstant(); };
@@ -306,6 +344,17 @@ import ThemeToggle from './ThemeToggle.astro';
         linkListeners.push({ el: link, handler });
       });
     }
+
+    // Update aria-current for active nav link
+    const currentPath = window.location.pathname.replace(/\/$/, '') || '/';
+    document.querySelectorAll('#main-header a[href]').forEach(a => {
+      const href = a.getAttribute('href').replace(/\/$/, '') || '/';
+      if (href === currentPath) {
+        a.setAttribute('aria-current', 'page');
+      } else {
+        a.removeAttribute('aria-current');
+      }
+    });
 
     // Scroll Effect with RAF throttling
     const headerBg = document.getElementById('header-bg');

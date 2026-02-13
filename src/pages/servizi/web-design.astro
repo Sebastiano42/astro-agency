@@ -85,6 +85,7 @@ const serviceSchema = {
         </div>
       </div>
     </div>
+    </div>
   </section>
 
   <!-- Features -->
@@ -94,7 +95,7 @@ const serviceSchema = {
       
       <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
         {features.map((feature, index) => (
-          <div class={`group reveal-scale delay-${(index + 1) * 100}`}>
+          <div class="group reveal-scale" style={`transition-delay: ${(index + 1) * 100}ms`}>
             <div class="glow-border relative h-full bg-gradient-to-br from-white/[0.08] to-transparent border border-white/10 rounded-2xl p-6 transition-all duration-500 hover:border-white/30 hover:bg-white/[0.05] overflow-hidden">
               <div class="absolute -top-16 -right-16 w-32 h-32 bg-gradient-to-br from-blue-500/20 to-purple-500/10 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
               
@@ -111,7 +112,7 @@ const serviceSchema = {
   </section>
 
   <!-- CTA -->
-  <section class="py-32 relative overflow-hidden">
+  <section class="py-24 md:py-32 relative overflow-hidden">
     <div class="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_50%,_var(--tw-gradient-stops))] from-blue-500/5 via-blue-500/2 via-30% via-transparent via-60% to-transparent"></div>
     <div class="container-custom relative z-10">
       <div class="max-w-2xl mx-auto text-center">
