@@ -1,7 +1,7 @@
 ========================================================================
   BUGFIX: Schermo nero e pagina bloccata su mobile
   Data: 09/02/2026
-  Progetto: Astro Agency (astro-agency-main)
+  Progetto: Sebastiano Moniaci (sebastianomoniaci)
 ========================================================================
 
 PROBLEMA

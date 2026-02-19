@@ -58,10 +58,10 @@ Icons           →  SVG inline
 
 ```bash
 # Clona il repository
-git clone https://github.com/Sebastiano42/astro-agency.git
+git clone https://github.com/Sebastiano42/sebastianomoniaci.git
 
 # Entra nella directory
-cd astro-agency
+cd sebastianomoniaci
 
 # Installa le dipendenze
 npm install
@@ -77,7 +77,7 @@ Il sito sarà disponibile su `http://localhost:4321`
 ## Struttura del Progetto
 
 ```
-astro-agency/
+sebastianomoniaci/
 ├── public/                 # Asset statici
 │   ├── favicon.svg
 │   ├── favicon.ico
