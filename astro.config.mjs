@@ -4,7 +4,7 @@ import sitemap from '@astrojs/sitemap';
 import vercel from '@astrojs/vercel';
 
 export default defineConfig({
-  site: 'https://yourdomain.com', // TODO: Replace with your actual domain
+  site: 'https://sebastianomoniaci.it',
   adapter: vercel(),
   prefetch: {
     prefetchAll: false,

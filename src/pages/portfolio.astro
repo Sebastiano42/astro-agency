@@ -19,7 +19,7 @@ const projects = [
     color: "from-emerald-500/20 to-cyan-500/10",
     description: "Dashboard finanziaria in tempo reale. Secure by design.",
     tags: ["REACT NATIVE", "NODE"],
-    link: "/contatti"
+    link: "/portfolio/app-fintech"
   },
   {
     title: "Studio Architettura",
@@ -28,7 +28,7 @@ const projects = [
     color: "from-orange-500/20 to-amber-500/10",
     description: "Identità visiva minimalista. Spazialità digitale.",
     tags: ["DESIGN", "WEBGL"],
-    link: "/contatti"
+    link: "/portfolio/studio-architettura"
   },
   {
     title: "Ristorazione Premium",
@@ -37,7 +37,7 @@ const projects = [
     color: "from-pink-500/20 to-rose-500/10",
     description: "Booking engine personalizzato. UX senza frizioni.",
     tags: ["VUE", "SUPABASE"],
-    link: "/contatti"
+    link: "/portfolio/ristorazione-premium"
   },
   {
     title: "Creative Portfolio",
@@ -46,7 +46,7 @@ const projects = [
     color: "from-violet-500/20 to-indigo-500/10",
     description: "Showcase interattivo per artisti digitali.",
     tags: ["THREE.JS", "GSAP"],
-    link: "/contatti"
+    link: "/portfolio/creative-portfolio"
   },
   {
     title: "Travel Journal",
@@ -55,7 +55,7 @@ const projects = [
     color: "from-amber-500/20 to-yellow-500/10",
     description: "Magazine editoriale. Tipografia avanzata.",
     tags: ["TYPOGRAPHY", "SEO"],
-    link: "/contatti"
+    link: "/portfolio/travel-journal"
   }
 ];
 ---
@@ -148,7 +148,7 @@ const projects = [
                 ))}
               </div>
 
-              <a href={project.link} class="btn-card group/btn">
+              <a href={project.link} class="btn-card group/btn" aria-label={`Vedi il progetto ${project.title}`}>
                 <span>Vedi Progetto</span>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="transform group-hover/btn:translate-x-1 transition-transform">
                   <path d="M5 12h14M12 5l7 7-7 7"/>

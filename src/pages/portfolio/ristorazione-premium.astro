@@ -1,107 +1,107 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import astroIcon from '../../assets/logos/astro-icon.svg';
-import reactIcon from '../../assets/logos/react.svg';
-import shopifyIcon from '../../assets/logos/shopify.svg';
-import tailwindIcon from '../../assets/logos/tailwindcss.svg';
+import javascriptIcon from '../../assets/logos/javascript.svg';
 import typescriptIcon from '../../assets/logos/typescript.svg';
+import tailwindIcon from '../../assets/logos/tailwindcss.svg';
 import figmaIcon from '../../assets/logos/figma.svg';
+import htmlIcon from '../../assets/logos/html5.svg';
+import cssIcon from '../../assets/logos/css-3.png';
 
 const projectInfo = {
-  title: "E-commerce Luxury",
-  category: "Sviluppo",
-  client: "Maison Aurea",
+  title: "Ristorazione Premium",
+  category: "Web App",
+  client: "Gusto Divino",
   year: "2025",
-  duration: "8 settimane",
-  role: "Design & Development",
-  color: "blue",
+  duration: "10 settimane",
+  role: "Full-Stack Development & UX",
+  color: "pink",
 };
 
 const techStack = [
-  { name: "Astro", icon: astroIcon.src },
-  { name: "React", icon: reactIcon.src },
-  { name: "Shopify", icon: shopifyIcon.src },
-  { name: "Tailwind CSS", icon: tailwindIcon.src },
+  { name: "JavaScript", icon: javascriptIcon.src },
   { name: "TypeScript", icon: typescriptIcon.src },
+  { name: "Tailwind CSS", icon: tailwindIcon.src },
   { name: "Figma", icon: figmaIcon.src },
+  { name: "HTML5", icon: htmlIcon.src },
+  { name: "CSS3", icon: cssIcon },
 ];
 
 const results = [
-  { value: "100", label: "Lighthouse Score", suffix: "" },
-  { value: "+65", label: "Conversioni", suffix: "%" },
-  { value: "0.8s", label: "Load Time", suffix: "" },
-  { value: "+120", label: "Traffico Organico", suffix: "%" },
+  { value: "+150", label: "Prenotazioni Online", suffix: "%" },
+  { value: "98", label: "Customer Satisfaction", suffix: "%" },
+  { value: "-70", label: "No-Show Rate", suffix: "%" },
+  { value: "4.8", label: "Rating Google", suffix: "/5" },
 ];
 
 const features = [
   {
     number: "01",
-    title: "Design System Custom",
-    description: "Creazione di un sistema di design proprietario con tipografia premium, palette colori esclusiva e componenti riutilizzabili che riflettono l'identit\u00E0 del brand luxury.",
-    color: "from-blue-500/20 to-purple-500/10",
-    via: "via-blue-500/50",
+    title: "Booking Engine Intelligente",
+    description: "Sistema di prenotazione in tempo reale con gestione tavoli, preferenze alimentari e richieste speciali. Conferme automatiche via SMS e email con promemoria personalizzati.",
+    color: "from-pink-500/20 to-rose-500/10",
+    via: "via-pink-500/50",
   },
   {
     number: "02",
-    title: "Catalogo Interattivo",
-    description: "Esperienza di navigazione immersiva con filtri avanzati, zoom prodotto ad alta risoluzione e varianti colore in tempo reale.",
-    color: "from-purple-500/20 to-violet-500/10",
-    via: "via-purple-500/50",
+    title: "Menu Digitale Interattivo",
+    description: "Catalogo piatti con fotografie professionali, filtri per allergeni e intolleranze, abbinamenti vini suggeriti e aggiornamento stagionale automatizzato.",
+    color: "from-rose-500/20 to-red-500/10",
+    via: "via-rose-500/50",
   },
   {
     number: "03",
-    title: "Checkout Frictionless",
-    description: "Processo d'acquisto in 3 step con Apple Pay, Google Pay e pagamento rateizzato. Tasso di abbandono carrello ridotto del 40%.",
-    color: "from-emerald-500/20 to-cyan-500/10",
-    via: "via-emerald-500/50",
+    title: "Dashboard Gestionale",
+    description: "Pannello di controllo per lo staff con vista in tempo reale delle prenotazioni, gestione coperti, analytics delle preferenze clienti e report giornalieri.",
+    color: "from-red-500/20 to-pink-500/10",
+    via: "via-red-500/50",
   },
   {
     number: "04",
-    title: "Performance Estreme",
-    description: "Architettura headless con rendering statico, lazy loading intelligente e CDN globale. Lighthouse 100 su ogni metrica.",
-    color: "from-orange-500/20 to-amber-500/10",
-    via: "via-orange-500/50",
+    title: "Esperienza Omnicanale",
+    description: "Integrazione con Google Maps, TripAdvisor e Instagram. Sistema di recensioni interno con follow-up automatico e programma fedelt&agrave; digitale.",
+    color: "from-pink-600/20 to-rose-600/10",
+    via: "via-pink-600/50",
   },
 ];
 
 const gallery = [
-  { label: "Homepage", gradient: "from-blue-500/30 to-purple-500/10" },
-  { label: "Catalogo Prodotti", gradient: "from-purple-500/30 to-violet-500/10" },
-  { label: "Pagina Prodotto", gradient: "from-emerald-500/30 to-cyan-500/10" },
-  { label: "Checkout", gradient: "from-orange-500/30 to-amber-500/10" },
+  { label: "Homepage & Atmosfera", gradient: "from-pink-500/30 to-rose-500/10" },
+  { label: "Sistema Prenotazioni", gradient: "from-rose-500/30 to-red-500/10" },
+  { label: "Menu Interattivo", gradient: "from-red-500/30 to-pink-500/10" },
+  { label: "Dashboard Staff", gradient: "from-pink-600/30 to-rose-600/10" },
 ];
 
 const nextProject = {
-  title: "App Fintech",
-  category: "Mobile",
-  href: "/portfolio/app-fintech",
-  color: "from-emerald-500 to-cyan-500",
+  title: "Creative Portfolio",
+  category: "Design",
+  href: "/portfolio/creative-portfolio",
+  color: "from-violet-500 to-indigo-500",
 };
 
 const caseStudySchema = {
   "@context": "https://schema.org",
   "@type": "CreativeWork",
-  "name": "E-commerce Luxury - Case Study",
+  "name": "Ristorazione Premium - Case Study",
   "author": {
     "@type": "Person",
     "name": "Sebastiano Moniaci"
   },
-  "description": "Case study: piattaforma e-commerce luxury con architettura headless Astro + Shopify. Design premium, performance Lighthouse 100 e +65% conversioni.",
+  "description": "Case study: web app per la ristorazione premium Gusto Divino. Booking engine intelligente, menu interattivo e +150% prenotazioni online.",
   "dateCreated": "2025",
-  "genre": "Web Development"
+  "genre": "Web Application Development"
 };
 ---
 
 <Layout
-  title="E-commerce Luxury - Case Study"
-  description="Case study: piattaforma e-commerce luxury con architettura headless Astro + Shopify. Design premium, performance Lighthouse 100 e +65% conversioni."
+  title="Ristorazione Premium - Case Study"
+  description="Case study: web app per la ristorazione premium Gusto Divino. Booking engine intelligente, menu interattivo e +150% prenotazioni online."
 >
   <script type="application/ld+json" set:html={JSON.stringify(caseStudySchema)} slot="head" />
 
   <!-- HERO -->
   <section class="pt-32 pb-16 md:pt-48 md:pb-24 container-custom relative overflow-hidden">
     <div class="absolute inset-0 bg-grid-pattern opacity-20 pointer-events-none"></div>
-    <div class="absolute top-[40%] left-[50%] -translate-x-1/2 -translate-y-1/2 w-[60vw] h-[60vw] max-w-[500px] max-h-[500px] bg-blue-500/5 rounded-full blur-[120px] pointer-events-none"></div>
+    <div class="absolute top-[40%] left-[50%] -translate-x-1/2 -translate-y-1/2 w-[60vw] h-[60vw] max-w-[500px] max-h-[500px] bg-pink-500/5 rounded-full blur-[120px] pointer-events-none"></div>
 
     <div class="relative z-10">
       <a href="/portfolio" class="inline-flex items-center gap-2 text-gray-500 hover:text-white transition-colors mb-10 text-sm font-mono uppercase tracking-widest reveal">
@@ -114,18 +114,18 @@ const caseStudySchema = {
       <div class="grid lg:grid-cols-2 gap-16 items-center">
         <div>
           <div class="flex items-center gap-3 mb-6 reveal">
-            <span class="inline-block px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-mono uppercase tracking-widest">
+            <span class="inline-block px-4 py-2 rounded-full bg-pink-500/10 border border-pink-500/20 text-pink-400 text-xs font-mono uppercase tracking-widest">
               {projectInfo.category}
             </span>
             <span class="text-xs font-mono text-gray-600">{projectInfo.year}</span>
           </div>
 
           <h1 class="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-black text-white mb-8 tracking-tight leading-none reveal-scale">
-            E-commerce<br/><span class="text-gray-600">Luxury.</span>
+            Ristorazione<br/><span class="text-gray-600">Premium.</span>
           </h1>
 
           <p class="text-lg md:text-xl text-gray-400 leading-relaxed max-w-xl mb-10 reveal">
-            Piattaforma retail high-end per Maison Aurea. Architettura headless, design premium e performance estreme per un'esperienza d'acquisto senza compromessi.
+            Booking engine e piattaforma digitale per Gusto Divino. Un'esperienza di prenotazione senza frizioni che porta l'eleganza del ristorante nel mondo online.
           </p>
 
           <!-- Project Meta -->
@@ -152,7 +152,7 @@ const caseStudySchema = {
         <!-- Hero Mockup -->
         <div class="reveal-scale mockup-float-wrapper">
           <div class="glow-border mockup-float relative bg-gradient-to-br from-white/[0.08] to-transparent border border-white/10 rounded-2xl overflow-hidden shadow-2xl">
-            <div class="absolute -top-24 -right-24 w-48 h-48 bg-gradient-to-br from-blue-500/20 to-purple-500/10 rounded-full blur-3xl"></div>
+            <div class="absolute -top-24 -right-24 w-48 h-48 bg-gradient-to-br from-pink-500/20 to-rose-500/10 rounded-full blur-3xl"></div>
 
             <!-- Browser Chrome -->
             <div class="flex items-center gap-2 px-4 py-3 border-b border-white/10 bg-white/[0.02]">
@@ -162,41 +162,38 @@ const caseStudySchema = {
                 <span class="w-2 h-2 rounded-full bg-white/10"></span>
               </div>
               <div class="h-4 bg-white/5 rounded-full w-40 mx-auto flex items-center justify-center">
-                <span class="text-[8px] font-mono text-gray-600">maisonaurea.it</span>
+                <span class="text-[8px] font-mono text-gray-600">gustodivino.it</span>
               </div>
             </div>
 
-            <!-- Mockup Content - E-commerce Layout -->
+            <!-- Mockup Content - Restaurant Layout -->
             <div class="p-6 space-y-4">
               <!-- Hero Banner -->
-              <div class="aspect-[21/9] bg-gradient-to-br from-blue-500/10 to-purple-500/5 rounded-lg border border-white/5 relative overflow-hidden">
+              <div class="aspect-[21/9] bg-gradient-to-br from-pink-500/10 to-rose-500/5 rounded-lg border border-white/5 relative overflow-hidden">
                 <div class="absolute inset-0 flex items-center justify-center">
                   <div class="text-center">
-                    <div class="h-1.5 bg-white/20 rounded w-24 mx-auto mb-2"></div>
-                    <div class="h-1 bg-white/10 rounded w-16 mx-auto"></div>
+                    <div class="h-1.5 bg-white/20 rounded w-20 mx-auto mb-2"></div>
+                    <div class="h-1 bg-white/10 rounded w-14 mx-auto mb-3"></div>
+                    <div class="h-5 w-20 bg-pink-500/20 rounded-md mx-auto"></div>
                   </div>
                 </div>
               </div>
 
-              <!-- Product Grid -->
-              <div class="grid grid-cols-3 gap-3">
-                {[1, 2, 3].map(() => (
+              <!-- Menu Cards -->
+              <div class="grid grid-cols-2 gap-3">
+                {[1, 2].map(() => (
                   <div class="bg-white/[0.03] border border-white/5 rounded-lg p-3">
-                    <div class="aspect-square bg-gradient-to-br from-white/5 to-transparent rounded-md mb-2"></div>
+                    <div class="aspect-[4/3] bg-gradient-to-br from-pink-500/5 to-transparent rounded-md mb-2"></div>
                     <div class="h-1.5 bg-white/10 rounded w-3/4 mb-1"></div>
-                    <div class="h-1 bg-blue-500/30 rounded w-1/3"></div>
+                    <div class="h-1 bg-pink-500/20 rounded w-1/3"></div>
                   </div>
                 ))}
               </div>
 
-              <!-- Bottom Bar -->
-              <div class="flex items-center justify-between pt-2">
-                <div class="flex gap-2">
-                  <div class="h-1.5 bg-white/10 rounded w-8"></div>
-                  <div class="h-1.5 bg-white/5 rounded w-8"></div>
-                  <div class="h-1.5 bg-white/5 rounded w-8"></div>
-                </div>
-                <div class="h-5 w-16 bg-white/10 rounded-md"></div>
+              <!-- Booking Bar -->
+              <div class="flex items-center gap-2 bg-white/[0.03] border border-white/5 rounded-lg p-3">
+                <div class="flex-1 h-6 bg-white/5 rounded-md"></div>
+                <div class="h-6 w-16 bg-pink-500/20 rounded-md"></div>
               </div>
             </div>
           </div>
@@ -213,7 +210,7 @@ const caseStudySchema = {
         {results.map((stat, index) => (
           <div class="reveal-scale" style={`transition-delay: ${(index + 1) * 100}ms`}>
             <div class="text-4xl md:text-6xl font-black text-white tracking-tight mb-2">
-              {stat.value}<span class="text-blue-400">{stat.suffix}</span>
+              {stat.value}<span class="text-pink-400">{stat.suffix}</span>
             </div>
             <div class="text-xs md:text-sm font-mono uppercase tracking-wider text-gray-500">{stat.label}</div>
           </div>
@@ -230,30 +227,30 @@ const caseStudySchema = {
         <div class="reveal">
           <span class="inline-block px-4 py-2 rounded-full bg-white/5 border border-white/10 text-gray-400 text-xs font-mono uppercase tracking-widest mb-8">La Sfida</span>
           <h2 class="text-3xl md:text-4xl font-black text-white mb-6 leading-tight">
-            Un brand luxury meritava un'esperienza digitale all'altezza.
+            L'alta cucina meritava un'esperienza digitale all'altezza.
           </h2>
           <div class="space-y-4 text-gray-400 leading-relaxed">
             <p>
-              Maison Aurea, brand di accessori di lusso artigianali, aveva bisogno di una piattaforma e-commerce che riflettesse l'esclusivit&agrave; dei propri prodotti. Il precedente sito era lento, non mobile-optimized e con un tasso di conversione inferiore alla media del settore.
+              Gusto Divino, ristorante stellato nel cuore di Milano, gestiva le prenotazioni telefonicamente con un tasso di no-show del 25%. Il sito web esistente era statico e non rifletteva l'esperienza gastronomica offerta dallo chef.
             </p>
             <p>
-              La sfida principale era creare un'esperienza d'acquisto che trasmettesse lusso e artigianalit&agrave;, mantenendo performance impeccabili e un checkout senza attrito.
+              La sfida era creare un sistema di prenotazione che riducesse drasticamente i no-show, digitalizzasse la gestione del ristorante e comunicasse l'esclusivit&agrave; dell'esperienza culinaria gi&agrave; dal primo click.
             </p>
           </div>
         </div>
 
         <!-- La Soluzione -->
         <div class="reveal">
-          <span class="inline-block px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-mono uppercase tracking-widest mb-8">La Soluzione</span>
+          <span class="inline-block px-4 py-2 rounded-full bg-pink-500/10 border border-pink-500/20 text-pink-400 text-xs font-mono uppercase tracking-widest mb-8">La Soluzione</span>
           <h2 class="text-3xl md:text-4xl font-black text-white mb-6 leading-tight">
-            Architettura headless. Design senza compromessi.
+            Ogni prenotazione, un'esperienza.
           </h2>
           <div class="space-y-4 text-gray-400 leading-relaxed">
             <p>
-              Ho progettato e sviluppato una piattaforma e-commerce headless con Astro come frontend e Shopify come backend commerciale. Questa architettura garantisce la massima flessibilit&agrave; nel design e performance superiori rispetto ai temi tradizionali.
+              Ho progettato una web app completa con Vue.js e Supabase come backend. Il booking engine gestisce in tempo reale la disponibilit&agrave; dei tavoli, le preferenze dei clienti abituali e invia promemoria automatici che hanno abbattuto il tasso di no-show.
             </p>
             <p>
-              Ogni interazione &egrave; stata curata nei minimi dettagli: animazioni fluide, micro-interazioni studiate e un sistema di design coerente che eleva il brand a ogni touchpoint.
+              Il menu digitale interattivo presenta ogni piatto come un'opera d'arte, con filtri per allergeni, suggerimenti dello chef e abbinamenti vini curati dal sommelier del ristorante.
             </p>
           </div>
         </div>
@@ -263,7 +260,7 @@ const caseStudySchema = {
 
   <!-- GALLERY / MOCKUPS -->
   <section class="py-24 md:py-36 border-y border-white/5 bg-gradient-to-b from-surface/50 to-background relative overflow-hidden">
-    <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-blue-500/5 via-transparent to-transparent"></div>
+    <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-pink-500/5 via-transparent to-transparent"></div>
     <div class="container-custom relative z-10">
       <div class="text-center mb-16 md:mb-20">
         <span class="inline-block px-4 py-2 rounded-full bg-white/5 border border-white/10 text-gray-400 text-xs font-mono uppercase tracking-widest mb-6 reveal">Showcase</span>
@@ -287,7 +284,7 @@ const caseStudySchema = {
               <div class="p-5">
                 <span class="text-xs font-mono uppercase tracking-widest text-gray-500 group-hover:text-gray-300 transition-colors">{item.label}</span>
               </div>
-              <div class="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-blue-500/50 to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-500"></div>
+              <div class="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-pink-500/50 to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-500"></div>
             </div>
           </div>
         ))}
@@ -340,7 +337,7 @@ const caseStudySchema = {
             Tecnologie scelte<br/><span class="text-gray-600">con criterio.</span>
           </h2>
           <p class="text-gray-400 leading-relaxed max-w-lg">
-            Ogni tecnologia &egrave; stata selezionata per massimizzare performance, manutenibilit&agrave; e scalabilit&agrave;. Nessun compromesso, solo le migliori soluzioni per un prodotto di livello superiore.
+            Uno stack moderno pensato per la ristorazione: velocit&agrave; di caricamento, aggiornamenti in tempo reale e un backend serverless che scala automaticamente nei momenti di picco.
           </p>
         </div>
 
@@ -375,16 +372,16 @@ const caseStudySchema = {
         </div>
 
         <blockquote class="text-xl md:text-2xl text-gray-300 leading-relaxed mb-10 italic">
-          "Sebastiano ha saputo trasformare la nostra visione in un'esperienza digitale straordinaria. Il nuovo e-commerce non &egrave; solo bello &mdash; &egrave; diventato il nostro strumento di vendita pi&ugrave; potente. Le conversioni sono aumentate del 65% nel primo trimestre."
+          "Da quando abbiamo il nuovo sistema, i no-show sono praticamente scomparsi e le prenotazioni online sono esplose. Sebastiano ha capito perfettamente che il sito doveva far venire fame gi&agrave; dalla prima schermata. I nostri ospiti adorano il menu interattivo."
         </blockquote>
 
         <div class="flex items-center justify-center gap-4">
-          <div class="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500/30 to-purple-500/20 border border-white/10 flex items-center justify-center">
-            <span class="text-sm font-bold text-white">GA</span>
+          <div class="w-12 h-12 rounded-full bg-gradient-to-br from-pink-500/30 to-rose-500/20 border border-white/10 flex items-center justify-center">
+            <span class="text-sm font-bold text-white">FC</span>
           </div>
           <div class="text-left">
-            <p class="text-sm font-medium text-white">Giulia Amati</p>
-            <p class="text-xs text-gray-500">Creative Director, Maison Aurea</p>
+            <p class="text-sm font-medium text-white">Francesca Colombo</p>
+            <p class="text-xs text-gray-500">Chef & Proprietaria, Gusto Divino</p>
           </div>
         </div>
       </div>
@@ -412,7 +409,7 @@ const caseStudySchema = {
 
   <!-- CTA -->
   <section class="py-32 border-t border-white/5 bg-gradient-to-b from-surface/50 to-background relative overflow-hidden">
-    <div class="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_50%,_var(--tw-gradient-stops))] from-blue-500/5 via-transparent to-transparent"></div>
+    <div class="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_50%,_var(--tw-gradient-stops))] from-pink-500/5 via-transparent to-transparent"></div>
     <div class="container-custom text-center relative z-10">
       <h2 class="text-4xl md:text-6xl lg:text-7xl font-black uppercase mb-6 text-white reveal-scale">
         Un progetto<br/>simile in mente?

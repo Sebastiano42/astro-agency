@@ -100,7 +100,7 @@ const articleSchema = {
 
       <!-- Article Content -->
       <div class="prose prose-invert prose-lg max-w-none reveal">
-        <div class="article-content" set:html={post.content} />
+        <div class="article-content" set:html={post.content.replace(/<script[\s\S]*?<\/script>/gi, '').replace(/on\w+\s*=/gi, '')} />
       </div>
 
       <!-- Share Buttons -->

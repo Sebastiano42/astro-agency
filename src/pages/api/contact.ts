@@ -1,97 +1,48 @@
 // src/pages/api/contact.ts
 import type { APIRoute } from 'astro';
+import { Resend } from 'resend';
 
 export const prerender = false;
 
-// Rate limiting store (in-memory, per IP)
-// In production, consider using Redis or a database
-const rateLimitStore = new Map<string, { count: number; timestamp: number }>();
+// Rate limiting with timestamp-based sliding window
+// Note: on Vercel serverless this resets on cold starts,
+// but still protects against burst abuse within a single instance
+const rateLimitStore = new Map<string, number[]>();
 const RATE_LIMIT_WINDOW = 60 * 60 * 1000; // 1 hour
 const MAX_REQUESTS = 3;
 
 // Email validation regex
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-// Clean up old rate limit entries every hour
-setInterval(() => {
-  const now = Date.now();
-  for (const [ip, data] of rateLimitStore.entries()) {
-    if (now - data.timestamp > RATE_LIMIT_WINDOW) {
-      rateLimitStore.delete(ip);
-    }
-  }
-}, RATE_LIMIT_WINDOW);
-
 function checkRateLimit(ip: string): boolean {
   const now = Date.now();
-  const record = rateLimitStore.get(ip);
+  const timestamps = rateLimitStore.get(ip) || [];
 
-  if (!record) {
-    rateLimitStore.set(ip, { count: 1, timestamp: now });
-    return true;
-  }
+  // Remove expired entries
+  const valid = timestamps.filter(t => now - t < RATE_LIMIT_WINDOW);
 
-  // Reset if window expired
-  if (now - record.timestamp > RATE_LIMIT_WINDOW) {
-    rateLimitStore.set(ip, { count: 1, timestamp: now });
-    return true;
-  }
-
-  // Check if limit exceeded
-  if (record.count >= MAX_REQUESTS) {
+  if (valid.length >= MAX_REQUESTS) {
     return false;
   }
 
-  // Increment count
-  record.count++;
+  valid.push(now);
+  rateLimitStore.set(ip, valid);
   return true;
 }
 
-async function sendEmail(data: {
-  nome: string;
-  email: string;
-  servizio: string;
-  messaggio: string;
-}) {
-  // TODO: Configure your email service here
-  // Options:
-  // 1. Resend: https://resend.com/docs/send-with-nodejs
-  // 2. SendGrid: https://docs.sendgrid.com/for-developers/sending-email/nodejs
-  // 3. Nodemailer with SMTP: https://nodemailer.com/
-
-  // Example with Resend (uncomment when configured):
-  /*
-  import { Resend } from 'resend';
-  const resend = new Resend(process.env.RESEND_API_KEY);
-
-  await resend.emails.send({
-    from: 'Studio <noreply@yourdomain.com>',
-    to: process.env.CONTACT_EMAIL || 'your@email.com',
-    subject: `Nuovo contatto: ${data.servizio}`,
-    html: `
-      <h2>Nuovo messaggio dal form contatti</h2>
-      <p><strong>Nome:</strong> ${data.nome}</p>
-      <p><strong>Email:</strong> ${data.email}</p>
-      <p><strong>Servizio:</strong> ${data.servizio}</p>
-      <p><strong>Messaggio:</strong></p>
-      <p>${data.messaggio}</p>
-    `
-  });
-  */
-
-  // For now, just log the data (remove in production)
-  console.log('📧 New contact form submission:', data);
-
-  // Simulate email send delay
-  await new Promise(resolve => setTimeout(resolve, 500));
-
-  return { success: true };
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
 }
 
 export const POST: APIRoute = async ({ request, clientAddress }) => {
   try {
     // Get client IP for rate limiting
-    const ip = clientAddress || 'unknown';
+    const ip = clientAddress || request.headers.get('x-forwarded-for') || 'unknown';
 
     // Check rate limit
     if (!checkRateLimit(ip)) {
@@ -180,8 +131,42 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
       );
     }
 
-    // Send email
-    await sendEmail({ nome, email, servizio, messaggio });
+    // Send email with Resend
+    const apiKey = import.meta.env.RESEND_API_KEY;
+    const contactEmail = import.meta.env.CONTACT_EMAIL || 'info@sebastianomoniaci.it';
+
+    if (!apiKey) {
+      console.error('RESEND_API_KEY is not configured');
+      return new Response(
+        JSON.stringify({
+          success: false,
+          message: 'Servizio email non configurato. Contattami direttamente a info@sebastianomoniaci.it',
+        }),
+        {
+          status: 500,
+          headers: { 'Content-Type': 'application/json' },
+        }
+      );
+    }
+
+    const resend = new Resend(apiKey);
+
+    await resend.emails.send({
+      from: 'Sito Web <noreply@sebastianomoniaci.it>',
+      to: contactEmail,
+      replyTo: email,
+      subject: `Nuovo contatto: ${escapeHtml(servizio)} - ${escapeHtml(nome)}`,
+      html: `
+        <h2>Nuovo messaggio dal form contatti</h2>
+        <p><strong>Nome:</strong> ${escapeHtml(nome)}</p>
+        <p><strong>Email:</strong> ${escapeHtml(email)}</p>
+        <p><strong>Servizio:</strong> ${escapeHtml(servizio)}</p>
+        <p><strong>Messaggio:</strong></p>
+        <p>${escapeHtml(messaggio).replace(/\n/g, '<br>')}</p>
+        <hr>
+        <p style="color: #888; font-size: 12px;">Inviato dal form contatti di sebastianomoniaci.it</p>
+      `
+    });
 
     // Success response
     return new Response(

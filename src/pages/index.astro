@@ -99,7 +99,7 @@ const testimonials = [
 
       <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
         {services.map((item, index) => (
-          <a href={item.href} class={`group text-center md:text-left reveal-scale h-full flex flex-col`}>
+          <a href={item.href} aria-label={`Scopri il servizio ${item.title}`} class={`group text-center md:text-left reveal-scale h-full flex flex-col`}>
             <div class="glow-border relative h-full bg-gradient-to-br from-white/[0.08] to-transparent border border-white/10 rounded-2xl p-8 transition-all duration-500 hover:border-white/30 hover:bg-white/[0.05] overflow-hidden flex flex-col">
               <!-- Gradient Glow Effect -->
               <div class={`absolute -top-20 -right-20 w-40 h-40 bg-gradient-to-br ${item.color} rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700`}></div>
